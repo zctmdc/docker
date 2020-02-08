@@ -160,8 +160,9 @@ N2N_PASS          组网密码
 N2N_SERVER        N2N超级节点网址和端口配置
 ```
 
-请访问:[github地址]查看更多
-docker-compose up -d
+请访问:[github地址][github地址]查看更多
+
+还支持 docker-compose up -d 配置运行
 
 ### 更多帮助请参考
 
