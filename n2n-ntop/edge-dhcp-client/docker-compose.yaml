@@ -1,0 +1,14 @@
+version: "3"
+services:
+    n2n_edge_dhcp:
+    image: zctmdc/n2n-ntop:latest
+    restart: always
+    privileged: true
+    environment:
+      - MODE=DHCP
+      - SUPERNODE_PORT=10086
+      - 2N_INTERFACE=edge0
+      - N2N_GROUP=zctmdc_dhcp
+      - N2N_PASS=zctmdc_dhcp
+      - 2N_SERVER=n2n.lucktu.com:10086
+    command: ["/bin/sh","-c","/user/sbin/run.sh"]

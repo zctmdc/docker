@@ -1,0 +1,12 @@
+version: "3"
+services:
+  n2n_supernode:
+    image: zctmdc/n2n-ntop:latest
+    restart: always
+    privileged: true
+    ports:
+      - 10086/udp
+    environment:
+      - MODE=SUPERNODE
+      - SUPERNODE_PORT=10086
+    command: ["/bin/sh","-c","/user/sbin/run.sh"]
