@@ -77,8 +77,7 @@ docker run \
   --name n2n_edge \
   --privileged \
   --net=host \
-  -e MODE="DHCP" \
-  -e 2N_INTERFACE=edge0
+  -e MODE="STATIC" \
   -e STATIC_IP="10.0.0.10" \
   -e N2N_GROUP="zctmdc_dhcp" \
   -e N2N_PASS="zctmdc_dhcp" \
@@ -88,7 +87,80 @@ docker run \
 
 ## 更多模式
 
-请访问:github地址
+### SUPERNODE 超级节点
+
+```bash
+docker run \
+  -d --restart=always \
+  -e MODE="SUPERNODE" \
+  -e SUPERNODE_PORT=10086 \
+  -p 10086:10086/udp \
+  zctmdc/n2n_ntop
+```
+
+### DHCPD DHCP服务模式
+
+```bash
+docker run \
+  -d --restart=always \
+  --name n2n_edge \
+  --privileged \
+  --net=host \
+  -e MODE="DHCP" \
+  -e STATIC_IP="10.0.0.1" \
+  -v path/to/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
+  -e N2N_GROUP="zctmdc_dhcp" \
+  -e N2N_PASS="zctmdc_dhcp" \
+  -e N2N_SERVER="n2n.lucktu.com:10086" \
+  zctmdc/n2n_ntop
+```
+
+指定STATIC_IP和-v dhcpd.conf:/etc/dhcp/dhcpd.conf:ro 文件
+
+### DHCP DHCP客户端模式
+
+```bash
+docker run \
+  -d --restart=always \
+  --name n2n_edge \
+  --privileged \
+  --net=host \
+  -e MODE="DHCP" \
+  -e N2N_GROUP="zctmdc_dhcp" \
+  -e N2N_PASS="zctmdc_dhcp" \
+  -e N2N_SERVER="n2n.lucktu.com:10086" \
+  zctmdc/n2n_ntop
+```
+
+### STATIC 静态模式
+
+```bash
+docker run \
+  -d --restart=always \
+  --name n2n_edge \
+  --privileged \
+  --net=host \
+  -e MODE="STATIC" \
+  -e STATIC_IP="10.0.0.10" \
+  -e N2N_GROUP="zctmdc_dhcp" \
+  -e N2N_PASS="zctmdc_dhcp" \
+  -e N2N_SERVER="n2n.lucktu.com:10086" \
+  zctmdc/n2n_ntop
+```
+
+## 环境变量
+
+```text
+MODE              模式            SUPERNODE DHCP DHCPD STATIC
+SUPERNODE_PORT    超级节点端口    仅在SUPERNODE中使用
+N2N_INTERFACE     网卡名字        edge生成的网卡名字
+STATIC_IP         静态IP          仅在静态模式和DHCPD使用
+N2N_GROUP         组网名称
+N2N_PASS          组网密码
+N2N_SERVER        N2N超级节点网址和端口配置
+```
+
+请访问:[github地址]查看更多
 docker-compose up -d
 
 ### 更多帮助请参考
