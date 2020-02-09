@@ -1,7 +1,7 @@
 version: "3"
 services:
   n2n_supernode:
-    image: zctmdc/n2n-ntop:latest
+    image: zctmdc/n2n_ntop:latest
     restart: always
     privileged: true
     ports:

@@ -1,7 +1,7 @@
 version: "3"
 services:
   n2n_edge_dhcpd:
-    image: zctmdc/n2n-ntop:latest
+    image: zctmdc/n2n_ntop:latest
     restart: always
     privileged: true
     environment:
@@ -16,7 +16,7 @@ services:
       - ./dhcpd.conf:/etc/dhcp/dhcpd.conf
     command: ["/bin/sh","-c","/user/sbin/run.sh"]
   n2n_edge_dhcp:
-    image: zctmdc/n2n-ntop:latest
+    image: zctmdc/n2n_ntop:latest
     restart: always
     privileged: true
     environment:
@@ -28,7 +28,7 @@ services:
       - 2N_SERVER=192.168.66.102:10086
     command: ["/bin/sh","-c","/user/sbin/run.sh"]
   n2n_edge_static:
-    image: zctmdc/n2n-ntop:latest
+    image: zctmdc/n2n_ntop:latest
     restart: always
     privileged: true
     environment:
@@ -41,7 +41,7 @@ services:
       - 2N_SERVER=192.168.66.102:10086
     command: ["/bin/sh","-c","/user/sbin/run.sh"]
   n2n_supernode:
-    image: zctmdc/n2n-ntop:latest
+    image: zctmdc/n2n_ntop:latest
     restart: always
     privileged: true
     ports:
