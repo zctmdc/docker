@@ -45,7 +45,7 @@ services:
     restart: always
     privileged: true
     ports:
-      - 10086/udp
+      - 10086:10086/udp
     environment:
       - MODE=SUPERNODE
       - SUPERNODE_PORT=10086
