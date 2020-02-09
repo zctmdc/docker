@@ -105,8 +105,8 @@ docker run \
   -d --restart=always \
   --name n2n_edge \
   --privileged \
+  -e MODE="DHCPD" \
   --net=host \
-  -e MODE="DHCP" \
   -e STATIC_IP="10.0.0.1" \
   -v path/to/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
   -e N2N_GROUP="zctmdc_dhcp" \

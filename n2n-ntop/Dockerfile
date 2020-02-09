@@ -1,4 +1,4 @@
-FROM alpine AS build-env
+FROM alpine
 
 MAINTAINER zctmdc <zctmdc@outlook.com>
 
