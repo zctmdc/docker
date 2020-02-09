@@ -11,7 +11,7 @@ services:
       - STATIC_IP="10.0.0.1"
       - N2N_GROUP=zctmdc_dhcp
       - N2N_PASS=zctmdc_dhcp
-      - 2N_SERVER=n2n.lucktu.com:10086
+      - N2N_SERVER="n2n.udpfile.com:10086 -l n2n.lucktu.com:10086"
     volumes:
       - ./edge-dhcp-server/dhcpd.conf:/etc/dhcp/dhcpd.conf
     command: ["/bin/sh","-c","/usr/sbin/run.sh"]
@@ -25,7 +25,7 @@ services:
       - 2N_INTERFACE=edge0
       - N2N_GROUP=zctmdc_dhcp
       - N2N_PASS=zctmdc_dhcp
-      - 2N_SERVER=n2n.lucktu.com:10086
+      - N2N_SERVER="n2n.udpfile.com:10086 -l n2n.lucktu.com:10086"
     command: ["/bin/sh","-c","/usr/sbin/run.sh"]
   n2n_edge_static:
     image: zctmdc/n2n_ntop:latest
@@ -38,7 +38,7 @@ services:
       - STATIC_IP="10.0.0.10"
       - N2N_GROUP=zctmdc_dhcp
       - N2N_PASS=zctmdc_dhcp
-      - 2N_SERVER=n2n.lucktu.com:10086
+      - N2N_SERVER="n2n.udpfile.com:10086 -l n2n.lucktu.com:10086"
     command: ["/bin/sh","-c","/usr/sbin/run.sh"]
   n2n_supernode:
     image: zctmdc/n2n_ntop:latest

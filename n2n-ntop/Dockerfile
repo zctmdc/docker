@@ -34,6 +34,7 @@ ENV N2N_GROUP zctmdc_dhcp
 ENV N2N_PASS zctmdc_dhcp
 ENV N2N_SERVER n2n.lucktu.com:10086
 
+
 RUN apk add --update --no-cache openssl dhclient dhcp-server-ldap \
 	&& touch /var/lib/dhcp/dhcpd.leases \
 	&& touch /var/log/run.log
