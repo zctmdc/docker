@@ -6,7 +6,7 @@ if [[ "${MODE}" == "SUPERNODE" ]]; then
     nohup \
       supernode \
       -l $SUPERNODE_PORT \
-      -f \
+      -v \
       >> /var/log/run.log 2>&1 &
 elif [[ "${MODE}" == "DHCPD" ]]; then
     echo ${MODE} -- DHCPD 服务器模式
