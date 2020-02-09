@@ -8,7 +8,7 @@ services:
       - MODE=STATIC
       - SUPERNODE_PORT=10086
       - 2N_INTERFACE=edge0
-      - STATIC_IP="10.0.0.1"
+      - STATIC_IP="10.0.0.10"
       - N2N_GROUP=zctmdc_dhcp
       - N2N_PASS=zctmdc_dhcp
       - 2N_SERVER=n2n.lucktu.com:10086
