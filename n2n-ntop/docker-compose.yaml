@@ -14,7 +14,7 @@ services:
       - 2N_SERVER=192.168.66.102:10086
     volumes:
       - ./edge-dhcp-server/dhcpd.conf:/etc/dhcp/dhcpd.conf
-    command: ["/bin/sh","-c","/user/sbin/run.sh"]
+    command: ["/bin/sh","-c","/usr/sbin/run.sh"]
   n2n_edge_dhcp:
     image: zctmdc/n2n_ntop:latest
     restart: always
@@ -26,7 +26,7 @@ services:
       - N2N_GROUP=zctmdc_dhcp
       - N2N_PASS=zctmdc_dhcp
       - 2N_SERVER=192.168.66.102:10086
-    command: ["/bin/sh","-c","/user/sbin/run.sh"]
+    command: ["/bin/sh","-c","/usr/sbin/run.sh"]
   n2n_edge_static:
     image: zctmdc/n2n_ntop:latest
     restart: always
@@ -39,7 +39,7 @@ services:
       - N2N_GROUP=zctmdc_dhcp
       - N2N_PASS=zctmdc_dhcp
       - 2N_SERVER=192.168.66.102:10086
-    command: ["/bin/sh","-c","/user/sbin/run.sh"]
+    command: ["/bin/sh","-c","/usr/sbin/run.sh"]
   n2n_supernode:
     image: zctmdc/n2n_ntop:latest
     restart: always
@@ -49,4 +49,4 @@ services:
     environment:
       - MODE=SUPERNODE
       - SUPERNODE_PORT=10086
-    command: ["/bin/sh","-c","/user/sbin/run.sh"]
+    command: ["/bin/sh","-c","/usr/sbin/run.sh"]

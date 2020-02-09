@@ -39,8 +39,8 @@ RUN apk add --update --no-cache openssl dhclient dhcp-server-ldap \
 	&& touch /var/log/run.log
 
 COPY edge-dhcp-server/dhcpd.conf  /etc/dhcp/dhcpd.conf
-COPY run.sh /user/sbin/run.sh
+COPY run.sh /usr/sbin/run.sh
 
-RUN  chmod a+x /user/sbin/run.sh
+RUN  chmod a+x /usr/sbin/run.sh
 
-CMD ["/bin/sh","-c","/user/sbin/run.sh"]
+CMD ["/bin/sh","-c","/usr/sbin/run.sh"]

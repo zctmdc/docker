@@ -11,4 +11,4 @@ services:
       - N2N_GROUP=zctmdc_dhcp
       - N2N_PASS=zctmdc_dhcp
       - 2N_SERVER=n2n.lucktu.com:10086
-    command: ["/bin/sh","-c","/user/sbin/run.sh"]
+    command: ["/bin/sh","-c","/usr/sbin/run.sh"]

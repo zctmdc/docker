@@ -12,5 +12,5 @@ RUN set -x \
 ENV WORK_PATH="/workpath"
 ENV STATIC_PATH="/var/www/static/"
 
-COPY run.sh /user/sbin/run.sh
-ENTRYPOINT ["/bin/bash","-c","/user/sbin/run.sh"]
+COPY run.sh /usr/sbin/run.sh
+CMD ["/bin/bash","-c","/usr/sbin/run.sh"]
