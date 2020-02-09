@@ -10,5 +10,5 @@ services:
       - 2N_INTERFACE=edge0
       - N2N_GROUP=zctmdc_dhcp
       - N2N_PASS=zctmdc_dhcp
-      - N2N_SERVER=n2n.udpfile.com:10086 -l n2n.lucktu.com:10086
+      - N2N_SERVER=n2n.lucktu.com:10086
     command: ["/bin/sh","-c","/usr/sbin/run.sh"]
