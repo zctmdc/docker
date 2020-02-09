@@ -48,6 +48,7 @@ docker run \
 ```bash
 docker run \
   -d --restart=always \
+  --name=supernode \
   -e MODE="SUPERNODE" \
   -e SUPERNODE_PORT=10086 \
   -p 10086:10086/udp \
@@ -87,23 +88,24 @@ docker run \
 
 ## 更多模式
 
-### SUPERNODE 超级节点
+### SUPERNODE - 超级节点
 
 ```bash
 docker run \
   -d --restart=always \
+  --name=supernode \
   -e MODE="SUPERNODE" \
   -e SUPERNODE_PORT=10086 \
   -p 10086:10086/udp \
   zctmdc/n2n_ntop
 ```
 
-### DHCPD DHCP服务模式
+### DHCPD - DHCP服务模式
 
 ```bash
 docker run \
   -d --restart=always \
-  --name n2n_edge \
+  --name n2n_edge_dhcpd \
   --privileged \
   -e MODE="DHCPD" \
   --net=host \
@@ -117,12 +119,12 @@ docker run \
 
 指定STATIC_IP和-v dhcpd.conf:/etc/dhcp/dhcpd.conf:ro 文件
 
-### DHCP DHCP客户端模式
+### DHCP - DHCP客户端模式
 
 ```bash
 docker run \
   -d --restart=always \
-  --name n2n_edge \
+  --name n2n_edge_dhcp \
   --privileged \
   --net=host \
   -e MODE="DHCP" \
@@ -132,12 +134,12 @@ docker run \
   zctmdc/n2n_ntop
 ```
 
-### STATIC 静态模式
+### STATIC - 静态模式
 
 ```bash
 docker run \
   -d --restart=always \
-  --name n2n_edge \
+  --name n2n_edge_static \
   --privileged \
   --net=host \
   -e MODE="STATIC" \

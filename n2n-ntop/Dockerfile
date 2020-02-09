@@ -41,4 +41,6 @@ RUN apk add --update --no-cache openssl dhclient dhcp-server-ldap \
 COPY dhcpd.conf  /etc/dhcp/dhcpd.conf
 COPY run.sh /user/sbin/run.sh
 
+RUN  chmod a+x /user/sbin/run.sh
+
 CMD ["/bin/sh","-c","/user/sbin/run.sh"]
