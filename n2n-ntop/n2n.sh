@@ -1,15 +1,17 @@
 #!/bin/sh
 set -x
 MODE=$(echo $MODE | tr '[a-z]' '[A-Z]')
-if [[ "${MODE}" == "SUPERNODE" ]]; then
+mode_supernode{
     echo  ${MODE} -- 超级节点模式  >> /var/log/n2n.log
     nohup \
       supernode \
         -l $SUPERNODE_PORT \
         -v \
-      >> /var/log/n2n.log 2>&1 &
-elif [[ "${MODE}" == "DHCPD" ]]; then
-    echo ${MODE} -- DHCPD 服务器模式  >> /var/log/n2n.log
+    >> /var/log/n2n.log 2>&1 &
+}
+
+mode_dhcpd{
+  echo ${MODE} -- DHCPD 服务器模式  >> /var/log/n2n.log
     STATIC_IP=`echo $STATIC_IP | grep -Eo "([0-9]{1,3}[\.]){3}"`1
     nohup \
       edge \
@@ -20,9 +22,9 @@ elif [[ "${MODE}" == "DHCPD" ]]; then
         -l $N2N_SERVER \
         -Arf \
       >> /var/log/n2n.log 2>&1 &
-      nohup dhcpd -f -d  $N2N_INTERFACE >> /var/log/n2n.log 2>&1 &
-elif [[ "${MODE}" == "DHCP" ]]; then
-    echo ${MODE} -- DHCP客户端模式  >> /var/log/n2n.log
+    nohup dhcpd -f -d  $N2N_INTERFACE >> /var/log/n2n.log 2>&1 &
+}
+mode_dhcp{echo ${MODE} -- DHCP客户端模式  >> /var/log/n2n.log
     nohup \
       edge \
         -d $N2N_INTERFACE \
@@ -36,8 +38,8 @@ elif [[ "${MODE}" == "DHCP" ]]; then
     do
       dhclient $N2N_INTERFACE
     done
-elif [[ "${MODE}" == "STATIC" ]]; then
-    echo ${MODE} -- 静态地址模式  >> /var/log/n2n.log
+}
+mode_static{    echo ${MODE} -- 静态地址模式  >> /var/log/n2n.log
     nohup \
       edge \
         -d $N2N_INTERFACE \
@@ -51,8 +53,24 @@ elif [[ "${MODE}" == "STATIC" ]]; then
     do
       sleep 1
     done
-else
-    echo ${MODE} -- 判断失败  >> /var/log/n2n.log
-fi
+}
+case $MODE in
+  SUPERNODE)
+    mode_supernode
+  ;;
+  DHCPD)  
+    mode_dhcpd
+  ;;
+  DHCP)
+    mode_dhcp
+  ;;
+  STATIC)
+    mode_static
+  ;;
+  *)
+    echo ${MODE} -- 判断失败,使用DHCP模式 >> /var/log/n2n.log
+    mode_dhcp
+  ;;
+esac
 ifconfig
 tail -f -n 20  /var/log/n2n.log
