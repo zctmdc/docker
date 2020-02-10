@@ -47,7 +47,7 @@ services:
         - N2N_DESTINATION=192.168.0.0/16
         - N2N_GATEWAY=10.0.0.2
       volumes:
-        - dhcpd.conf:/etc/dhcp/dhcpd.conf
+        - ../n2n_ntop/edge-dhcp-server/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
       ports:
         - 1080:1080
       command: ["/bin/sh","-c","/usr/local/sbin/run.sh"]

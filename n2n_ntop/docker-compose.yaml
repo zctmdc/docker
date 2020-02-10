@@ -13,7 +13,7 @@ services:
       - N2N_PASS=zctmdc_dhcp
       - N2N_SERVER=n2n.lucktu.com:10086
     volumes:
-      - ./edge-dhcp-server/dhcpd.conf:/etc/dhcp/dhcpd.conf
+      - ./edge-dhcp-server/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
     command: ["/bin/sh","-c","/usr/local/sbin/run.sh"]
   n2n_edge_dhcp:
     image: zctmdc/n2n_ntop:latest
