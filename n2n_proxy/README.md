@@ -1,6 +1,6 @@
 # N2N proxy
 
-基于N2N和ginuerzh/gost制作的P2P远程代理
+基于[zctmdc/n2n_ntop][n2n_ntop]和[pginuerzh/gost][gost]制作的P2P远程代理
 
 只需要开放一个端口,就可以在软件上使用代理,链接远程电脑
 
@@ -9,7 +9,7 @@
 ### 测试
 
 ```bash
-docker run -ti --rm zctmdc/n2n_proxy 
+docker run -ti --rm zctmdc/n2n_proxy
 ```
 
 ### 远端/网络共享端
@@ -46,3 +46,11 @@ docker run \
   -p 1080:1080 \
   zctmdc/n2n_proxy
 ```
+
+然后你就可以使用1080端口进行代理,访问远程资料
+
+更多详情参看:[zctmdc/n2n_ntop][n2n_ntop]和[pginuerzh/gost][gost]
+
+[n2n_ntop]:https://hub.docker.com/r/zctmdc/n2n_ntop "n2n-ntop的docker hub地址"
+
+[gost]:https://github.com/ginuerzh/gost "ginuerzh/gost的GITHUB地址"
