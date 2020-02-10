@@ -12,7 +12,8 @@ RUN  chmod a+x /usr/local/sbin/run.sh \
   && touch /var/log/proxy.log
 
 ENV N2N_DESTINATION 192.168.0.0/16
-ENV N2N_GATEWAY 10.0.0.1
+ENV STATIC_IP 10.10.0.1
+ENV N2N_GATEWAY 10.10.0.1
 ENV N2N_GW FALSE
 ENV N2N_NAT FALSE
 

@@ -13,7 +13,9 @@ docker run -ti --rm -v path-to-dir:/workpath -p 80:80 zctmdc/file-server
 ### iso文件将自动挂载
 
 ```bash
-docker run -ti --rm -v path-to-iso:/workpath -p 80:80 zctmdc/file-server
+docker run -ti --rm -v path-to-iso:/workpath -p 8088:80 zctmdc/file-server
 ```
 
-其他类型文件将会出错！！！
+> 其他类型文件可能会出错！！！
+
+然后使用浏览器访问localhost:8088进行测试
