@@ -20,7 +20,7 @@ docker run \
   --name n2n_proxy_nat \
   --privileged \
   -e MODE="DHCPD" \
-  -e STATIC_IP="10.0.0.1" \
+  -e STATIC_IP="10.0.10.1" \
   -v path/to/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
   -e N2N_GROUP="zctmdc_dhcp" \
   -e N2N_PASS="zctmdc_dhcp" \
@@ -42,7 +42,7 @@ docker run \
   -e N2N_SERVER="n2n.lucktu.com:10086" \
   -e N2N_GW="TURE" \
   -e N2N_DESTINATION="192.168.0.0/16" \
-  -e N2N_GATEWAY="10.0.0.1"\
+  -e N2N_GATEWAY="10.0.10.1"\
   -p 1080:1080 \
   zctmdc/n2n_proxy
 ```

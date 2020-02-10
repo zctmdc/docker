@@ -18,4 +18,4 @@ docker run -ti --rm -v path-to-iso:/workpath -p 8088:80 zctmdc/file-server
 
 > 其他类型文件可能会出错！！！
 
-然后使用浏览器访问localhost:8088进行测试
+然后使用浏览器访问 *<http://localhost:8088>* 进行测试

@@ -6,7 +6,7 @@ services:
       privileged: true
       environment:
         - MODE=DHCPD
-        - STATIC_IP=10.10.0.1
+        - STATIC_IP=10.0.10.1
         - N2N_GROUP=zctmdc_proxy
         - N2N_PASS=zctmdc_proxy
         - N2N_SERVER=n2n.lucktu.com:10086
