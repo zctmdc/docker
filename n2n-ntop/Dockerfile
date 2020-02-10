@@ -1,4 +1,4 @@
-FROM alpine
+FROM alpine AS builder 
 
 MAINTAINER zctmdc <zctmdc@outlook.com>
 
@@ -25,6 +25,21 @@ RUN buildDeps=" \
 	&& rm -rf ./* \
 	&& apk del .build-deps
 ############end build############
+FROM alpine
+
+RUN apk add --update --no-cache openssl dhclient dhcp-server-ldap
+
+COPY --from=builder /usr/local/sbin/supernode /usr/local/sbin/
+COPY --from=builder /usr/local/sbin/edge /usr/local/sbin/
+COPY edge-dhcp-server/dhcpd.conf  /etc/dhcp/dhcpd.conf
+COPY run.sh /usr/local/sbin/
+COPY n2n.sh /usr/local/sbin/
+
+RUN  chmod a+x /usr/local/sbin/run.sh \
+	&& chmod a+x /usr/local/sbin/n2n.sh \
+	&& touch /var/lib/dhcp/dhcpd.leases \
+	&& touch /var/log/n2n.log \
+	&& touch /var/log/run.log 
 
 ENV MODE DHCP
 ENV SUPERNODE_PORT 10086
@@ -34,14 +49,4 @@ ENV N2N_GROUP zctmdc_dhcp
 ENV N2N_PASS zctmdc_dhcp
 ENV N2N_SERVER n2n.lucktu.com:10086
 
-
-RUN apk add --update --no-cache openssl dhclient dhcp-server-ldap \
-	&& touch /var/lib/dhcp/dhcpd.leases \
-	&& touch /var/log/run.log
-
-COPY edge-dhcp-server/dhcpd.conf  /etc/dhcp/dhcpd.conf
-COPY run.sh /usr/sbin/run.sh
-
-RUN  chmod a+x /usr/sbin/run.sh
-
-CMD ["/bin/sh","-c","/usr/sbin/run.sh"]
+CMD ["/bin/sh","-c","/usr/local/sbin/run.sh"]

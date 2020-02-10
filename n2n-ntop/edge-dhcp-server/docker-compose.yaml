@@ -14,4 +14,4 @@ services:
       - N2N_SERVER=n2n.lucktu.com:10086
     volumes:
       - dhcpd.conf:/etc/dhcp/dhcpd.conf
-    command: ["/bin/sh","-c","/usr/sbin/run.sh"]
+    command: ["/bin/sh","-c","/usr/local/sbin/run.sh"]

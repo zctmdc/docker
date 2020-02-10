@@ -1,9 +1,10 @@
 #!/bin/sh
-set -x
 
 #docker run  --privileged --rm -ti alpine sh
 #docker exec -it alpine_sh sh
 ############ build start############
+set -x
+
 cd /tmp/
 apk update
 apk upgrade
