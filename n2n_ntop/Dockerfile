@@ -13,19 +13,19 @@ RUN buildDeps=" \
 		openssl-dev \
 	"; \
 	\
-	set -x \
-	&& apk update \ 
-	&& apk upgrade \ 
+	set -x \ 
 	&& apk add --update --no-cache --virtual .build-deps $buildDeps \
 	&& git clone https://github.com/ntop/n2n.git \
   && cd n2n \
   && cmake . \
 	&& make install
-# WORKDIR /tmp
-# RUN rm -rf ./* \
-# 	&& apk del .build-deps
+WORKDIR /tmp
+RUN rm -rf /tmp/* \
+	&& apk del .build-deps
 ############end build############
 FROM alpine
+
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
 RUN apk add --update --no-cache openssl dhclient dhcp-server-ldap
 
