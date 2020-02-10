@@ -3,7 +3,7 @@ FROM zctmdc/n2n_ntop
 
 MAINTAINER zctmdc <zctmdc@outlook.com>
 
-COPY --from=gost_src /bin/gost/gost /usr/local/sbin/
+COPY --from=gost_src /bin/gost /usr/local/sbin/
 COPY run.sh /usr/local/sbin/
 COPY proxy.sh /usr/local/sbin/
 
