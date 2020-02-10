@@ -122,7 +122,7 @@ docker run \
   -e MODE="DHCPD" \
   --net=host \
   -e STATIC_IP="10.0.0.1" \
-  -v path/to/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
+  -v path/to/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro \
   -e N2N_GROUP="zctmdc_dhcp" \
   -e N2N_PASS="zctmdc_dhcp" \
   -e N2N_SERVER="n2n.lucktu.com:10086" \
@@ -162,7 +162,7 @@ docker run \
   zctmdc/n2n_ntop
 ```
 
-## 环境.变量
+## 环境变量介绍
 
 |变量名|变量说明|备注|对应参数|
 |---:|:---|:---|:---|
@@ -173,7 +173,7 @@ docker run \
 |N2N_GROUP|组网名称|在EDGE中使用|-c|
 |N2N_PASS|组网密码|在EDGE中使用|-k|
 |N2N_INTERFACE|网卡名|edge生成的网卡名字|-d|
-|N2N_ARGS|更多参数|运行时附加的更多参数||
+|N2N_ARGS|更多参数|运行时附加的更多参数|-Av|
 
 ## 还可以使用 *docker-compose* 配置运行
 

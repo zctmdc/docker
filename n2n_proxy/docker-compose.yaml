@@ -12,6 +12,7 @@ services:
         - N2N_SERVER=n2n.lucktu.com:10086
         - N2N_NAT=TRUE
         - N2N_ARGS=-Av
+        - N2N_PROXY=TRUE
       volumes:
         - ../n2n_ntop/edge-dhcp-server/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
       command: ["/bin/sh","-c","/usr/local/sbin/run.sh"]
@@ -29,6 +30,7 @@ services:
         - N2N_DESTINATION=192.168.0.0/16
         - N2N_GATEWAY=10.0.10.1
         - N2N_ARGS=-Avr
+        - N2N_PROXY=TRUE
       volumes:
         - ../n2n_ntop/edge-dhcp-server/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
       ports:
@@ -49,6 +51,7 @@ services:
         - N2N_DESTINATION=192.168.0.0/16
         - N2N_GATEWAY=10.0.10.1
         - N2N_ARGS=-Av
+        - N2N_PROXY=FALSE
       # volumes:
       #   - n2n_proxy_nat/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
       ports:

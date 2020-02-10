@@ -1,11 +1,11 @@
 #!/bin/sh
 set -x
 nohup /usr/local/sbin/n2n.sh >> /var/log/proxy.log 2>&1 &
-if [[ "${N2N_GW} == "TRUE"]] ;then 
+if [[ "${N2N_GW}" == "TRUE" ]] ;then 
+    echo  ${N2N_GW} -- 启用转发 >>  /var/log/proxy.log
     route add -net $DESTINATION gw $GATEWAY
 fi
-nohup /bin/gost >> /var/log/proxy.log 2>&1 &
-if [[ "${N2N_NAT} == "TRUE"]] ;then 
+if [[ "${N2N_NAT}" == "TRUE" ]] ;then 
   echo  ${N2N_NAT} -- 启用NAT >>  /var/log/proxy.log
 
   lan_eth=$N2N_INTERFACE
@@ -20,5 +20,9 @@ if [[ "${N2N_NAT} == "TRUE"]] ;then
   iptables -A FORWARD -i $wan_eth -j ACCEPT
   iptables -t nat -A POSTROUTING -s $lan_gateway/24 -o $wan_eth -j MASQUERADE
 fi
-
+route
+if [[ "${N2N_PROXY}" == "TRUE" ]] ;then 
+  echo  ${N2N_PROXY} -- 启用代理 >>  /var/log/proxy.log
+  nohup /bin/gost $PROXY_ARGS  >> /var/log/proxy.log 2>&1 &
+fi
 tail -f -n 20  /var/log/proxy.log

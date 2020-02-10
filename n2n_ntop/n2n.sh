@@ -1,7 +1,8 @@
 #!/bin/sh
+
 set -x
-MODE=$(echo $MODE | tr '[a-z]' '[A-Z]')
-echo MODE=$(echo $MODE | tr '[a-z]' '[A-Z]') >> /var/log/n2n.log
+MODE=$(echo "$MODE" | tr '[a-z]' '[A-Z]')
+echo MODE=$(echo "$MODE" | tr '[a-z]' '[A-Z]') >> /var/log/n2n.log
 if [[  "${N2N_ARGS:0:1}" != "-" ]]; then
     N2N_ARGS=-${N2N_ARGS}
 fi
@@ -31,6 +32,7 @@ mode_dhcpd() {
         -f \
         ${N2N_ARGS} \
       >> /var/log/n2n.log 2>&1 &
+    echo  DHCPD 服务启动中  >> /var/log/n2n.log
     nohup dhcpd -f -d  $N2N_INTERFACE >> /var/log/n2n.log 2>&1 &
 }
 mode_dhcp() {

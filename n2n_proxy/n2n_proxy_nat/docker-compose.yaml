@@ -12,6 +12,7 @@ services:
         - N2N_SERVER=n2n.lucktu.com:10086
         - N2N_NAT=TRUE
         - N2N_ARGS=-Av
+        - N2N_PROXY=FALSE
       # volumes:
       #   - dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
       command: ["/bin/sh","-c","/usr/local/sbin/run.sh"]
