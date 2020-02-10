@@ -31,6 +31,14 @@ n2n尽可能在edge节点之间建立直接的P2P连接;如果不可能（通常
 
 ## 快速入门
 
+### 代码换行
+
+|终端|符号|按键方法|
+-:|:-:|:-|
+|bash|\\|回车键上方|
+|powershell|**`**|键盘TAB按钮上方|
+|CMD|**＾**|键盘SHIFT+6|
+
 ### 建立 *supernode*
 
 * 前台模式
@@ -54,10 +62,6 @@ docker run \
   -p 10086:10086/udp \
   zctmdc/n2n_ntop
 ```
-
-在powershell中换行符号为 **`**    键盘TAB按钮上方
-
-在CMD中换行符号为 **＾**    键盘SHIFT+6
 
 ### 建立 *edge*
 
@@ -162,9 +166,15 @@ N2N_PASS          组网密码
 N2N_SERVER        N2N超级节点网址和端口配置
 ```
 
-请访问:[github地址][github地址]查看更多
+* 还可以使用 *docker-compose* 配置运行
 
-还支持 docker-compose up -d 配置运行
+```bash
+git clone https://github.com/zctmdc/docker.git
+cd n2n-ntop
+docker-compose up -d
+```
+
+请访问:[github地址][github地址]查看更多
 
 ### 更多帮助请参考
 
