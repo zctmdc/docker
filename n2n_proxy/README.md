@@ -1,6 +1,6 @@
 # N2N proxy
 
-基于N2N和ginuerzh/gost制作的远程P2P代理docker套装
+基于N2N和ginuerzh/gost制作的P2P远程代理
 
 只需要开放一个端口,就可以在软件上使用代理,链接远程电脑
 
