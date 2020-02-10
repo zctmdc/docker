@@ -11,11 +11,12 @@ services:
         - N2N_PASS=zctmdc_dhcp
         - N2N_SERVER=n2n.lucktu.com:10086
         - N2N_NAT=TRUE
+        - N2N_ARGS=-Av
       volumes:
         - dhcpd.conf:/etc/dhcp/dhcpd.conf
       command: ["/bin/sh","-c","/usr/local/sbin/run.sh"]
 
-    n2n_proxy_nat:
+    n2n_proxy_gw_dhcp:
       image: zctmdc/n2n_proxy:latest
       restart: always
       privileged: true
@@ -27,13 +28,14 @@ services:
         - N2N_GW=TURE
         - N2N_DESTINATION=192.168.0.0/16
         - N2N_GATEWAY=10.0.0.1
+        - N2N_ARGS=-Avr
       volumes:
         - dhcpd.conf:/etc/dhcp/dhcpd.conf
       ports:
         - 1080:1080
       command: ["/bin/sh","-c","/usr/local/sbin/run.sh"]
 
-    n2n_proxy_nat:
+    n2n_proxy_gw_static:
       image: zctmdc/n2n_proxy:latest
       restart: always
       privileged: true
@@ -46,6 +48,7 @@ services:
         - N2N_GW=TURE
         - N2N_DESTINATION=192.168.0.0/16
         - N2N_GATEWAY=10.0.0.2
+        - N2N_ARGS=-Av
       volumes:
         - ../n2n_ntop/edge-dhcp-server/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
       ports:

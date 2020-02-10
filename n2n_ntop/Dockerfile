@@ -20,10 +20,10 @@ RUN buildDeps=" \
 	&& git clone https://github.com/ntop/n2n.git \
   && cd n2n \
   && cmake . \
-	&& make install \
-	&& cd /tmp \
-	&& rm -rf ./* \
-	&& apk del .build-deps
+	&& make install
+# WORKDIR /tmp
+# RUN rm -rf ./* \
+# 	&& apk del .build-deps
 ############end build############
 FROM alpine
 
@@ -48,5 +48,5 @@ ENV STATIC_IP 10.0.0.10
 ENV N2N_GROUP zctmdc_dhcp
 ENV N2N_PASS zctmdc_dhcp
 ENV N2N_SERVER n2n.lucktu.com:10086
-
+ENV N2N_ARGS -Av
 CMD ["/bin/sh","-c","/usr/local/sbin/run.sh"]

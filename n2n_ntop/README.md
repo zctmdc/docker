@@ -39,6 +39,12 @@ n2n尽可能在edge节点之间建立直接的P2P连接;如果不可能（通常
 |powershell|**`**|键盘TAB按钮上方|
 |CMD|**＾**|键盘SHIFT+6|
 
+### 自写运行代码
+
+```bash
+docker run --rm -ti -p 10086:10086 zctmdc/n2n_ntop supernode -l 10086 -v
+```
+
 ### 建立 *supernode*
 
 * 前台模式
@@ -60,6 +66,7 @@ docker run \
   -e MODE="SUPERNODE" \
   -e SUPERNODE_PORT=10086 \
   -p 10086:10086/udp \
+  -e N2N_ARGS="-v"
   zctmdc/n2n_ntop
 ```
 
@@ -87,6 +94,7 @@ docker run \
   -e N2N_GROUP="zctmdc_dhcp" \
   -e N2N_PASS="zctmdc_dhcp" \
   -e N2N_SERVER="n2n.lucktu.com:10086" \
+  -e N2N_ARGS="-Av" \
   zctmdc/n2n_ntop
 ```
 
@@ -165,6 +173,7 @@ docker run \
 |N2N_GROUP|组网名称|在EDGE中使用|-c|
 |N2N_PASS|组网密码|在EDGE中使用|-k|
 |N2N_INTERFACE|网卡名|edge生成的网卡名字|-d|
+|N2N_ARGS|更多参数|运行时附加的更多参数||
 
 ## 还可以使用 *docker-compose* 配置运行
 

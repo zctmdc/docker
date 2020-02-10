@@ -1,17 +1,25 @@
 #!/bin/sh
 set -x
 MODE=$(echo $MODE | tr '[a-z]' '[A-Z]')
+echo MODE=$(echo $MODE | tr '[a-z]' '[A-Z]') >> /var/log/n2n.log
+if [[  "${N2N_ARGS:0:1}" != "-" ]]; then
+    N2N_ARGS=-${N2N_ARGS}
+fi
+echo N2N_ARGS=${N2N_ARGS}>> /var/log/n2n.log
+
 mode_supernode{
     echo  ${MODE} -- 超级节点模式  >> /var/log/n2n.log
+    supernode -h
     nohup \
       supernode \
         -l $SUPERNODE_PORT \
-        -v \
+        $N2N_ARGS \
     >> /var/log/n2n.log 2>&1 &
 }
 
 mode_dhcpd{
-  echo ${MODE} -- DHCPD 服务器模式  >> /var/log/n2n.log
+    echo ${MODE} -- DHCPD 服务器模式  >> /var/log/n2n.log
+    edge -h
     STATIC_IP=`echo $STATIC_IP | grep -Eo "([0-9]{1,3}[\.]){3}"`1
     nohup \
       edge \
@@ -20,11 +28,14 @@ mode_dhcpd{
         -c $N2N_GROUP \
         -k $N2N_PASS \
         -l $N2N_SERVER \
-        -Arf \
+        -f \
+        ${N2N_ARGS} \
       >> /var/log/n2n.log 2>&1 &
     nohup dhcpd -f -d  $N2N_INTERFACE >> /var/log/n2n.log 2>&1 &
 }
-mode_dhcp{echo ${MODE} -- DHCP客户端模式  >> /var/log/n2n.log
+mode_dhcp{
+    echo ${MODE} -- DHCP客户端模式  >> /var/log/n2n.log
+    edge -h
     nohup \
       edge \
         -d $N2N_INTERFACE \
@@ -32,14 +43,17 @@ mode_dhcp{echo ${MODE} -- DHCP客户端模式  >> /var/log/n2n.log
         -c $N2N_GROUP \
         -k $N2N_PASS \
         -l $N2N_SERVER \
-        -Arf \
+        -rf \
+        ${N2N_ARGS} \
       >> /var/log/n2n.log 2>&1 &
     while [ -z `ifconfig $N2N_INTERFACE| grep "inet addr:" | awk '{print $2}' | cut -c 6-` ]
     do
       dhclient $N2N_INTERFACE
     done
 }
-mode_static{    echo ${MODE} -- 静态地址模式  >> /var/log/n2n.log
+mode_static{
+    echo ${MODE} -- 静态地址模式  >> /var/log/n2n.log
+    edge -h
     nohup \
       edge \
         -d $N2N_INTERFACE \
@@ -47,7 +61,8 @@ mode_static{    echo ${MODE} -- 静态地址模式  >> /var/log/n2n.log
         -c $N2N_GROUP \
         -k $N2N_PASS \
         -l $N2N_SERVER \
-        -Arf \
+        -f \
+        ${N2N_ARGS} \
       >> /var/log/n2n.log 2>&1 &
     while [ -z `ifconfig $N2N_INTERFACE| grep "inet addr:" | awk '{print $2}' | cut -c 6-` ]
     do

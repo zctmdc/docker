@@ -12,6 +12,7 @@ services:
       - N2N_GROUP=zctmdc_dhcp
       - N2N_PASS=zctmdc_dhcp
       - N2N_SERVER=n2n.lucktu.com:10086
+      - N2N_ARGS=-Av
     volumes:
       - ./edge-dhcp-server/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
     command: ["/bin/sh","-c","/usr/local/sbin/run.sh"]
@@ -26,6 +27,7 @@ services:
       - N2N_GROUP=zctmdc_dhcp
       - N2N_PASS=zctmdc_dhcp
       - N2N_SERVER=n2n.lucktu.com:10086
+      - N2N_ARGS=-Avr
     command: ["/bin/sh","-c","/usr/local/sbin/run.sh"]
   n2n_edge_static:
     image: zctmdc/n2n_ntop:latest
@@ -39,6 +41,7 @@ services:
       - N2N_GROUP=zctmdc_dhcp
       - N2N_PASS=zctmdc_dhcp
       - N2N_SERVER=n2n.lucktu.com:10086
+      - N2N_ARGS=-Av
     command: ["/bin/sh","-c","/usr/local/sbin/run.sh"]
   n2n_supernode:
     image: zctmdc/n2n_ntop:latest
@@ -49,4 +52,5 @@ services:
     environment:
       - MODE=SUPERNODE
       - SUPERNODE_PORT=10086
+      - N2N_ARGS=-v
     command: ["/bin/sh","-c","/usr/local/sbin/run.sh"]
