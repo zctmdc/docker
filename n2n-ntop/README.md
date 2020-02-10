@@ -166,7 +166,7 @@ N2N_PASS          组网密码
 N2N_SERVER        N2N超级节点网址和端口配置
 ```
 
-* 还可以使用 *docker-compose* 配置运行
+## 还可以使用 *docker-compose* 配置运行
 
 ```bash
 git clone https://github.com/zctmdc/docker.git
