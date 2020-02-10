@@ -154,17 +154,17 @@ docker run \
   zctmdc/n2n_ntop
 ```
 
-## 环境变量
+## 环境.变量
 
-```text
-MODE              模式            SUPERNODE DHCP DHCPD STATIC
-SUPERNODE_PORT    超级节点端口    仅在SUPERNODE中使用
-N2N_INTERFACE     网卡名字        edge生成的网卡名字
-STATIC_IP         静态IP          仅在静态模式和DHCPD使用
-N2N_GROUP         组网名称
-N2N_PASS          组网密码
-N2N_SERVER        N2N超级节点网址和端口配置
-```
+|变量名|变量说明|备注|对应参数|
+|---:|:---|:---|:---|
+|MODE|模式|可选 *`SUPERNODE`* *`DHCP`* *`STATIC`* *`DHCPD`* ||
+|SUPERNODE_PORT|超级节点端口|在SUPERNODE中使用|-l|
+|N2N_SERVER|要连接的N2N超级节点|IP:port|-l|
+|STATIC_IP|静态IP|在静态模式和DHCPD使用|-a|
+|N2N_GROUP|组网名称|在EDGE中使用|-c|
+|N2N_PASS|组网密码|在EDGE中使用|-k|
+|N2N_INTERFACE|网卡名|edge生成的网卡名字|-d|
 
 ## 还可以使用 *docker-compose* 配置运行
 
