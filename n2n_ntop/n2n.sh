@@ -7,7 +7,7 @@ if [[  "${N2N_ARGS:0:1}" != "-" ]]; then
 fi
 echo N2N_ARGS=${N2N_ARGS}>> /var/log/n2n.log
 
-mode_supernode{
+mode_supernode() {
     echo  ${MODE} -- 超级节点模式  >> /var/log/n2n.log
     supernode -h
     nohup \
@@ -17,7 +17,7 @@ mode_supernode{
     >> /var/log/n2n.log 2>&1 &
 }
 
-mode_dhcpd{
+mode_dhcpd() {
     echo ${MODE} -- DHCPD 服务器模式  >> /var/log/n2n.log
     edge -h
     STATIC_IP=`echo $STATIC_IP | grep -Eo "([0-9]{1,3}[\.]){3}"`1
@@ -33,7 +33,7 @@ mode_dhcpd{
       >> /var/log/n2n.log 2>&1 &
     nohup dhcpd -f -d  $N2N_INTERFACE >> /var/log/n2n.log 2>&1 &
 }
-mode_dhcp{
+mode_dhcp() {
     echo ${MODE} -- DHCP客户端模式  >> /var/log/n2n.log
     edge -h
     nohup \
@@ -51,7 +51,7 @@ mode_dhcp{
       dhclient $N2N_INTERFACE
     done
 }
-mode_static{
+mode_static() {
     echo ${MODE} -- 静态地址模式  >> /var/log/n2n.log
     edge -h
     nohup \
