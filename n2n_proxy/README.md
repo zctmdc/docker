@@ -69,6 +69,7 @@ docker run \
 |N2N_NAT|是否开启NAT转发|允许其他docker访问本机网络内容|FALSE|
 |N2N_PROXY|是否开启代理|是否开启HTTP/SOCKS5代理|TRUE|
 |PROXY_ARGS|代理参数|具体参数访问[pginuerzh/gost][gost]查看|-L=:1080|
+
 更多详情参看:[zctmdc/n2n_ntop][n2n_ntop]和[pginuerzh/gost][gost]
 
 [n2n_ntop]:https://hub.docker.com/r/zctmdc/n2n_ntop "n2n-ntop的docker hub地址"
