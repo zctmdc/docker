@@ -35,7 +35,7 @@ docker run \
 ```bash
 docker run \
   -d --restart=always \
-  --name n2n_proxy_nat \
+  --name n2n_proxy_gw \
   --privileged \
   -e MODE="DHCP" \
   -e N2N_GROUP="zctmdc_proxy" \
@@ -50,6 +50,15 @@ docker run \
 ```
 
 然后你就可以使用1080端口进行代理,访问远程资料
+
+### 手动添加转发
+
+```bash
+docker exec n2n_proxy_gw \
+  route add -net $N2N_DESTINATION gw $N2N_GATEWAY
+
+# 请修改N2N_DESTINATION和N2N_GATEWAY
+```
 
 ## 环境变量介绍
 
