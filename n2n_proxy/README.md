@@ -55,7 +55,7 @@ docker run \
 
 |变量名|变量说明|备注|对应参数|
 |---:|:---|:---|:---|
-|MODE|模式|可选 *`SUPERNODE`* *`DHCP`* *`STATIC`* *`DHCPD`* ||
+|MODE|模式|对应启动的模式| *`SUPERNODE`* *`DHCP`* *`STATIC`* *`DHCPD`* |
 |SUPERNODE_PORT|超级节点端口|在SUPERNODE中使用|-l|
 |N2N_SERVER|要连接的N2N超级节点|IP:port|-l|
 |STATIC_IP|静态IP|在静态模式和DHCPD使用|-a|
