@@ -20,7 +20,7 @@ if [[ "${N2N_NAT}" == "TRUE" ]] ;then
   iptables -A FORWARD -i $wan_eth -j ACCEPT
   iptables -t nat -A POSTROUTING -s $lan_gateway/24 -o $wan_eth -j MASQUERADE
 fi
-route
+route -n
 if [[ "${N2N_PROXY}" == "TRUE" ]] ;then 
   echo  ${N2N_PROXY} -- 启用代理 >>  /var/log/proxy.log
   nohup /bin/gost $PROXY_ARGS  >> /var/log/proxy.log 2>&1 &
