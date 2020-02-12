@@ -55,7 +55,7 @@ docker run \
 
 ```bash
 docker exec -t n2n_proxy_gw \
-  route add $N2N_DESTINATION gw $N2N_GATEWAY
+  route add [-net|-host] $N2N_DESTINATION gw $N2N_GATEWAY
 
 ```
 
@@ -64,12 +64,12 @@ docker exec -t n2n_proxy_gw \
 ```bash
 #  比如增加192.168.77.1-255网域的下一跳为10.0.10.77
 docker exec -t n2n_proxy_gw \
-  route add 192.168.77.0/24 gw 10.0.10.77
+  route add -net  192.168.77.0/24 gw 10.0.10.77
 
 
 # 或者增加192.168.78.5地址的下一跳为10.0.10.78
 docker exec -t n2n_proxy_gw \
-  route add 192.168.78.5 gw 10.0.10.78
+  route add -host 192.168.78.5 gw 10.0.10.78
 ```
 
 #### route - 更多介绍
