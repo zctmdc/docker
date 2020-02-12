@@ -1,0 +1,67 @@
+version: "3"
+services:
+  n2n_edge_dhcpd:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: zctmdc/n2n-vpn:latest
+    restart: always
+    privileged: true
+    environment:
+      - MODE=DHCPD
+      - N2N_PORT=10086
+      - N2N_TUN=edge0
+      - N2N_IP="10.0.10.1"
+      - N2N_COMMUNITY=zctmdc_proxy
+      - N2N_KEY=zctmdc_proxy
+      - N2N_SERVER=n2n.lucktu.com:10086
+      - N2N_ARGS=-Av
+    # volumes:
+    #   - ./edge-dhcp-server/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
+    command: ["/bin/sh", "-c", "/usr/local/sbin/run.sh"]
+  n2n_edge_dhcp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: zctmdc/n2n-vpn:latest
+    restart: always
+    privileged: true
+    network_mode: host
+    environment:
+      - MODE=DHCP
+      - N2N_PORT=10086
+      - N2N_TUN=edge0
+      - N2N_COMMUNITY=zctmdc_proxy
+      - N2N_KEY=zctmdc_proxy
+      - N2N_SERVER=n2n.lucktu.com:10086
+      - N2N_ARGS=-Avr
+    command: ["/bin/sh", "-c", "/usr/local/sbin/run.sh"]
+  n2n_edge_static:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: zctmdc/n2n-vpn:latest
+    restart: always
+    privileged: true
+    network_mode: host
+    environment:
+      - MODE=STATIC
+      - N2N_PORT=10086
+      - N2N_TUN=edge0
+      - N2N_IP="10.0.10.100"
+      - N2N_COMMUNITY=zctmdc_proxy
+      - N2N_KEY=zctmdc_proxy
+      - N2N_SERVER=n2n.lucktu.com:10086
+      - N2N_ARGS=-Av
+    command: ["/bin/sh", "-c", "/usr/local/sbin/run.sh"]
+  n2n_supernode:
+    image: zctmdc/n2n-vpn:latest
+    restart: always
+    privileged: true
+    ports:
+      - 10086:10086/udp
+    environment:
+      - MODE=SUPERNODE
+      - N2N_PORT=10086
+      - N2N_ARGS=-v
+    command: ["/bin/sh", "-c", "/usr/local/sbin/run.sh"]

@@ -1,14 +1,14 @@
 #!/bin/sh
 set -x
 nohup /usr/local/sbin/n2n.sh >> /var/log/proxy.log 2>&1 &
-if [[ "${N2N_GW}" == "TRUE" ]] ;then 
-    echo  ${N2N_GW} -- 启用转发 >>  /var/log/proxy.log
+if [[ "${N2N_ROUTE}" == "TRUE" ]] ;then 
+    echo  ${N2N_ROUTE} -- 启用转发 >>  /var/log/proxy.log
     route add -net $N2N_DESTINATION gw $N2N_GATEWAY
 fi
 if [[ "${N2N_NAT}" == "TRUE" ]] ;then 
   echo  ${N2N_NAT} -- 启用NAT >>  /var/log/proxy.log
 
-  lan_eth=$N2N_INTERFACE
+  lan_eth=$N2N_TUN
   wan_eth="eth0"
   lan_ip=`ifconfig $lan_eth| grep "inet addr:" | awk '{print $2}' | cut -c 6-`
   lan_gateway=`ifconfig $lan_eth |sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p'`1

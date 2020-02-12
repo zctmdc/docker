@@ -1,15 +1,15 @@
 version: "3"
 services:
   n2n_edge_static:
-    image: zctmdc/n2n_ntop:latest
+    image: zctmdc/n2n-vpn:latest
     restart: always
     privileged: true
+    network_mode: host
     environment:
       - MODE=STATIC
-      - SUPERNODE_PORT=10086
-      - 2N_INTERFACE=edge0
-      - STATIC_IP=10.10.10.10
-      - N2N_GROUP=zctmdc_proxy
-      - N2N_PASS=zctmdc_proxy
+      - N2N_TUN=edge0
+      - N2N_IP=10.0.10.100
+      - N2N_COMMUNITY=zctmdc_proxy
+      - N2N_KEY=zctmdc_proxy
       - N2N_SERVER=n2n.lucktu.com:10086
     command: ["/bin/sh","-c","/usr/local/sbin/run.sh"]
