@@ -121,7 +121,7 @@ docker run \
   --privileged \
   -e MODE="DHCPD" \
   --net=host \
-  -e STATIC_IP="10.0.10.2" \
+  -e STATIC_IP="10.0.10.1" \
   -v path/to/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro \
   -e N2N_GROUP="zctmdc_proxy" \
   -e N2N_PASS="zctmdc_proxy" \

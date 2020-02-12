@@ -57,7 +57,13 @@ docker run \
 docker exec -t n2n_proxy_gw \
   route add $N2N_DESTINATION gw $N2N_GATEWAY
 
-# 请修改N2N_DESTINATION和N2N_GATEWAY
+```
+
+> 请修改 *$N2N_DESTINATION* 和 *$N2N_GATEWAY*
+
+#### 更多介绍
+
+```bash
 route [add|del] [-net|-host] [网域或主机] netmask [mask] [gw|dev]
 观察的参数：
    -n  ：不要使用通讯协定或主机名称，直接使用 IP 或 port number；
@@ -68,6 +74,17 @@ route [add|del] [-net|-host] [网域或主机] netmask [mask] [gw|dev]
    netmask ：与网域有关，可以设定 netmask 决定网域的大小；
    gw      ：gateway 的简写，后续接的是 IP 的数值喔，与 dev 不同；
    dev     ：如果只是要指定由那一块网路卡连线出去，则使用这个设定，后面接 eth0 等
+```
+
+```bash
+#  比如增加192.168.77.1-255网域的下一跳为10.0.10.77
+docker exec -t n2n_proxy_gw \
+  route add 192.168.77.0/24 gw 10.0.10.77
+
+
+# 或者增加192.168.78.5地址的下一跳为10.0.10.78
+docker exec -t n2n_proxy_gw \
+  route add 192.168.78.5 gw 10.0.10.78
 ```
 
 更多请看[linux添加路由表][route]
