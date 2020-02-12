@@ -8,7 +8,7 @@ services:
         - MODE=DHCP
         - SUPERNODE_PORT=10086
         - 2N_INTERFACE=edge0
-        - N2N_GROUP=zctmdc_dhcp
-        - N2N_PASS=zctmdc_dhcp
+        - N2N_GROUP=zctmdc_proxy
+        - N2N_PASS=zctmdc_proxy
         - N2N_SERVER=n2n.lucktu.com:10086
       command: ["/bin/sh","-c","/usr/local/sbin/run.sh"]

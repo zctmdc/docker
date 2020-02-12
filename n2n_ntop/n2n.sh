@@ -21,7 +21,7 @@ mode_supernode() {
 mode_dhcpd() {
     echo ${MODE} -- DHCPD 服务器模式  >> /var/log/n2n.log
     edge -h
-    STATIC_IP=`echo $STATIC_IP | grep -Eo "([0-9]{1,3}[\.]){3}"`1
+    # STATIC_IP=`echo $STATIC_IP | grep -Eo "([0-9]{1,3}[\.]){3}"`1
     nohup \
       edge \
         -d $N2N_INTERFACE \

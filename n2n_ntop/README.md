@@ -90,9 +90,9 @@ docker run \
   --privileged \
   --net=host \
   -e MODE="STATIC" \
-  -e STATIC_IP="10.0.0.10" \
-  -e N2N_GROUP="zctmdc_dhcp" \
-  -e N2N_PASS="zctmdc_dhcp" \
+  -e STATIC_IP="10.0.10.10" \
+  -e N2N_GROUP="zctmdc_proxy" \
+  -e N2N_PASS="zctmdc_proxy" \
   -e N2N_SERVER="n2n.lucktu.com:10086" \
   -e N2N_ARGS="-Av" \
   zctmdc/n2n_ntop
@@ -121,10 +121,10 @@ docker run \
   --privileged \
   -e MODE="DHCPD" \
   --net=host \
-  -e STATIC_IP="10.0.0.1" \
+  -e STATIC_IP="10.0.10.2" \
   -v path/to/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro \
-  -e N2N_GROUP="zctmdc_dhcp" \
-  -e N2N_PASS="zctmdc_dhcp" \
+  -e N2N_GROUP="zctmdc_proxy" \
+  -e N2N_PASS="zctmdc_proxy" \
   -e N2N_SERVER="n2n.lucktu.com:10086" \
   zctmdc/n2n_ntop
 ```
@@ -140,8 +140,8 @@ docker run \
   --privileged \
   --net=host \
   -e MODE="DHCP" \
-  -e N2N_GROUP="zctmdc_dhcp" \
-  -e N2N_PASS="zctmdc_dhcp" \
+  -e N2N_GROUP="zctmdc_proxy" \
+  -e N2N_PASS="zctmdc_proxy" \
   -e N2N_SERVER="n2n.lucktu.com:10086" \
   zctmdc/n2n_ntop
 ```
@@ -155,9 +155,9 @@ docker run \
   --privileged \
   --net=host \
   -e MODE="STATIC" \
-  -e STATIC_IP="10.0.0.10" \
-  -e N2N_GROUP="zctmdc_dhcp" \
-  -e N2N_PASS="zctmdc_dhcp" \
+  -e STATIC_IP="10.0.10.10" \
+  -e N2N_GROUP="zctmdc_proxy" \
+  -e N2N_PASS="zctmdc_proxy" \
   -e N2N_SERVER="n2n.lucktu.com:10086" \
   zctmdc/n2n_ntop
 ```

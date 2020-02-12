@@ -8,9 +8,9 @@ services:
       - MODE=DHCPD
       - SUPERNODE_PORT=10086
       - 2N_INTERFACE=edge0
-      - STATIC_IP="10.0.0.1"
-      - N2N_GROUP=zctmdc_dhcp
-      - N2N_PASS=zctmdc_dhcp
+      - STATIC_IP="10.0.10.1"
+      - N2N_GROUP=zctmdc_proxy
+      - N2N_PASS=zctmdc_proxy
       - N2N_SERVER=n2n.lucktu.com:10086
       - N2N_ARGS=-Av
     # volumes:
@@ -24,8 +24,8 @@ services:
       - MODE=DHCP
       - SUPERNODE_PORT=10086
       - 2N_INTERFACE=edge0
-      - N2N_GROUP=zctmdc_dhcp
-      - N2N_PASS=zctmdc_dhcp
+      - N2N_GROUP=zctmdc_proxy
+      - N2N_PASS=zctmdc_proxy
       - N2N_SERVER=n2n.lucktu.com:10086
       - N2N_ARGS=-Avr
     command: ["/bin/sh","-c","/usr/local/sbin/run.sh"]
@@ -37,9 +37,9 @@ services:
       - MODE=STATIC
       - SUPERNODE_PORT=10086
       - 2N_INTERFACE=edge0
-      - STATIC_IP="10.0.0.10"
-      - N2N_GROUP=zctmdc_dhcp
-      - N2N_PASS=zctmdc_dhcp
+      - STATIC_IP="10.0.10.10"
+      - N2N_GROUP=zctmdc_proxy
+      - N2N_PASS=zctmdc_proxy
       - N2N_SERVER=n2n.lucktu.com:10086
       - N2N_ARGS=-Av
     command: ["/bin/sh","-c","/usr/local/sbin/run.sh"]

@@ -45,9 +45,9 @@ RUN  chmod a+x /usr/local/sbin/run.sh \
 ENV MODE DHCP
 ENV SUPERNODE_PORT 10086
 ENV N2N_INTERFACE edge0
-ENV STATIC_IP 10.0.0.10
-ENV N2N_GROUP zctmdc_dhcp
-ENV N2N_PASS zctmdc_dhcp
+ENV STATIC_IP 10.0.10.10
+ENV N2N_GROUP zctmdc_proxy
+ENV N2N_PASS zctmdc_proxy
 ENV N2N_SERVER n2n.lucktu.com:10086
 ENV N2N_ARGS -Av
 CMD [ "/bin/bash" , "-c" , "/usr/local/sbin/run.sh" ]

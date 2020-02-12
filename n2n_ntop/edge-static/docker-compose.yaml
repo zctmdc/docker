@@ -8,8 +8,8 @@ services:
       - MODE=STATIC
       - SUPERNODE_PORT=10086
       - 2N_INTERFACE=edge0
-      - STATIC_IP=10.10.0.10
-      - N2N_GROUP=zctmdc_dhcp
-      - N2N_PASS=zctmdc_dhcp
+      - STATIC_IP=10.10.10.10
+      - N2N_GROUP=zctmdc_proxy
+      - N2N_PASS=zctmdc_proxy
       - N2N_SERVER=n2n.lucktu.com:10086
     command: ["/bin/sh","-c","/usr/local/sbin/run.sh"]
