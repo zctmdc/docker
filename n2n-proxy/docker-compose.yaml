@@ -16,7 +16,7 @@ services:
       - N2N_NAT=TRUE
       - N2N_PROXY=TRUE
     # volumes:
-    #   - ../n2n_ntop/edge-dhcp-server/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
+    #   - ./dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
     command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
 
   n2n_proxy_gw_dhcp:

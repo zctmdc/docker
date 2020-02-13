@@ -12,6 +12,6 @@ RUN set -x \
 ENV WORK_PATH="/workpath"
 ENV STATIC_PATH="/var/www/static/"
 
-COPY run.sh /usr/sbin/run.sh
-RUN chmod a+x /usr/sbin/run.sh
-CMD ["/bin/bash","-c","/usr/sbin/run.sh"]
+COPY run.sh /usr/local/sbin/run.sh
+RUN chmod a+x /usr/local/sbin/run.sh
+CMD ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]

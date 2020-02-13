@@ -1,0 +1,10 @@
+version: "3"
+services:
+  file-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: zctmdc/file-server:latest
+    # volumes:
+    #   - path-to-iso:/workpath:ro
+    command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]

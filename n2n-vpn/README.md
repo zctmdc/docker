@@ -182,9 +182,11 @@ docker run \
 ## 还可以使用 *docker-compose* 配置运行
 
 ```bash
-git clone https://github.com/zctmdc/docker.git
+git clone -b test https://github.com/zctmdc/docker.git
 cd n2n-vpn
-docker-compose up -d
+# docker-compose up -d
+docker-compose build
+docker-compose run n2n_edge_dhcp
 ```
 
 请访问:[github地址][github地址]查看更多

@@ -36,6 +36,7 @@ mode_supernode() {
 
 mode_dhcpd() {
     echo ${MODE} -- DHCPD 服务器模式  >> /var/log/n2n.log
+    init_dhcpd_conf
     edge -h
     # N2N_IP=`echo $N2N_IP | grep -Eo "([0-9]{1,3}[\.]){3}"`1
     nohup \
