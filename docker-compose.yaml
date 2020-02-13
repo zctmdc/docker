@@ -1,0 +1,27 @@
+version: "3"
+services:
+  n2n-vpn:
+    build:
+      context: n2n-vpn
+      dockerfile: Dockerfile
+    image: zctmdc/n2n-vpn:latest
+  n2n_ntop:
+    build:
+      context: n2n-vpn
+      dockerfile: Dockerfile
+    image: zctmdc/n2n_ntop:test
+  n2n-proxy:
+    build:
+      context: n2n-proxy
+      dockerfile: Dockerfile
+    image: zctmdc/n2n-proxy:latest
+  n2n_proxy:
+    build:
+      context: n2n-proxy
+      dockerfile: Dockerfile
+    image: zctmdc/n2n_proxy:test
+  file-server:
+    build:
+      context: nginx_file_server
+      dockerfile: Dockerfile
+    image: zctmdc/file-server:test
