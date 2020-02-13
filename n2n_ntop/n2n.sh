@@ -71,6 +71,7 @@ mode_dhcp() {
       dhclient $N2N_TUN
     done
 }
+
 mode_static() {
     echo ${MODE} -- 静态地址模式  >> /var/log/n2n.log
     edge -h
@@ -93,7 +94,7 @@ case $MODE in
   SUPERNODE)
     mode_supernode
   ;;
-  DHCPD)  
+  DHCPD)
     mode_dhcpd
   ;;
   DHCP)

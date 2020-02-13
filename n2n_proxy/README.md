@@ -1,15 +1,15 @@
 # N2N proxy
 
-基于[zctmdc/n2n-vpn][n2n-vpn]和[pginuerzh/gost][gost]制作的P2P远程代理
+基于[zctmdc/n2n_ntop][n2n_ntop]和[pginuerzh/gost][gost]制作的P2P远程代理
 
-只需要开放一个端口,就可以在软件上使用代理,链接远程电脑
+只需要开放一个端口,就可以在软件上使用代理,连接远程设备
 
 ## 使用方法
 
 ### 测试
 
 ```bash
-docker run -ti --rm zctmdc/n2n-proxy
+docker run -ti --rm zctmdc/n2n_proxy:alpha
 ```
 
 ### 远端/网络共享端
@@ -27,7 +27,7 @@ docker run \
   -e N2N_SERVER="n2n.lucktu.com:10086" \
   -e N2N_NAT=TRUE \
   -e N2N_PROXY=FALSE \
-  zctmdc/n2n-proxy
+  zctmdc/n2n_proxy:alpha
 ```
 
 ### 近端/代理路口端
@@ -46,7 +46,7 @@ docker run \
   -e N2N_GATEWAY="10.0.10.1"\
   -e N2N_PROXY=TRUE \
   -p 1080:1080 \
-  zctmdc/n2n-proxy
+  zctmdc/n2n_proxy:alpha
 ```
 
 然后你就可以使用1080端口进行代理,访问远程资料
@@ -109,8 +109,30 @@ route [add|del] [-net|-host] [网域或主机] netmask [mask] [gw|dev]
 |N2N_PROXY|是否开启代理|是否开启HTTP/SOCKS5代理|TRUE|
 |PROXY_ARGS|代理参数|具体参数访问 *[pginuerzh/gost][gost]* 查看|-L=:1080|
 
-更多详情参看 *[zctmdc/n2n-vpn][n2n-vpn]* 和 *[pginuerzh/gost][gost]*
+更多介绍参看 *[zctmdc/n2n_ntop][n2n_ntop]* 和 *[pginuerzh/gost][gost]*
 
-[n2n-vpn]:https://hub.docker.com/r/zctmdc/n2n-vpn "n2n-ntop的docker hub地址"
+## 还可以使用 *docker-compose* 配置运行
+
+```bash
+git clone -b alpha https://github.com/zctmdc/docker.git
+cd n2n_proxy
+docker-compose build
+# docker-compose up -d
+docker-compose run n2n_proxy_dhcp
+```
+
+更多介绍请访问 [docker-compose CLI概述][Overview of docker-compose CLI]
+
+## 告诉我你在用
+
+如果你使用正常了请点个赞
+[我的docker主页][zctmdc—docker] ，[n2n_proxy的docker项目页][n2n_proxy] 和 [我github的docker项目页][zctmdc—github]
+我就不会随意的去更改和重命名空间，变量名了
+
 [gost]:https://github.com/ginuerzh/gost "ginuerzh/gost的GITHUB地址"
 [route]:https://www.cnblogs.com/snake-hand/p/3143041.html "linux route命令的使用详解"
+[zctmdc—docker]: https://hub.docker.com/u/zctmdc "我的docker主页"
+[zctmdc—github]: https://github.com/zctmdc/docker.git "我github的docker项目页"
+[n2n_ntop]: https://hub.docker.com/r/zctmdc/n2n_ntop "n2n_ntop的docker项目页"
+[n2n_proxy]: https://hub.docker.com/r/zctmdc/n2n_proxy "n2n_proxy的docker项目页"
+[Overview of docker-compose CLI]: https://docs.docker.com/compose/reference/overview/ "docker-compose CLI概述"

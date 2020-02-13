@@ -1,4 +1,4 @@
-# docker n2n-vpn
+# docker n2n_ntop
 
 ## 关于
 
@@ -41,11 +41,11 @@ n2n尽可能在edge节点之间建立直接的P2P连接;如果不可能（通常
 |powershell|**`**|键盘TAB按钮上方|
 |CMD|**＾**|键盘SHIFT+6|
 
-### 自写运行代码
+### 快速测试
 
 ```bash
 docker run --rm -ti \
- -p 10086:10086 zctmdc/n2n_ntop \
+ -p 10086:10086 zctmdc/n2n_ntop:alpha \
  supernode -l 10086 -v
 ```
 
@@ -58,7 +58,7 @@ docker run \
   --rm -ti \
   -e MODE="SUPERNODE" \
   -p 10086:10086/udp \
-  zctmdc/n2n_ntop
+  zctmdc/n2n_ntop:alpha
 ```
 
 * 后台模式
@@ -70,7 +70,7 @@ docker run \
   -e MODE="SUPERNODE" \
   -e N2N_PORT=10086 \
   -e N2N_ARGS="-v"
-  zctmdc/n2n_ntop
+  zctmdc/n2n_ntop:alpha
 ```
 
 ### 建立 *edge*
@@ -78,7 +78,7 @@ docker run \
 * 前台模式
 
 ```bash
-docker run --rm -ti --privileged zctmdc/n2n_ntop
+docker run --rm -ti --privileged zctmdc/n2n_ntop:alpha
 ```
 
 * 后台模式
@@ -95,7 +95,7 @@ docker run \
   -e N2N_KEY="zctmdc_proxy" \
   -e N2N_SERVER="n2n.lucktu.com:10086" \
   -e N2N_ARGS="-Av" \
-  zctmdc/n2n_ntop
+  zctmdc/n2n_ntop:alpha
 ```
 
 ## 更多模式
@@ -109,7 +109,7 @@ docker run \
   -e MODE="SUPERNODE" \
   -e N2N_PORT=10086 \
   -p 10086:10086/udp \
-  zctmdc/n2n_ntop
+  zctmdc/n2n_ntop:alpha
 ```
 
 ### DHCPD - DHCP服务模式
@@ -125,7 +125,7 @@ docker run \
   -e N2N_COMMUNITY="zctmdc_proxy" \
   -e N2N_KEY="zctmdc_proxy" \
   -e N2N_SERVER="n2n.lucktu.com:10086" \
-  zctmdc/n2n_ntop
+  zctmdc/n2n_ntop:alpha
 ```
 
 如果你需要自定义DHCPD服务配置文件
@@ -147,7 +147,7 @@ docker run \
   -e N2N_KEY="zctmdc_proxy" \
   -e N2N_SERVER="n2n.lucktu.com:10086" \
   -e N2N_ARGS="-Avr" \
-  zctmdc/n2n_ntop
+  zctmdc/n2n_ntop:alpha
 ```
 
 ### STATIC - 静态模式
@@ -163,7 +163,7 @@ docker run \
   -e N2N_COMMUNITY="zctmdc_proxy" \
   -e N2N_KEY="zctmdc_proxy" \
   -e N2N_SERVER="n2n.lucktu.com:10086" \
-  zctmdc/n2n_ntop
+  zctmdc/n2n_ntop:alpha
 ```
 
 ## 环境变量介绍
@@ -179,23 +179,27 @@ docker run \
 |N2N_TUN|网卡名|edge生成的网卡名字|-d|
 |N2N_ARGS|更多参数|运行时附加的更多参数|-Av|
 
-## 还可以使用 *docker-compose* 配置运行
+更多帮助请参考 [好运博客][好运博客] 中 [N2N 新手向导及最新信息][N2N 新手向导及最新信息]
+
+更多节点请访问 [N2N中心节点][N2N中心节点]
+
+## 使用 *docker-compose* 配置运行
 
 ```bash
-git clone -b test https://github.com/zctmdc/docker.git
-cd n2n-vpn
+git clone -b alpha https://github.com/zctmdc/docker.git
+cd n2n_ntop
 # docker-compose up -d
 docker-compose build
 docker-compose run n2n_edge_dhcp
 ```
 
-请访问:[github地址][github地址]查看更多
+更多介绍请访问 [docker-compose CLI概述][Overview of docker-compose CLI]
 
-### 更多帮助请参考
+## 告诉我你在用
 
-[好运博客][好运博客]中[N2N 新手向导及最新信息][N2N 新手向导及最新信息]
-
-更多节点请访问 [N2N中心节点][N2N中心节点]
+如果你使用正常了请点个赞
+[我的docker主页][zctmdc—docker] ，[n2n_ntop的docker项目页][n2n_ntop] 和 [我github的docker项目页][zctmdc—github]
+我就不会随意的去更改和重命名空间，变量名了
 
 [n2n]: https://web.archive.org/web/20110924083045/http://www.ntop.org:80/products/n2n/ "n2n官网"
 [ntop]: https://github.com/ntop "ntop团队"
@@ -204,4 +208,9 @@ docker-compose run n2n_edge_dhcp
 [好运博客]: http://www.lucktu.com "好运博客"
 [N2N 新手向导及最新信息]: http://www.lucktu.com/archives/783.html "N2N 新手向导及最新信息（2019-12-05 更新）"
 [N2N中心节点]: http://supernode.ml/ "N2N中心节点"
-[github地址]: https://github.com/zctmdc/docker/n2n-ntop "github地址"
+
+[zctmdc—docker]: https://hub.docker.com/u/zctmdc "我的docker主页"
+[zctmdc—github]: https://github.com/zctmdc/docker.git "我github的docker项目页"
+[n2n_ntop]: https://hub.docker.com/r/zctmdc/n2n_ntop "n2n_ntop的docker项目页"
+[n2n_proxy]: https://hub.docker.com/r/zctmdc/n2n_proxy "n2n_proxy的docker项目页"
+[Overview of docker-compose CLI]: https://docs.docker.com/compose/reference/overview/ "docker-compose CLI概述"

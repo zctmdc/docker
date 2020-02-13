@@ -1,17 +1,32 @@
 version: "3"
 services:
+  n2n_supernode:
+    image: zctmdc/n2n_ntop:alpha
+    restart: always
+    privileged: true
+    ports:
+      - 10086:10086/udp
+    environment:
+      - MODE=SUPERNODE
+      - N2N_PORT=10086
+      - N2N_ARGS=-v
+    command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
+
   n2n_edge_dhcpd:
     build:
       context: .
       dockerfile: Dockerfile
-    image: zctmdc/n2n-vpn:latest
+    depends_on:
+      - n2n_supernode
+    image: zctmdc/n2n_ntop:alpha
     restart: always
     privileged: true
+    # network_mode: host
     environment:
       - MODE=DHCPD
       - N2N_PORT=10086
-      - N2N_TUN=edge0
-      - N2N_IP="10.0.10.1"
+      - N2N_TUN=edge_dhcpd
+      - N2N_IP=10.0.10.1
       - N2N_COMMUNITY=zctmdc_proxy
       - N2N_KEY=zctmdc_proxy
       - N2N_SERVER=n2n.lucktu.com:10086
@@ -24,14 +39,17 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: zctmdc/n2n-vpn:latest
+    depends_on:
+      - n2n_edge_dhcpd
+      - n2n_supernode
+    image: zctmdc/n2n_ntop:alpha
     restart: always
     privileged: true
-    network_mode: host
+    # network_mode: host
     environment:
       - MODE=DHCP
       - N2N_PORT=10086
-      - N2N_TUN=edge0
+      - N2N_TUN=edge_dhcp
       - N2N_COMMUNITY=zctmdc_proxy
       - N2N_KEY=zctmdc_proxy
       - N2N_SERVER=n2n.lucktu.com:10086
@@ -42,29 +60,20 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: zctmdc/n2n-vpn:latest
+    depends_on:
+      - n2n_edge_dhcpd
+      - n2n_supernode
+    image: zctmdc/n2n_ntop:alpha
     restart: always
     privileged: true
-    network_mode: host
+    # network_mode: host
     environment:
       - MODE=STATIC
       - N2N_PORT=10086
-      - N2N_TUN=edge0
-      - N2N_IP="10.0.10.100"
+      - N2N_TUN=edge_static
+      - N2N_IP=10.0.10.100
       - N2N_COMMUNITY=zctmdc_proxy
       - N2N_KEY=zctmdc_proxy
       - N2N_SERVER=n2n.lucktu.com:10086
       - N2N_ARGS=-Av
-    command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
-
-  n2n_supernode:
-    image: zctmdc/n2n-vpn:latest
-    restart: always
-    privileged: true
-    ports:
-      - 10086:10086/udp
-    environment:
-      - MODE=SUPERNODE
-      - N2N_PORT=10086
-      - N2N_ARGS=-v
     command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]

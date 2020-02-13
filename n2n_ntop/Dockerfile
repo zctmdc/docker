@@ -1,4 +1,4 @@
-FROM alpine AS builder 
+FROM alpine AS builder
 
 MAINTAINER zctmdc <zctmdc@outlook.com>
 
@@ -13,7 +13,7 @@ RUN buildDeps=" \
 		openssl-dev \
 	"; \
 	\
-	set -x \ 
+	set -x \
 	&& apk add --update --no-cache --virtual .build-deps $buildDeps \
 	&& git clone https://github.com/ntop/n2n.git \
   && cd n2n \
@@ -40,7 +40,7 @@ RUN  chmod a+x /usr/local/sbin/run.sh \
 	&& chmod a+x /usr/local/sbin/n2n.sh \
 	&& touch /var/lib/dhcp/dhcpd.leases \
 	&& touch /var/log/n2n.log \
-	&& touch /var/log/run.log 
+	&& touch /var/log/run.log
 
 ENV MODE DHCP
 ENV N2N_PORT 10086

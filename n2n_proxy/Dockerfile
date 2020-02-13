@@ -1,5 +1,5 @@
 FROM ginuerzh/gost as gost_src
-FROM zctmdc/n2n-vpn
+FROM zctmdc/n2n_ntop:alpha
 
 MAINTAINER zctmdc <zctmdc@outlook.com>
 
@@ -13,7 +13,7 @@ RUN  chmod a+x /usr/local/sbin/run.sh \
   && touch /var/lib/dhcp/dhcpd.leases \
 	&& touch /var/log/n2n.log \
   && touch /var/log/proxy.log \
-	&& touch /var/log/run.log 
+	&& touch /var/log/run.log
 
 ENV N2N_DESTINATION 192.168.0.0/16
 ENV N2N_GATEWAY 10.0.10.1
