@@ -18,7 +18,7 @@ services:
       - N2N_ARGS=-Av
     # volumes:
     #   - ./edge-dhcp-server/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
-    command: ["/bin/sh", "-c", "/usr/local/sbin/run.sh"]
+    command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
   n2n_edge_dhcp:
     build:
       context: .
@@ -35,7 +35,7 @@ services:
       - N2N_KEY=zctmdc_proxy
       - N2N_SERVER=n2n.lucktu.com:10086
       - N2N_ARGS=-Avr
-    command: ["/bin/sh", "-c", "/usr/local/sbin/run.sh"]
+    command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
   n2n_edge_static:
     build:
       context: .
@@ -53,7 +53,7 @@ services:
       - N2N_KEY=zctmdc_proxy
       - N2N_SERVER=n2n.lucktu.com:10086
       - N2N_ARGS=-Av
-    command: ["/bin/sh", "-c", "/usr/local/sbin/run.sh"]
+    command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
   n2n_supernode:
     image: zctmdc/n2n-vpn:latest
     restart: always
@@ -64,4 +64,4 @@ services:
       - MODE=SUPERNODE
       - N2N_PORT=10086
       - N2N_ARGS=-v
-    command: ["/bin/sh", "-c", "/usr/local/sbin/run.sh"]
+    command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]

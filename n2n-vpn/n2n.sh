@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 set -x
 MODE=$(echo "$MODE" | tr '[a-z]' '[A-Z]')

@@ -17,7 +17,7 @@ services:
       - N2N_PROXY=TRUE
     # volumes:
     #   - ../n2n_ntop/edge-dhcp-server/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
-    command: ["/bin/sh", "-c", "/usr/local/sbin/run.sh"]
+    command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
 
   n2n_proxy_gw_dhcp:
     build:
@@ -41,7 +41,7 @@ services:
       - ../n2n_ntop/edge-dhcp-server/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
     ports:
       - 1080:1080
-    command: ["/bin/sh", "-c", "/usr/local/sbin/run.sh"]
+    command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
 
   n2n_proxy_gw_static:
     build:
@@ -65,4 +65,4 @@ services:
     #   - n2n_proxy_nat/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
     # ports:
     #   - 10080:1080
-    command: ["/bin/sh", "-c", "/usr/local/sbin/run.sh"]
+    command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]

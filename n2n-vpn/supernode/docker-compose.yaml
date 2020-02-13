@@ -9,4 +9,4 @@ services:
     environment:
       - MODE=SUPERNODE
       - N2N_PORT=10086
-    command: ["/bin/sh","-c","/usr/local/sbin/run.sh"]
+    command: ["/bin/bash","-c","/usr/local/sbin/run.sh"]

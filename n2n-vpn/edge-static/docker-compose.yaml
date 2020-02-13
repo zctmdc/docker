@@ -12,4 +12,4 @@ services:
       - N2N_COMMUNITY=zctmdc_proxy
       - N2N_KEY=zctmdc_proxy
       - N2N_SERVER=n2n.lucktu.com:10086
-    command: ["/bin/sh","-c","/usr/local/sbin/run.sh"]
+    command: ["/bin/bash","-c","/usr/local/sbin/run.sh"]

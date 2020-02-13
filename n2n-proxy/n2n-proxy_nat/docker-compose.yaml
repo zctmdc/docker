@@ -19,4 +19,4 @@ services:
       #   - n2n_proxy_nat/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
       # ports:
       #   - 10080:1080
-      command: ["/bin/sh","-c","/usr/local/sbin/run.sh"]
+      command: ["/bin/bash","-c","/usr/local/sbin/run.sh"]
