@@ -180,7 +180,8 @@ docker run \
 ```bash
 git clone https://github.com/zctmdc/docker.git
 cd n2n-ntop
-docker-compose up -d
+# docker-compose up -d
+docker-compose run n2n_edge_dhcp
 ```
 
 请访问:[github地址][github地址]查看更多

@@ -32,7 +32,7 @@ RUN apk add --update --no-cache openssl dhclient dhcp-server-ldap bash
 COPY --from=builder /usr/local/bin/n2n-benchmark /usr/local/sbin/
 COPY --from=builder /usr/local/sbin/supernode /usr/local/sbin/
 COPY --from=builder /usr/local/sbin/edge /usr/local/sbin/
-COPY edge-dhcp-server/dhcpd.conf  /etc/dhcp/dhcpd.conf
+# COPY ./dhcpd.conf /etc/dhcp/dhcpd.conf
 COPY run.sh /usr/local/sbin/
 COPY n2n.sh /usr/local/sbin/
 

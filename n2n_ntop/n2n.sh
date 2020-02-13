@@ -17,7 +17,23 @@ mode_supernode() {
         $N2N_ARGS \
     >> /var/log/n2n.log 2>&1 &
 }
-
+init_dhcpd_conf()
+{
+IP_PREFIX=`echo $N2N_IP | grep -Eo "([0-9]{1,3}[\.]){3}"`
+if [ ! -f "/etc/dhcp/dhcpd.conf" ] ;then
+mkdir -p /etc/dhcp/
+cat > "/etc/dhcp/dhcpd.conf" <<    EOF
+  authoritative;
+  ddns-update-style none;
+  ignore client-updates;
+  subnet ${IP_PREFIX}0 netmask 255.255.255.0 {
+    range ${IP_PREFIX}60 ${IP_PREFIX}180;
+    default-lease-time 600;
+    max-lease-time 7200;
+  }
+EOF
+fi
+}
 mode_dhcpd() {
     echo ${MODE} -- DHCPD 服务器模式  >> /var/log/n2n.log
     edge -h
@@ -32,6 +48,7 @@ mode_dhcpd() {
         -f \
         ${N2N_ARGS} \
       >> /var/log/n2n.log 2>&1 &
+    init_dhcpd_conf
     echo  DHCPD 服务启动中  >> /var/log/n2n.log
     nohup dhcpd -f -d  $N2N_INTERFACE >> /var/log/n2n.log 2>&1 &
 }

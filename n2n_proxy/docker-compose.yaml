@@ -14,7 +14,7 @@ services:
         - N2N_ARGS=-Av
         - N2N_PROXY=TRUE
       volumes:
-        - ../n2n_ntop/edge-dhcp-server/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
+        - ./dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
       command: ["/bin/sh","-c","/usr/local/sbin/run.sh"]
 
     n2n_proxy_gw_dhcp:

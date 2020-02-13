@@ -4,7 +4,7 @@ FROM zctmdc/n2n_ntop
 MAINTAINER zctmdc <zctmdc@outlook.com>
 
 COPY --from=gost_src /bin/gost /bin/
-COPY n2n_proxy_nat/dhcpd.conf  /etc/dhcp/dhcpd.conf
+# COPY ./dhcpd.conf /etc/dhcp/dhcpd.conf
 COPY run.sh /usr/local/sbin/
 COPY proxy.sh /usr/local/sbin/
 

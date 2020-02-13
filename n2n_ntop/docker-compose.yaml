@@ -14,7 +14,7 @@ services:
       - N2N_SERVER=n2n.lucktu.com:10086
       - N2N_ARGS=-Av
     # volumes:
-    #   - ./edge-dhcp-server/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
+    #   - ./dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
     command: ["/bin/sh","-c","/usr/local/sbin/run.sh"]
   n2n_edge_dhcp:
     image: zctmdc/n2n_ntop:latest
