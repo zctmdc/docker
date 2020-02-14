@@ -96,12 +96,13 @@ route [add|del] [-net|-host] [网域或主机] netmask [mask] [gw|dev]
 |---:|:---|:---|:---|
 |MODE|模式|对应启动的模式| *`SUPERNODE`* *`DHCP`* *`STATIC`* *`DHCPD`* |
 |N2N_PORT|超级节点端口|在SUPERNODE中使用|-l|
-|N2N_TUN|网卡名|edge生成的网卡名字|-d|
 |N2N_SERVER|要连接的N2N超级节点|IP:port|-l|
 |N2N_IP|静态IP|在静态模式和DHCPD使用|-a|
 |N2N_COMMUNITY|组网名称|在EDGE中使用|-c|
 |N2N_KEY|组网密码|在EDGE中使用|-k|
+|N2N_TUN|网卡名|edge生成的网卡名字|-d|
 |N2N_ARGS|更多参数|运行时附加的更多参数|-Av|
+|---|---|---|---|
 |N2N_DESTINATION|目标网络|想要访问的远程地址| `192.168.0.0/16` `192.168.1.10`|
 |N2N_GATEWAY|网关地址|远程共享docker的网卡地址,用于网络出口|10.0.10.1|
 |N2N_ROUTE|是否添加路由|将访问目标网络路由表添加到近端docker|FALSE|
