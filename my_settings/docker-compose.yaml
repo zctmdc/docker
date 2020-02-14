@@ -1,6 +1,6 @@
 version: "3"
 services:
-  n2n_proxy_nat:
+  n2n_proxy_nat_lucktu:
     build:
       context: .
       dockerfile: Dockerfile
@@ -17,54 +17,30 @@ services:
       - N2N_NAT=TRUE
       - N2N_PROXY=TRUE
       - PROXY_ARGS=-L=:1080
+    ports:
+      - 14080:1080
     # volumes:
     #   - ./dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
     command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
-
-  n2n_proxy_dhcp:
+  n2n_proxy_nat_fast:
     build:
       context: .
       dockerfile: Dockerfile
-    depends_on:
-      - n2n_proxy_nat
     image: zctmdc/n2n_proxy:Alpha
     restart: always
     privileged: true
     environment:
-      - MODE=DHCP
+      - MODE=DHCPD
+      - N2N_IP=10.20.30.1
       - N2N_COMMUNITY=zctmdc_proxy
       - N2N_KEY=zctmdc_proxy
-      - N2N_SERVER=n2n.lucktu.com:10086
-      - N2N_ROUTE=TURE
-      - N2N_DESTINATION=192.168.0.0/16
-      - N2N_GATEWAY=10.0.10.1
+      - N2N_SERVER=n2n.x0x.cn:10086
       - N2N_ARGS=-Avr
+      - N2N_NAT=TRUE
       - N2N_PROXY=TRUE
       - PROXY_ARGS=-L=:1080
     ports:
-      - 1080:1080
-    command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
-
-  n2n_proxy_static:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: zctmdc/n2n_proxy:Alpha
-    restart: always
-    privileged: true
-    environment:
-      - MODE=STATIC
-      - N2N_IP=10.0.10.100
-      - N2N_COMMUNITY=zctmdc_proxy
-      - N2N_KEY=zctmdc_proxy
-      - N2N_SERVER=n2n.lucktu.com:10086
-      - N2N_ROUTE=FALSE
-      # - N2N_DESTINATION=192.168.0.0/16
-      # - N2N_GATEWAY=10.0.10.1
-      - N2N_ARGS=-Av
-      - N2N_PROXY=FALSE
+      - 10080:1080
     # volumes:
-    #   - n2n_proxy_nat/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
-    # ports:
-    #   - 10080:1080
+    #   - ./dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
     command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
