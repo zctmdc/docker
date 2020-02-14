@@ -1,4 +1,4 @@
-# N2N proxy
+# N2N proxy:Alpha
 
 基于[zctmdc/n2n_ntop][n2n_ntop]和[pginuerzh/gost][gost]制作的P2P远程代理
 
