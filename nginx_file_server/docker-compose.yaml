@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: zctmdc/file-server:alpha
+    image: zctmdc/file-server:Alpha
     # volumes:
     #   - path-to-iso:/workpath:ro
     # ports:
@@ -14,7 +14,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: zctmdc/file-server:alpha
+    image: zctmdc/file-server:Alpha
     volumes:
       - .:/workpath:ro
     ports:

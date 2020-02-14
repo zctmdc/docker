@@ -9,7 +9,7 @@
 ### 测试
 
 ```bash
-docker run -ti --rm zctmdc/n2n_proxy:alpha
+docker run -ti --rm zctmdc/n2n_proxy:Alpha
 ```
 
 ### 远端/网络共享端
@@ -27,7 +27,7 @@ docker run \
   -e N2N_SERVER="n2n.lucktu.com:10086" \
   -e N2N_NAT=TRUE \
   -e N2N_PROXY=FALSE \
-  zctmdc/n2n_proxy:alpha
+  zctmdc/n2n_proxy:Alpha
 ```
 
 ### 近端/代理路口端
@@ -46,7 +46,7 @@ docker run \
   -e N2N_GATEWAY="10.0.10.1"\
   -e N2N_PROXY=TRUE \
   -p 1080:1080 \
-  zctmdc/n2n_proxy:alpha
+  zctmdc/n2n_proxy:Alpha
 ```
 
 然后你就可以使用1080端口进行代理,访问远程资料

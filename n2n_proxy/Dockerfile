@@ -1,5 +1,5 @@
 FROM ginuerzh/gost as gost_src
-FROM zctmdc/n2n_ntop:alpha
+FROM zctmdc/n2n_ntop:Alpha
 
 MAINTAINER zctmdc <zctmdc@outlook.com>
 
