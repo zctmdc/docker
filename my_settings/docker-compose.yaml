@@ -34,7 +34,7 @@ services:
       - N2N_IP=10.20.30.1
       - N2N_COMMUNITY=proxy_fast
       - N2N_KEY=n2n_fast
-      - N2N_SERVER=n2n.x0x.cn:10086
+      - N2N_SERVER=t0.lucktu.com:10086
       - N2N_ARGS=-Avr
       - N2N_NAT=TRUE
       - N2N_PROXY=TRUE
