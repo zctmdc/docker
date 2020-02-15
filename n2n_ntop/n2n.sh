@@ -1,5 +1,4 @@
 #!/bin/bash
-
 set -x
 MODE=$(echo "$MODE" | tr '[a-z]' '[A-Z]')
 echo MODE=$(echo "$MODE" | tr '[a-z]' '[A-Z]') >> /var/log/n2n.log
