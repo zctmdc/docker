@@ -2,7 +2,7 @@ version: "3"
 services:
   n2n_proxy_nat_lucktu:
     build:
-      context: .
+      context: ../n2n_proxy
       dockerfile: Dockerfile
     image: zctmdc/n2n_proxy:Alpha
     restart: always
@@ -16,6 +16,7 @@ services:
       - N2N_ARGS=-Avr
       - N2N_NAT=TRUE
       - N2N_PROXY=TRUE
+      - N2N_ROUTE=FALSE
       - PROXY_ARGS=-L=:1080
     ports:
       - 14080:1080
@@ -24,7 +25,7 @@ services:
     command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
   n2n_proxy_nat_fast:
     build:
-      context: .
+      context: ../n2n_proxy
       dockerfile: Dockerfile
     image: zctmdc/n2n_proxy:Alpha
     restart: always
@@ -38,9 +39,10 @@ services:
       - N2N_ARGS=-Avr
       - N2N_NAT=TRUE
       - N2N_PROXY=TRUE
+      - N2N_ROUTE=FALSE
       - PROXY_ARGS=-L=:1080
     ports:
-      - 10080:1080
+      - 11080:1080
     # volumes:
     #   - ./dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
     command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
