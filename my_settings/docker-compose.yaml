@@ -17,9 +17,9 @@ services:
       - N2N_NAT=TRUE
       - N2N_PROXY=TRUE
       - N2N_ROUTE=FALSE
-      - PROXY_ARGS=-L=:1080
+      - PROXY_ARGS=-L=:14080
     ports:
-      - 14080:1080
+      - 14080:14080
     # volumes:
     #   - ./dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
     command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
@@ -40,9 +40,9 @@ services:
       - N2N_NAT=TRUE
       - N2N_PROXY=TRUE
       - N2N_ROUTE=FALSE
-      - PROXY_ARGS=-L=:1080
+      - PROXY_ARGS=-L=:11080
     ports:
-      - 11080:1080
+      - 11080:11080
     # volumes:
     #   - ./dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
     command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
