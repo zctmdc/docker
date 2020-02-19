@@ -6,22 +6,22 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
 WORKDIR /tmp
 RUN buildDeps=" \
-		build-base \
-		cmake \
-		git \
-		linux-headers \
-		openssl-dev \
-	"; \
-	\
-	set -x \
-	&& apk add --update --no-cache --virtual .build-deps $buildDeps \
-	&& git clone https://github.com/ntop/n2n.git \
+    build-base \
+    cmake \
+    git \
+    linux-headers \
+    openssl-dev \
+  "; \
+  \
+  set -x \
+  && apk add --update --no-cache --virtual .build-deps $buildDeps \
+  && git clone https://github.com/ntop/n2n.git \
   && cd n2n \
   && cmake . \
-	&& make install
+  && make install
 WORKDIR /tmp
 RUN rm -rf /tmp/* \
-	&& apk del .build-deps
+  && apk del .build-deps
 
 FROM alpine
 
@@ -36,11 +36,12 @@ COPY --from=builder /usr/local/sbin/edge /usr/local/sbin/
 COPY run.sh /usr/local/sbin/
 COPY n2n.sh /usr/local/sbin/
 
-RUN  chmod a+x /usr/local/sbin/run.sh \
-	&& chmod a+x /usr/local/sbin/n2n.sh \
-	&& touch /var/lib/dhcp/dhcpd.leases \
-	&& touch /var/log/n2n.log \
-	&& touch /var/log/run.log
+RUN set -x \
+  && chmod a+x /usr/local/sbin/run.sh \
+  && chmod a+x /usr/local/sbin/n2n.sh \
+  && touch /var/lib/dhcp/dhcpd.leases \
+  && touch /var/log/n2n.log \
+  && touch /var/log/run.log
 
 ENV MODE DHCP
 ENV N2N_PORT 10086

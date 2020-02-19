@@ -9,11 +9,11 @@ COPY run.sh /usr/local/sbin/
 COPY proxy.sh /usr/local/sbin/
 
 RUN  chmod a+x /usr/local/sbin/run.sh \
-	&& chmod a+x /usr/local/sbin/proxy.sh \
+  && chmod a+x /usr/local/sbin/proxy.sh \
   && touch /var/lib/dhcp/dhcpd.leases \
-	&& touch /var/log/n2n.log \
+  && touch /var/log/n2n.log \
   && touch /var/log/proxy.log \
-	&& touch /var/log/run.log
+  && touch /var/log/run.log
 
 ENV N2N_DESTINATION 192.168.0.0/16
 ENV N2N_GATEWAY 10.0.10.1
