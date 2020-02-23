@@ -188,10 +188,10 @@ docker run \
 
 ```bash
 git clone -b alpha https://github.com/zctmdc/docker.git
-cd n2n_ntop
-# docker-compose up -d
 docker-compose build
-docker-compose run n2n_edge_dhcp
+cd n2n_ntop
+docker-compose up -d
+# docker-compose run n2n_edge_dhcp
 ```
 
 更多介绍请访问 [docker-compose CLI概述][Overview of docker-compose CLI]

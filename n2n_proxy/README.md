@@ -116,10 +116,10 @@ route [add|del] [-net|-host] [网域或主机] netmask [mask] [gw|dev]
 
 ```bash
 git clone -b alpha https://github.com/zctmdc/docker.git
-cd n2n_proxy
 docker-compose build
-# docker-compose up -d
-docker-compose run n2n_proxy_dhcp
+cd n2n_proxy
+docker-compose up -d
+# docker-compose run n2n_proxy_dhcp
 ```
 
 更多介绍请访问 [docker-compose CLI概述][Overview of docker-compose CLI]
