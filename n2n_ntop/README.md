@@ -69,7 +69,8 @@ docker run \
   --name=supernode \
   -e MODE="SUPERNODE" \
   -e N2N_PORT=10086 \
-  -e N2N_ARGS="-v"
+  -e N2N_ARGS="-v" \
+  -p 10086:10086/udp \
   zctmdc/n2n_ntop:Alpha
 ```
 
@@ -131,7 +132,7 @@ docker run \
 如果你需要自定义DHCPD服务配置文件
 
  ```bash
- -v path/to/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
+ -v path/to/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro \
  ```
 
 ### DHCP - DHCP客户模式
