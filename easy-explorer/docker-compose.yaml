@@ -1,17 +1,17 @@
 version: "3"
+volumes:
+  easy-explorer-data
 services:
-  easy_explore-onecloud:
+  easy-explorer:
     build:
       context: .
       dockerfile: Dockerfile
     privileged: true
-    image: zctmdc/easy_explorer:Alpha
+    image: zctmdc/easy-explorer:Alpha
     environment:
-      - SMB_USERNAME=LZtesu_docker
-      - SMB_PASSWORD=NOPASS
-      - USER_TOKEN=
+      # - USER_TOKEN=
     volumes:
-      - /home/zctmdc/easy-explorer:/mnt/share:rw
+      - easy-explorer-data:/mnt/share:rw
     ports:
       - 2300:2300
       - 8899:8899

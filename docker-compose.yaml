@@ -17,3 +17,15 @@ services:
       context: nginx_file_server
       dockerfile: Dockerfile
     image: zctmdc/file-server:Alpha
+
+  easy_explore:
+    build:
+      context: easy-explorer
+      dockerfile: Dockerfile
+    image: zctmdc/easy_explorer:Alpha
+
+  mount_smb:
+    build:
+      context: mount_smb
+      dockerfile: Dockerfile
+    image: zctmdc/easy_explorer:Alpha

@@ -1,0 +1,14 @@
+version: "3"
+services:
+  mount_smb:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    privileged: true
+    image: zctmdc/easy_explorer:Alpha
+    environment:
+      - SMB_USERNAME=LZtesu_docker
+      - SMB_PASSWORD=NOPASS
+    volumes:
+      - /home/zctmdc/easy-explorer:/mnt/share/LZtesu
+    command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]

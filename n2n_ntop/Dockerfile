@@ -19,9 +19,6 @@ RUN buildDeps=" \
   && cd n2n \
   && cmake . \
   && make install
-WORKDIR /tmp
-RUN rm -rf /tmp/* \
-  && apk del .build-deps
 
 FROM alpine
 
