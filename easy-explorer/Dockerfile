@@ -10,7 +10,9 @@ RUN buildDeps=" \
   "; \
   \
   set -x \
-  && apk add  --update --no-cache --virtual buildDeps \
+  && apk add --update --no-cache --virtual .build-deps $buildDeps
+
+RUN set -x \
   && echo `curl http://firmware.koolshare.cn/binary/Easy-Explorer/ \
   | grep -Eo "http://firmware.koolshare.cn/binary/Easy-Explorer/[0-9\.]+/" \
   | tail -1`easy-explorer-linux \
