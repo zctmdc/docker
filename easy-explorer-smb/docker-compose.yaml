@@ -5,7 +5,7 @@ services:
       context: .
       dockerfile: Dockerfile
     privileged: true
-    image: zctmdc/easy_explorer:Alpha
+    image: zctmdc/easy-explorer-smb:Alpha
     environment:
       - SMB_USERNAME=LZtesu_docker
       - SMB_PASSWORD=NOPASS

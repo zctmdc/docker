@@ -1,4 +1,4 @@
-FROM alpine
+FROM zctmdc/easy-explorer:Alpha
 
 MAINTAINER zctmdc <zctmdc@outlook.com>
 

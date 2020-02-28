@@ -24,8 +24,8 @@ services:
       dockerfile: Dockerfile
     image: zctmdc/easy-explorer:Alpha
 
-  mount_smb:
+  easy-explorer-smb:
     build:
-      context: mount_smb
+      context: easy-explorer-smb
       dockerfile: Dockerfile
-    image: zctmdc/easy-explorer:Alpha
+    image: zctmdc/easy-explorer-smb:Alpha
