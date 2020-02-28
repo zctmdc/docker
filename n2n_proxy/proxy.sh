@@ -2,7 +2,7 @@
 set -x
 nohup /usr/local/sbin/n2n.sh >> /var/log/proxy.log 2>&1 &
 if [[ "${N2N_ROUTE}" == "TRUE" ]] ;then
-    echo  ${N2N_ROUTE} -- 启用转发 >>  /var/log/proxy.log
+    echo  ${N2N_ROUTE} -- 启用路由表添加 >>  /var/log/proxy.log
     route add -net $N2N_DESTINATION gw $N2N_GATEWAY
 fi
 if [[ "${N2N_NAT}" == "TRUE" ]] ;then
