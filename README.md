@@ -37,7 +37,8 @@ docker-compose run n2n_proxy_dhcp
 
 如果你使用正常了请点个赞
 [我的docker主页][zctmdc—docker] 和 [我github的docker项目页][zctmdc—github]
-我就不会随意的去更改和重命名空间，变量名了
+
+我将引起注意，不再随意的去更改和重命名空间/变量名
 
 [zctmdc—docker]: https://hub.docker.com/u/zctmdc "我的docker主页"
 [zctmdc—github]: https://github.com/zctmdc/docker.git "我github的docker项目页"

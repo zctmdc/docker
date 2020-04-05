@@ -200,7 +200,7 @@ docker-compose up -d
 
 如果你使用正常了请点个赞
 [我的docker主页][zctmdc—docker] ，[n2n_ntop的docker项目页][n2n_ntop] 和 [我github的docker项目页][zctmdc—github]
-我就不会随意的去更改和重命名空间，变量名了
+我将引起注意，不再随意的去更改和重命名空间/变量名
 
 [n2n]: https://web.archive.org/web/20110924083045/http://www.ntop.org:80/products/n2n/ "n2n官网"
 [ntop]: https://github.com/ntop "ntop团队"
