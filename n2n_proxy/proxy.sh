@@ -2,6 +2,10 @@
 set -x
 touch /var/log/proxy.log
 nohup /usr/local/sbin/n2n.sh >>/var/log/proxy.log 2>&1 &
+while [ -z $(ifconfig $N2N_TUN | grep "inet addr:" | awk '{print $2}' | cut -c 6-) ]; do
+  echo 等待n2n脚本完成 >>/var/log/proxy.log
+  sleep 1
+done
 if [[ "${N2N_ROUTE}" == "TRUE" ]]; then
   echo ${N2N_ROUTE} -- 启用路由表添加 >>/var/log/proxy.log
   route add -net $N2N_DESTINATION gw $N2N_GATEWAY
