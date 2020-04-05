@@ -28,9 +28,10 @@ COPY run.sh /usr/local/sbin/
 COPY easy-explorer.sh /usr/local/sbin/
 
 RUN set -x \
-  && apk add --update --no-cache bash \
-  && chmod a+x /usr/local/sbin/run.sh \
-  && chmod a+x /usr/local/sbin/easy-explorer.sh \
+  && apk add --update --no-cache bash
+
+RUN set -x \
+  && chmod a+x /usr/local/sbin/*.sh \
   && chmod a+x /usr/local/sbin/easy-explorer \
   && touch /var/log/easy-explorer.log
 

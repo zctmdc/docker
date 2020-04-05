@@ -1,0 +1,21 @@
+version: "3"
+volumes:
+  route_apps-data:
+services:
+  route_apps_server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: zctmdc/route_apps_server:Alpha
+    environment:
+      - N2N_TMP_DIR=/tmp
+      - N2N_OPT_DIR=/tmp/bin
+      - WORK_PATH=/tmp
+      - FORCE_UPDATE=FALSE
+      - FRP_TMP_DIR=/tmp/frp
+      - FRP_OPT_DIR=/tmp/bin
+    volumes:
+      - route_apps-data:/tmp:rw
+    ports:
+      - 17880:80
+    command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]

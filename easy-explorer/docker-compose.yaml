@@ -1,6 +1,6 @@
 version: "3"
 volumes:
-  easy-explorer-data
+  easy-explorer-data:
 services:
   easy-explorer:
     build:

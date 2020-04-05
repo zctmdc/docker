@@ -20,9 +20,9 @@ docker run -ti --rm \
 ```bash
 git clone -b alpha https://github.com/zctmdc/docker.git
 cd nginx_file_server
-# docker-compose up -d
+vim docker-compose.yaml
 docker-compose build
-docker-compose run file-server_dir
+# docker-compose run file-server_dir
 ```
 
 ### iso文件将自动挂载
@@ -35,6 +35,6 @@ docker run \
  zctmdc/file-server:Alpha
 ```
 
-> 挂在方式为 `mount -o loop` ，其他类型文件可能会出错！
+> 挂载文件的方式为 `mount -o loop $file` ，其他类型文件可能会出错！
 
 然后使用浏览器访问 [http://localhost:8088](http://localhost:8088?_blank) 进行测试

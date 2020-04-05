@@ -8,22 +8,22 @@
 
 ### 测试
 
-```bash
+```shell
 docker run -ti --rm zctmdc/n2n_proxy:Alpha
 ```
 
 ### 远端/网络共享端
 
-```bash
+```shell
 docker run \
   -d --restart=always \
   --name n2n_proxy_nat \
   --privileged \
   -e MODE="DHCPD" \
-  -e N2N_IP="10.0.10.1" \
+  -e N2N_IP="10.10.10.1" \
   -v path/to/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
-  -e N2N_COMMUNITY="zctmdc_proxy" \
-  -e N2N_KEY="zctmdc_proxy" \
+  -e N2N_COMMUNITY="n2n" \
+  -e N2N_KEY="test" \
   -e N2N_SERVER="n2n.lucktu.com:10086" \
   -e N2N_NAT=TRUE \
   -e N2N_PROXY=FALSE \
@@ -32,28 +32,29 @@ docker run \
 
 ### 近端/代理路口端
 
-```bash
+```shell
 docker run \
   -d --restart=always \
   --name n2n_proxy_gw \
   --privileged \
   -e MODE="DHCP" \
-  -e N2N_COMMUNITY="zctmdc_proxy" \
-  -e N2N_KEY="zctmdc_proxy" \
+  -e N2N_COMMUNITY="n2n" \
+  -e N2N_KEY="test" \
   -e N2N_SERVER="n2n.lucktu.com:10086" \
   -e N2N_ROUTE="TURE" \
   -e N2N_DESTINATION="192.168.0.0/16" \
-  -e N2N_GATEWAY="10.0.10.1"\
+  -e N2N_GATEWAY="10.10.10.1"\
   -e N2N_PROXY=TRUE \
-  -p 1080:1080 \
+  -e PROXY_ARGS="-L=:14080" \
+  -p 14080:14080 \
   zctmdc/n2n_proxy:Alpha
 ```
 
-然后你就可以使用1080端口进行代理,访问远程资料
+然后你就可以使用14080端口进行代理,访问远程资料
 
 ### 手动添加路由表
 
-```bash
+```shell
 docker exec -t n2n_proxy_gw \
   route add [-net|-host] $N2N_DESTINATION gw $N2N_GATEWAY
 
@@ -61,7 +62,7 @@ docker exec -t n2n_proxy_gw \
 
 > 请修改 *$N2N_DESTINATION* 和 *$N2N_GATEWAY*
 
-```bash
+```shell
 #  比如增加192.168.77.1-255网域的下一跳为10.0.10.77
 docker exec -t n2n_proxy_gw \
   route add -net  192.168.77.0/24 gw 10.0.10.77
@@ -74,7 +75,7 @@ docker exec -t n2n_proxy_gw \
 
 #### route - 更多介绍
 
-```bash
+```shell
 route [add|del] [-net|-host] [网域或主机] netmask [mask] [gw|dev]
 观察的参数：
    -n      ：不要使用通讯协定或主机名称，直接使用 IP 或 port number；
@@ -104,20 +105,21 @@ route [add|del] [-net|-host] [网域或主机] netmask [mask] [gw|dev]
 |N2N_ARGS|更多参数|运行时附加的更多参数|-Av|
 |---|---|---|---|
 |N2N_DESTINATION|目标网络|想要访问的远程地址| `192.168.0.0/16` `192.168.1.10`|
-|N2N_GATEWAY|网关地址|远程共享docker的网卡地址,用于网络出口|10.0.10.1|
+|N2N_GATEWAY|网关地址|远程共享docker的网卡地址,用于网络出口|10.10.10.1|
 |N2N_ROUTE|是否添加路由|将访问目标网络路由表添加到近端docker|FALSE|
 |N2N_NAT|是否开启NAT转发|允许其他docker访问本机网络内容|FALSE|
 |N2N_PROXY|是否开启代理|是否开启HTTP/SOCKS5代理|TRUE|
-|PROXY_ARGS|代理参数|具体参数访问 *[pginuerzh/gost][gost]* 查看|-L=:1080|
+|PROXY_ARGS|代理参数|具体参数访问 *[pginuerzh/gost][gost]* 查看|-L=:14080|
 
 更多介绍参看 *[zctmdc/n2n_ntop][n2n_ntop]* 和 *[pginuerzh/gost][gost]*
 
 ## 还可以使用 *docker-compose* 配置运行
 
-```bash
+```shell
 git clone -b alpha https://github.com/zctmdc/docker.git
 docker-compose build
 cd n2n_proxy
+vim docker-compose.yaml
 docker-compose up -d
 # docker-compose run n2n_proxy_dhcp
 ```
@@ -128,7 +130,8 @@ docker-compose up -d
 
 如果你使用正常了请点个赞
 [我的docker主页][zctmdc—docker] ，[n2n_proxy的docker项目页][n2n_proxy] 和 [我github的docker项目页][zctmdc—github]
-我就不会随意的去更改和重命名空间，变量名了
+
+我将引起注意，不再随意的去更改和重命名空间/变量名
 
 [gost]:https://github.com/ginuerzh/gost "ginuerzh/gost的GITHUB地址"
 [route]:https://www.cnblogs.com/snake-hand/p/3143041.html "linux route命令的使用详解"

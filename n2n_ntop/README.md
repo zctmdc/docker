@@ -91,9 +91,9 @@ docker run \
   --privileged \
   --net=host \
   -e MODE="STATIC" \
-  -e N2N_IP="10.0.10.10" \
-  -e N2N_COMMUNITY="zctmdc_proxy" \
-  -e N2N_KEY="zctmdc_proxy" \
+  -e N2N_IP="10.10.10.10" \
+  -e N2N_COMMUNITY="n2n" \
+  -e N2N_KEY="test" \
   -e N2N_SERVER="n2n.lucktu.com:10086" \
   -e N2N_ARGS="-Av" \
   zctmdc/n2n_ntop:Alpha
@@ -122,9 +122,9 @@ docker run \
   --privileged \
   --net=host \
   -e MODE="DHCPD" \
-  -e N2N_IP="10.0.10.1" \
-  -e N2N_COMMUNITY="zctmdc_proxy" \
-  -e N2N_KEY="zctmdc_proxy" \
+  -e N2N_IP="10.10.10.1" \
+  -e N2N_COMMUNITY="n2n" \
+  -e N2N_KEY="test" \
   -e N2N_SERVER="n2n.lucktu.com:10086" \
   zctmdc/n2n_ntop:Alpha
 ```
@@ -144,8 +144,8 @@ docker run \
   --privileged \
   --net=host \
   -e MODE="DHCP" \
-  -e N2N_COMMUNITY="zctmdc_proxy" \
-  -e N2N_KEY="zctmdc_proxy" \
+  -e N2N_COMMUNITY="n2n" \
+  -e N2N_KEY="test" \
   -e N2N_SERVER="n2n.lucktu.com:10086" \
   -e N2N_ARGS="-Avr" \
   zctmdc/n2n_ntop:Alpha
@@ -160,9 +160,9 @@ docker run \
   --privileged \
   --net=host \
   -e MODE="STATIC" \
-  -e N2N_IP="10.0.10.100" \
-  -e N2N_COMMUNITY="zctmdc_proxy" \
-  -e N2N_KEY="zctmdc_proxy" \
+  -e N2N_IP="10.10.10.100" \
+  -e N2N_COMMUNITY="n2n" \
+  -e N2N_KEY="test" \
   -e N2N_SERVER="n2n.lucktu.com:10086" \
   zctmdc/n2n_ntop:Alpha
 ```

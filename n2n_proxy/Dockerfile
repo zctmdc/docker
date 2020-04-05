@@ -4,22 +4,17 @@ FROM zctmdc/n2n_ntop:Alpha
 MAINTAINER zctmdc <zctmdc@outlook.com>
 
 COPY --from=gost_src /bin/gost /bin/
-# COPY n2n_proxy_nat/dhcpd.conf  /etc/dhcp/dhcpd.conf
 COPY run.sh /usr/local/sbin/
 COPY proxy.sh /usr/local/sbin/
 
-RUN  chmod a+x /usr/local/sbin/run.sh \
-  && chmod a+x /usr/local/sbin/proxy.sh \
-  && touch /var/lib/dhcp/dhcpd.leases \
-  && touch /var/log/n2n.log \
-  && touch /var/log/proxy.log \
-  && touch /var/log/run.log
+RUN set -x \
+  && chmod a+x /usr/local/sbin/*.sh
 
 ENV N2N_DESTINATION 192.168.0.0/16
-ENV N2N_GATEWAY 10.0.10.1
+ENV N2N_GATEWAY 10.10.10.1
 ENV N2N_ROUTE FALSE
 ENV N2N_NAT FALSE
 ENV N2N_PROXY TRUE
-ENV PROXY_ARGS -L=:1080
+ENV PROXY_ARGS -L=:14080
 
 CMD ["/bin/bash","-c","/usr/local/sbin/run.sh"]

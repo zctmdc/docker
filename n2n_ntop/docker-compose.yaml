@@ -26,9 +26,9 @@ services:
       - MODE=DHCPD
       - N2N_PORT=10086
       - N2N_TUN=edge_dhcpd
-      - N2N_IP=10.0.10.1
-      - N2N_COMMUNITY=zctmdc_proxy
-      - N2N_KEY=zctmdc_proxy
+      - N2N_IP=10.10.10.1
+      - N2N_COMMUNITY=n2n
+      - N2N_KEY=test
       - N2N_SERVER=n2n.lucktu.com:10086
       - N2N_ARGS=-Av
     # volumes:
@@ -50,8 +50,8 @@ services:
       - MODE=DHCP
       - N2N_PORT=10086
       - N2N_TUN=edge_dhcp
-      - N2N_COMMUNITY=zctmdc_proxy
-      - N2N_KEY=zctmdc_proxy
+      - N2N_COMMUNITY=n2n
+      - N2N_KEY=test
       - N2N_SERVER=n2n.lucktu.com:10086
       - N2N_ARGS=-Avr
     command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
@@ -71,9 +71,9 @@ services:
       - MODE=STATIC
       - N2N_PORT=10086
       - N2N_TUN=edge_static
-      - N2N_IP=10.0.10.100
-      - N2N_COMMUNITY=zctmdc_proxy
-      - N2N_KEY=zctmdc_proxy
+      - N2N_IP=10.10.10.100
+      - N2N_COMMUNITY=n2n
+      - N2N_KEY=test
       - N2N_SERVER=n2n.lucktu.com:10086
       - N2N_ARGS=-Av
     command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]

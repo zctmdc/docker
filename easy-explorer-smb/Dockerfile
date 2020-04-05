@@ -12,8 +12,7 @@ COPY mount_smb.sh /usr/local/sbin/
 COPY run.sh /usr/local/sbin/
 
 RUN set -x \
-  && chmod a+x /usr/local/sbin/run.sh \
-  && chmod a+x /usr/local/sbin/mount_smb.sh
+  && chmod a+x /usr/local/sbin/*.sh
 
 VOLUME /mnt/share
 

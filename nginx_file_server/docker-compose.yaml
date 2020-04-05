@@ -1,22 +1,13 @@
 version: "3"
 services:
-  file-server_iso:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    image: zctmdc/file-server:Alpha
-    # volumes:
-    #   - path-to-iso:/workpath:ro
-    # ports:
-    #   - 8088:80
-    # command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
   file-server_dir:
     build:
       context: .
       dockerfile: Dockerfile
     image: zctmdc/file-server:Alpha
     volumes:
-      - .:/workpath:ro
+      # - C:\Users\ZCTMDC\OneDrive\cloud\apps\route:/workpath:ro
+      - C:\Users\ZCTMDC\Downloads\share:/workpath:ro
     ports:
-      - 8088:80
+      - 16680:80
     command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
