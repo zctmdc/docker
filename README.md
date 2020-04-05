@@ -29,8 +29,9 @@
 git clone -b alpha https://github.com/zctmdc/docker.git
 cd n2n_proxy
 docker-compose build
+vim docker-compose.yaml
 # docker-compose up -d
-docker-compose run n2n_proxy_dhcp
+# docker-compose run n2n_proxy_dhcp
 ```
 
 ## 告诉我你在用
