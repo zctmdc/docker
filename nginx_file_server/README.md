@@ -20,10 +20,11 @@ docker run -ti --rm \
 ```bash
 git clone -b alpha https://github.com/zctmdc/docker.git
 cd nginx_file_server
-vim docker-compose.yaml
-docker-compose build
-# docker-compose run file-server_dir
+# vim docker-compose.yaml #自定义配置
+# docker-compose up --build file-server_dir #前台编译并运行 n2n_edge_dhcp
+# docker-compose up -d --build file-server_dir #后台运行
 ```
+
 
 ### iso文件将自动挂载
 
