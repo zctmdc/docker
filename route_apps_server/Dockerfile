@@ -4,7 +4,8 @@ MAINTAINER zctmdc <zctmdc@outlook.com>
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
 RUN set -x \
-  && apk add --update --no-cache unzip curl git sed bash
+  && apk add --update --no-cache unzip curl git sed bash \
+  && mkdir -p /usr/local/sbin/
 
 COPY frp_download.sh /usr/local/sbin/
 COPY n2n_download.sh /usr/local/sbin/

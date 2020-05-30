@@ -192,7 +192,7 @@ git clone -b alpha https://github.com/zctmdc/docker.git
 
 #启动 n2n_edge_dhcp
 cd n2n_ntop
-# docker-compose up --build n2n_edge_dhcp #前台编译并运行 n2n_edge_dhcp
+# docker-compose up n2n_edge_dhcp #前台运行 n2n_edge_dhcp
 # docker-compose up -d n2n_edge_dhcp #后台运行
 ```
 

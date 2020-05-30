@@ -1,5 +1,6 @@
 #!/bin/bash
 set -x
+
 if [[ -s ${1} ]]; then
   FORCE_UPDATE=${1}
 fi
@@ -18,12 +19,12 @@ frp_version=$(
     grep -Eo "[0-9]+\.[0-9]+\.[0-9]+"
 )
 version_file=${FRP_OPT_DIR}/frp_version.txt
-if [[ "${FORCE_UPDATE}"="FALSE" && -e "${version_file}" && "$(cat ${version_file})"="${frp_version}" ]]; then
+if [[ "${FORCE_UPDATE}"="FALSE" && -e "${version_file}" && "$(cat ${version_file})"=="${frp_version}" ]]; then
   echo "FRP - 已为最新版本"
-  return
+  exit
 fi
 echo "FRP - 发现新版本,即将更新"
-rm -rf FRP_TMP_DIR FRP_OPT_DIR
+rm -rf ${FRP_TMP_DIR} ${FRP_OPT_DIR}
 curl -s https://github.com/fatedier/frp/releases/tag/v${frp_version} |
   grep v${frp_version} |
   grep -Eo "frp_.+(gz|zip)" |
@@ -35,8 +36,9 @@ curl -s https://github.com/fatedier/frp/releases/tag/v${frp_version} |
     kernel_name_and_machine=${kernel_name_and_machine_and_suffix%%.*}
     kernel_name=${kernel_name_and_machine%_*}
     machine=${kernel_name_and_machine#*_}
-    wget https://github.com/fatedier/frp/releases/download/v${frp_version}/${file_name} \
-      -O ${FRP_TMP_DIR}/${file_name}
+    wget -O ${FRP_TMP_DIR}/${file_name} \
+      https://github.com/fatedier/frp/releases/download/v${frp_version}/${file_name}
+
     case $file_suffix in
     tar.gz)
       tar -zxvf ${FRP_TMP_DIR}/${file_name}
@@ -62,4 +64,4 @@ curl -s https://github.com/fatedier/frp/releases/tag/v${frp_version} |
     # rm -rf frp_${frp_version}_${kernel_name}_${machine}*
     echo ----------------------------------------------------------------
   done &&
-  echo $frp_version >${version_file}
+  echo ${frp_version} >${version_file}

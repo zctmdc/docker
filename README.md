@@ -17,7 +17,7 @@
 |---:|:---|
 |编译镜像|`docker-compose build` |
 |全部运行|`docker-compose up -d` |
-|单个运行|`docker-compose run`   |
+|单个运行|`docker-compose up ${name}`   |
 
 更多介绍请访问 [docker-compose CLI概述][Overview of docker-compose CLI]
 
@@ -31,7 +31,7 @@ cd n2n_proxy
 docker-compose build
 vim docker-compose.yaml
 # docker-compose up -d
-# docker-compose run n2n_proxy_dhcp
+# docker-compose up n2n_proxy_dhcp
 ```
 
 ## 告诉我你在用

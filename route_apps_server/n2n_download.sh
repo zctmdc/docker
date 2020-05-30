@@ -1,5 +1,6 @@
 #!/bin/bash
 set -x
+
 if [[ -s "$1" ]]; then
   FORCE_UPDATE="$1"
 fi
@@ -12,17 +13,20 @@ fi
 mkdir -p "$N2N_TMP_DIR"
 cd "$N2N_TMP_DIR"
 if [[ -d "$N2N_TMP_DIR/n2n" ]]; then
-  cd "$N2N_TMP_DIR/n2n"
-  echo "N2N - 正在更新"
-  git fetch --all
-  git reset --hard origin/master
-  git pull
-  echo "N2N - 更新成功"
-else
-  echo "N2N - 正在克隆"
-  git clone https://github.com/lucktu/n2n.git
-  echo "N2N - 克隆成功"
+  rm -rf "$N2N_TMP_DIR/n2n"
 fi
+# if [[ -d "$N2N_TMP_DIR/n2n" ]]; then
+#   cd "$N2N_TMP_DIR/n2n"
+#   echo "N2N - 正在更新"
+#   git fetch --all
+#   git reset --hard origin/master
+#   git pull
+#   echo "N2N - 更新成功"
+# else
+echo "N2N - 正在克隆"
+git clone https://github.com/lucktu/n2n.git
+echo "N2N - 克隆成功"
+# fi
 mkdir -p "$N2N_OPT_DIR"
 cd "$N2N_TMP_DIR/n2n/Linux/" &&
   ls -al | grep "^-" |

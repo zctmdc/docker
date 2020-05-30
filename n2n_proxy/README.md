@@ -121,7 +121,7 @@ docker-compose build
 cd n2n_proxy
 vim docker-compose.yaml
 docker-compose up -d
-# docker-compose run n2n_proxy_dhcp
+# docker-compose up n2n_proxy_dhcp
 ```
 
 更多介绍请访问 [docker-compose CLI概述][Overview of docker-compose CLI]
