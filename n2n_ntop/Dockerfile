@@ -42,5 +42,6 @@ ENV N2N_IP 10.10.10.10
 ENV N2N_COMMUNITY n2n
 ENV N2N_KEY test
 ENV N2N_SERVER n2n.lucktu.com:10086
-ENV N2N_ARGS -Av
+ENV N2N_ARGS -A -v
+ENV TZ Asia/Shanghai
 CMD [ "/bin/bash" , "-c" , "/usr/local/sbin/run.sh" ]

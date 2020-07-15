@@ -13,7 +13,7 @@ services:
       - N2N_COMMUNITY=n2n
       - N2N_KEY=test
       - N2N_SERVER=n2n.lucktu.com:10086
-      - N2N_ARGS=-Avr
+      - N2N_ARGS=-A -v -r
       - N2N_NAT=TRUE
       - N2N_PROXY=TRUE
       - PROXY_ARGS=-L=:14080
@@ -38,7 +38,7 @@ services:
       - N2N_ROUTE=TURE
       - N2N_DESTINATION=192.168.0.0/16
       - N2N_GATEWAY=10.10.10.1
-      - N2N_ARGS=-Avr
+      - N2N_ARGS=-A -v -r
       - N2N_PROXY=TRUE
       - PROXY_ARGS=-L=:14080
     ports:
@@ -61,7 +61,7 @@ services:
       - N2N_ROUTE=FALSE
       # - N2N_DESTINATION=192.168.0.0/16
       # - N2N_GATEWAY=10.0.10.1
-      - N2N_ARGS=-Av
+      - N2N_ARGS=-A -v
       - N2N_PROXY=FALSE
     # volumes:
     #   - n2n_proxy_nat/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro

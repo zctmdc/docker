@@ -5,36 +5,28 @@ if [[ -s "$1" ]]; then
   FORCE_UPDATE="$1"
 fi
 if [[ ! -s "$N2N_TMP_DIR" ]]; then
-  N2N_TMP_DIR=/tmp
+  N2N_TMP_DIR=/tmp/n2n
 fi
 if [[ ! -s "$1" ]]; then
   N2N_OPT_DIR=/tmp/bin
 fi
-mkdir -p "$N2N_TMP_DIR"
-cd "$N2N_TMP_DIR"
-if [[ -d "$N2N_TMP_DIR/n2n" ]]; then
-  rm -rf "$N2N_TMP_DIR/n2n"
-fi
-# if [[ -d "$N2N_TMP_DIR/n2n" ]]; then
-#   cd "$N2N_TMP_DIR/n2n"
-#   echo "N2N - 正在更新"
-#   git fetch --all
-#   git reset --hard origin/master
-#   git pull
-#   echo "N2N - 更新成功"
-# else
-echo "N2N - 正在克隆"
-git clone https://github.com/lucktu/n2n.git
-echo "N2N - 克隆成功"
-# fi
+cd "/tmp"
+rm -rf "$N2N_TMP_DIR"
+while [[ ! -d "$N2N_TMP_DIR" ]]; do
+  echo "N2N - 正在克隆"
+  git clone https://github.com/lucktu/n2n.git
+  echo "N2N - 克隆完毕"
+done
+
 mkdir -p "$N2N_OPT_DIR"
-cd "$N2N_TMP_DIR/n2n/Linux/" &&
+
+cd "$N2N_TMP_DIR/Linux/" &&
   ls -al | grep "^-" |
   awk '{print $9}' |
     grep "zip" |
     while read line; do
       if [[ "$line" =~ "(" ]]; then
-        basename="$N2N_OPT_DIR/$(echo $line | sed -e 's/_v[0-9]\{1,\}\..*//')"
+        basename="$(pwd)/$(echo $line | sed -e 's/_v[0-9]\{1,\}\..*//')"
         machine=$(echo "$basename" | sed 's/.*_//')
         unzip -u -d "$basename" "$line"
         file01=$(echo "$line" | sed -e "s/$machine.*//" -e "s/n2n//")$(echo "$machine" | sed -e 's/)//' -e 's/(.*//')
@@ -48,9 +40,25 @@ cd "$N2N_TMP_DIR/n2n/Linux/" &&
             chmod 0755 "$N2N_OPT_DIR/$acfile$file01"
           cp "$n2nsrcdir/$acfile" "$N2N_OPT_DIR/$acfile$file02" &&
             chmod 0755 "$N2N_OPT_DIR/$acfile$file02"
+          if [[ "$N2N_OPT_DIR/$acfile$file01" =~ "el" ]]; then
+            cp -f "$N2N_OPT_DIR/$acfile$file01" "$N2N_OPT_DIR/$acfile${file01::-2}"le" &&
+              chmod 0755 "$N2N_OPT_DIR/$acfile${file01::-2}"le"
+          fi
+          if [[ "$N2N_OPT_DIR/$acfile$file01" =~ "le" ]]; then
+            cp -f "$N2N_OPT_DIR/$acfile$file01" "$N2N_OPT_DIR/$acfile${file01::-2}"el" &&
+              chmod 0755 "$N2N_OPT_DIR/$acfile${file01::-2}"le"
+          fi
+          if [[ "$N2N_OPT_DIR/$acfile$file02" =~ "el" ]]; then
+            cp -f "$N2N_OPT_DIR/$acfile$file02" "$N2N_OPT_DIR/$acfile${file02::-2}"le" &&
+              chmod 0755 "$N2N_OPT_DIR/$acfile${file02::-2}"le"
+          fi
+          if [[ "$N2N_OPT_DIR/$acfile$file02" =~ "le" ]]; then
+            cp -f "$N2N_OPT_DIR/$acfile$file02" "$N2N_OPT_DIR/$acfile${file02::-2}"el" &&
+              chmod 0755 "$N2N_OPT_DIR/$acfile${file02::-2}"le"
+          fi
         done
       else
-        basename="$N2N_OPT_DIR/$(echo $line | sed -e 's/_v[0-9]\{1,\}\..*//')"
+        basename="$(pwd)/$(echo $line | sed -e 's/_v[0-9]\{1,\}\..*//')"
         machine=$(echo "$basename" | sed 's/.*_//')
         unzip -u -d "$basename" "$line"
         file01=$(echo "$line" | sed -e "s/$machine.*//" -e "s/n2n//")"$machine"
@@ -61,6 +69,16 @@ cd "$N2N_TMP_DIR/n2n/Linux/" &&
         for acfile in edge supernode; do
           cp "$n2nsrcdir/$acfile" "$N2N_OPT_DIR/$acfile$file01" &&
             chmod 0755 "$N2N_OPT_DIR/$acfile$file01"
+          if [[ "$N2N_OPT_DIR/$acfile$file01" =~ "el" ]]; then
+            cp -f "$N2N_OPT_DIR/$acfile$file01" "$N2N_OPT_DIR/$acfile${file01::-2}"le" &&
+              chmod 0755 "$N2N_OPT_DIR/$acfile${file01::-2}"le"
+          fi
+          if [[ "$N2N_OPT_DIR/$acfile$file01" =~ "le" ]]; then
+            cp -f "$N2N_OPT_DIR/$acfile$file01" "$N2N_OPT_DIR/$acfile${file01::-2}"el" &&
+              chmod 0755 "$N2N_OPT_DIR/$acfile${file01::-2}"le"
+          fi
         done
       fi
-    done
+    done &&
+  echo "$($N2N_OPT_DIR/edge_v2_linux_x64 | grep -Eo 'v\..*r[0-9]+')" >"$N2N_OPT_DIR"/n2n_version.txt &&
+  /usr/local/sbin/qshell-linux-x64-v2.4.2 qupload ~/.qshell/qupload.conf
