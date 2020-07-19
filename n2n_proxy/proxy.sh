@@ -8,6 +8,9 @@ while [ -z $(ifconfig $N2N_TUN | grep "inet addr:" | awk '{print $2}' | cut -c 6
 done
 if [[ "${N2N_ROUTE}" == "TRUE" ]]; then
   echo ${N2N_ROUTE} -- 启用路由表添加 >>/var/log/proxy.log
+  if [ -z "${N2N_GATEWAY}" ]; then
+    N2N_GATEWAY="$(ifconfig $N2N_TUN | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')1"
+  fi
   route add -net $N2N_DESTINATION gw $N2N_GATEWAY
 fi
 if [[ "${N2N_NAT}" == "TRUE" ]]; then
