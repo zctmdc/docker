@@ -11,13 +11,15 @@ if [[ "${N2N_ROUTE}" == "TRUE" ]]; then
   if [ -z "${N2N_GATEWAY}" ]; then
     N2N_GATEWAY="$(ifconfig $N2N_TUN | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')1"
   fi
-  route add -net $N2N_DESTINATION gw $N2N_GATEWAY
+  if [[ "$N2N_GATEWAY" != "$N2N_IP" ]]; then
+    route add -net $N2N_DESTINATION gw $N2N_GATEWAY
+  fi
 fi
 if [[ "${N2N_NAT}" == "TRUE" ]]; then
   echo ${N2N_NAT} -- 启用NAT >>/var/log/proxy.log
 
   lan_eth=$N2N_TUN
-
+  wan_eth="$(ifconfig | grep eth | awk '{print $1}')"
   lan_ip=$(ifconfig $lan_eth | grep "inet addr:" | awk '{print $2}' | cut -c 6-)
   lan_gateway=$(ifconfig $lan_eth | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')1
   lan_subnet=$(ifconfig $lan_eth | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')0/24
