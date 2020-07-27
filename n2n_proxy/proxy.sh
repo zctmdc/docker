@@ -13,6 +13,10 @@ if [[ "${N2N_ROUTE}" == "TRUE" ]]; then
   fi
   if [[ "$N2N_GATEWAY" != "$N2N_IP" ]]; then
     route add -net $N2N_DESTINATION gw $N2N_GATEWAY
+    wan_eth="$(ifconfig | grep eth | awk '{print $1}')"
+    wan_gateway=$(ifconfig $wan_eth | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')1
+    wan_subnet=$(ifconfig $wan_eth | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')0/24
+    route add -net $wan_subnet gw $wan_gateway
   fi
 fi
 if [[ "${N2N_NAT}" == "TRUE" ]]; then
