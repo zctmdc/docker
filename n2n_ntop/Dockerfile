@@ -11,6 +11,7 @@ RUN buildDeps=" \
     git \
     linux-headers \
     openssl-dev \
+    libpcap-dev \
   "; \
   \
   set -x \
