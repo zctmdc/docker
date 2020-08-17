@@ -8,6 +8,7 @@ COPY run.sh /usr/local/sbin/
 COPY proxy.sh /usr/local/sbin/
 
 RUN set -x \
+  && apk add --update --no-cache psmisc \
   && chmod a+x /usr/local/sbin/*.sh
 
 ENV N2N_DESTINATION 192.168.0.0/16

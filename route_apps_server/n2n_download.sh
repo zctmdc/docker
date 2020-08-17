@@ -28,10 +28,10 @@ cd "$N2N_TMP_DIR/Linux/" &&
       if [[ "$line" =~ "(" ]]; then
         basename="$(pwd)/$(echo $line | sed -e 's/_v[0-9]\{1,\}\..*//')"
         machine=$(echo "$basename" | sed 's/.*_//')
-        unzip -u -d "$basename" "$line"
         file01=$(echo "$line" | sed -e "s/$machine.*//" -e "s/n2n//")$(echo "$machine" | sed -e 's/)//' -e 's/(.*//')
         file02=$(echo "$line" | sed -e "s/$machine.*//" -e "s/n2n//")$(echo "$machine" | sed -e 's/)//' -e 's/.*(//')
         n2nsrcdir="$basename"
+        unzip -u -d "$basename" "$line"
         if [[ -d "$basename/static" ]]; then
           n2nsrcdir="$basename/static"
         fi
@@ -40,19 +40,19 @@ cd "$N2N_TMP_DIR/Linux/" &&
             chmod 0755 "$N2N_OPT_DIR/$acfile$file01"
           cp "$n2nsrcdir/$acfile" "$N2N_OPT_DIR/$acfile$file02" &&
             chmod 0755 "$N2N_OPT_DIR/$acfile$file02"
-          if [[ "$N2N_OPT_DIR/$acfile$file01" =~ "el" ]]; then
+          if [[ "$file01" =~ "el" ]]; then
             cp -f "$N2N_OPT_DIR/$acfile$file01" "$N2N_OPT_DIR/$acfile${file01::-2}"le" &&
               chmod 0755 "$N2N_OPT_DIR/$acfile${file01::-2}"le"
           fi
-          if [[ "$N2N_OPT_DIR/$acfile$file01" =~ "le" ]]; then
+          if [[ "$file01" =~ "le" ]]; then
             cp -f "$N2N_OPT_DIR/$acfile$file01" "$N2N_OPT_DIR/$acfile${file01::-2}"el" &&
               chmod 0755 "$N2N_OPT_DIR/$acfile${file01::-2}"le"
           fi
-          if [[ "$N2N_OPT_DIR/$acfile$file02" =~ "el" ]]; then
+          if [[ "$file02" =~ "el" ]]; then
             cp -f "$N2N_OPT_DIR/$acfile$file02" "$N2N_OPT_DIR/$acfile${file02::-2}"le" &&
               chmod 0755 "$N2N_OPT_DIR/$acfile${file02::-2}"le"
           fi
-          if [[ "$N2N_OPT_DIR/$acfile$file02" =~ "le" ]]; then
+          if [[ "$file02" =~ "le" ]]; then
             cp -f "$N2N_OPT_DIR/$acfile$file02" "$N2N_OPT_DIR/$acfile${file02::-2}"el" &&
               chmod 0755 "$N2N_OPT_DIR/$acfile${file02::-2}"le"
           fi
@@ -69,11 +69,11 @@ cd "$N2N_TMP_DIR/Linux/" &&
         for acfile in edge supernode; do
           cp "$n2nsrcdir/$acfile" "$N2N_OPT_DIR/$acfile$file01" &&
             chmod 0755 "$N2N_OPT_DIR/$acfile$file01"
-          if [[ "$N2N_OPT_DIR/$acfile$file01" =~ "el" ]]; then
+          if [[ "$file01" =~ "el" ]]; then
             cp -f "$N2N_OPT_DIR/$acfile$file01" "$N2N_OPT_DIR/$acfile${file01::-2}"le" &&
               chmod 0755 "$N2N_OPT_DIR/$acfile${file01::-2}"le"
           fi
-          if [[ "$N2N_OPT_DIR/$acfile$file01" =~ "le" ]]; then
+          if [[ "$file01" =~ "le" ]]; then
             cp -f "$N2N_OPT_DIR/$acfile$file01" "$N2N_OPT_DIR/$acfile${file01::-2}"el" &&
               chmod 0755 "$N2N_OPT_DIR/$acfile${file01::-2}"le"
           fi
