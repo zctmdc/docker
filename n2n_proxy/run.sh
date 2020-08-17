@@ -26,4 +26,6 @@ status_check() {
     echo "RUNNING"
   fi
 }
+status_check &
+
 tail -f -n 20 /var/log/run.log
