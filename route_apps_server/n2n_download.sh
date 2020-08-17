@@ -48,6 +48,14 @@ cd "$N2N_TMP_DIR/Linux/" &&
             cp -f "$N2N_OPT_DIR/$acfile$file01" "$N2N_OPT_DIR/$acfile${file01::-2}"el" &&
               chmod 0755 "$N2N_OPT_DIR/$acfile${file01::-2}"le"
           fi
+          if [[ "$file01" =~ "x86" ]]; then
+            cp -f "$N2N_OPT_DIR/$acfile$file01" "$N2N_OPT_DIR/$acfile${file01::-2}"386" &&
+              chmod 0755 "$N2N_OPT_DIR/$acfile${file01::-2}"386"
+          fi
+          if [[ "$file01" =~ "x64" ]]; then
+            cp -f "$N2N_OPT_DIR/$acfile$file01" "$N2N_OPT_DIR/$acfile${file01::-2}"amd64" &&
+              chmod 0755 "$N2N_OPT_DIR/$acfile${file01::-2}"amd64"
+          fi
           if [[ "$file02" =~ "el" ]]; then
             cp -f "$N2N_OPT_DIR/$acfile$file02" "$N2N_OPT_DIR/$acfile${file02::-2}"le" &&
               chmod 0755 "$N2N_OPT_DIR/$acfile${file02::-2}"le"
@@ -55,6 +63,14 @@ cd "$N2N_TMP_DIR/Linux/" &&
           if [[ "$file02" =~ "le" ]]; then
             cp -f "$N2N_OPT_DIR/$acfile$file02" "$N2N_OPT_DIR/$acfile${file02::-2}"el" &&
               chmod 0755 "$N2N_OPT_DIR/$acfile${file02::-2}"le"
+          fi
+          if [[ "$file02" =~ "x86" ]]; then
+            cp -f "$N2N_OPT_DIR/$acfile$file02" "$N2N_OPT_DIR/$acfile${file02::-2}"386" &&
+              chmod 0755 "$N2N_OPT_DIR/$acfile${file02::-2}"386"
+          fi
+          if [[ "$file02" =~ "x64" ]]; then
+            cp -f "$N2N_OPT_DIR/$acfile$file02" "$N2N_OPT_DIR/$acfile${file02::-2}"amd64" &&
+              chmod 0755 "$N2N_OPT_DIR/$acfile${file02::-2}"amd64"
           fi
         done
       else
@@ -76,6 +92,14 @@ cd "$N2N_TMP_DIR/Linux/" &&
           if [[ "$file01" =~ "le" ]]; then
             cp -f "$N2N_OPT_DIR/$acfile$file01" "$N2N_OPT_DIR/$acfile${file01::-2}"el" &&
               chmod 0755 "$N2N_OPT_DIR/$acfile${file01::-2}"le"
+          fi
+          if [[ "$file01" =~ "x86" ]]; then
+            cp -f "$N2N_OPT_DIR/$acfile$file01" "$N2N_OPT_DIR/$acfile${file01::-2}"386" &&
+              chmod 0755 "$N2N_OPT_DIR/$acfile${file01::-2}"386"
+          fi
+          if [[ "$file01" =~ "x64" ]]; then
+            cp -f "$N2N_OPT_DIR/$acfile$file01" "$N2N_OPT_DIR/$acfile${file01::-2}"amd64" &&
+              chmod 0755 "$N2N_OPT_DIR/$acfile${file01::-2}"amd64"
           fi
         done
       fi
