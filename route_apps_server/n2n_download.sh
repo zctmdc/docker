@@ -20,18 +20,24 @@ done
 
 mkdir -p "$N2N_OPT_DIR"
 
+replaseKV='
+el-le
+amd64-x64
+386-x86
+'
+
 cd "$N2N_TMP_DIR/Linux/" &&
   ls -al | grep "^-" |
   awk '{print $9}' |
     grep "zip" |
-    while read line; do
-      if [[ "$line" =~ "(" ]]; then
-        basename="$(pwd)/$(echo $line | sed -e 's/_v[0-9]\{1,\}\..*//')"
+    while read line_src_file; do
+      if [[ "$line_src_file" =~ "(" ]]; then
+        basename="$(pwd)/$(echo $line_src_file | sed -e 's/_v[0-9]\{1,\}\..*//')"
         machine=$(echo "$basename" | sed 's/.*_//')
-        file01=$(echo "$line" | sed -e "s/$machine.*//" -e "s/n2n//")$(echo "$machine" | sed -e 's/)//' -e 's/(.*//')
-        file02=$(echo "$line" | sed -e "s/$machine.*//" -e "s/n2n//")$(echo "$machine" | sed -e 's/)//' -e 's/.*(//')
+        file01=$(echo "$line_src_file" | sed -e "s/$machine.*//" -e "s/n2n//")$(echo "$machine" | sed -e 's/)//' -e 's/(.*//')
+        file02=$(echo "$line_src_file" | sed -e "s/$machine.*//" -e "s/n2n//")$(echo "$machine" | sed -e 's/)//' -e 's/.*(//')
         n2nsrcdir="$basename"
-        unzip -u -d "$basename" "$line"
+        unzip -u -d "$basename" "$line_src_file"
         if [[ -d "$basename/static" ]]; then
           n2nsrcdir="$basename/static"
         fi
@@ -40,44 +46,41 @@ cd "$N2N_TMP_DIR/Linux/" &&
             chmod 0755 "$N2N_OPT_DIR/$acfile$file01"
           cp "$n2nsrcdir/$acfile" "$N2N_OPT_DIR/$acfile$file02" &&
             chmod 0755 "$N2N_OPT_DIR/$acfile$file02"
-          if [[ "$file01" =~ "el" ]]; then
-            cp -f "$N2N_OPT_DIR/$acfile$file01" "$N2N_OPT_DIR/$acfile${file01::-2}"le" &&
-              chmod 0755 "$N2N_OPT_DIR/$acfile${file01::-2}"le"
-          fi
-          if [[ "$file01" =~ "le" ]]; then
-            cp -f "$N2N_OPT_DIR/$acfile$file01" "$N2N_OPT_DIR/$acfile${file01::-2}"el" &&
-              chmod 0755 "$N2N_OPT_DIR/$acfile${file01::-2}"le"
-          fi
-          if [[ "$file01" =~ "x86" ]]; then
-            cp -f "$N2N_OPT_DIR/$acfile$file01" "$N2N_OPT_DIR/$acfile${file01::-2}"386" &&
-              chmod 0755 "$N2N_OPT_DIR/$acfile${file01::-2}"386"
-          fi
-          if [[ "$file01" =~ "x64" ]]; then
-            cp -f "$N2N_OPT_DIR/$acfile$file01" "$N2N_OPT_DIR/$acfile${file01::-2}"amd64" &&
-              chmod 0755 "$N2N_OPT_DIR/$acfile${file01::-2}"amd64"
-          fi
-          if [[ "$file02" =~ "el" ]]; then
-            cp -f "$N2N_OPT_DIR/$acfile$file02" "$N2N_OPT_DIR/$acfile${file02::-2}"le" &&
-              chmod 0755 "$N2N_OPT_DIR/$acfile${file02::-2}"le"
-          fi
-          if [[ "$file02" =~ "le" ]]; then
-            cp -f "$N2N_OPT_DIR/$acfile$file02" "$N2N_OPT_DIR/$acfile${file02::-2}"el" &&
-              chmod 0755 "$N2N_OPT_DIR/$acfile${file02::-2}"le"
-          fi
-          if [[ "$file02" =~ "x86" ]]; then
-            cp -f "$N2N_OPT_DIR/$acfile$file02" "$N2N_OPT_DIR/$acfile${file02::-2}"386" &&
-              chmod 0755 "$N2N_OPT_DIR/$acfile${file02::-2}"386"
-          fi
-          if [[ "$file02" =~ "x64" ]]; then
-            cp -f "$N2N_OPT_DIR/$acfile$file02" "$N2N_OPT_DIR/$acfile${file02::-2}"amd64" &&
-              chmod 0755 "$N2N_OPT_DIR/$acfile${file02::-2}"amd64"
-          fi
+          for line_rep in ${replaseKV}; do
+            line_rep_k="${line_rep%-*}"
+            line_rep_v="${line_rep#*-}"
+            if [[ "$file01" == *"${line_rep_k}" ]]; then
+              src_file="$N2N_OPT_DIR/$acfile$file01"
+              to_file="$N2N_OPT_DIR/$acfile${file01%%${line_rep_k}}${line_rep_v}"
+              cp -f "${src_file}" "${to_file}" &&
+                chmod 0755 "${to_file}"
+            fi
+            if [[ "$file01" == *"${line_rep_v}" ]]; then
+              src_file="$N2N_OPT_DIR/$acfile$file01"
+              to_file="$N2N_OPT_DIR/$acfile${file01%%${line_rep_v}}${line_rep_k}"
+              cp -f "${src_file}" "${to_file}" &&
+                chmod 0755 "${to_file}"
+            fi
+            if [[ "$file02" == *"${line_rep_k}" ]]; then
+              src_file="$N2N_OPT_DIR/$acfile$file02"
+              to_file="$N2N_OPT_DIR/$acfile${file02%%${line_rep_k}}${line_rep_v}"
+              cp -f "${src_file}" "${to_file}" &&
+                chmod 0755 "${to_file}"
+            fi
+            if [[ "$file02" == *"${line_rep_v}" ]]; then
+              src_file="$N2N_OPT_DIR/$acfile$file02"
+              to_file="$N2N_OPT_DIR/$acfile${file02%%${line_rep_v}}${line_rep_k}"
+              cp -f "${src_file}" "${to_file}" &&
+                chmod 0755 "${to_file}"
+            fi
+          done
         done
       else
-        basename="$(pwd)/$(echo $line | sed -e 's/_v[0-9]\{1,\}\..*//')"
+        basename="$(pwd)/$(echo $line_src_file | sed -e 's/_v[0-9]\{1,\}\..*//')"
         machine=$(echo "$basename" | sed 's/.*_//')
-        unzip -u -d "$basename" "$line"
-        file01=$(echo "$line" | sed -e "s/$machine.*//" -e "s/n2n//")"$machine"
+        unzip -u -d "$basename" "$line_src_file"
+        file01=$(echo "$line_src_file" | sed -e "s/$machine.*//" -e "s/n2n//")"$machine"
+        echo "file01=$file01"
         n2nsrcdir="$basename"
         if [[ -d "$basename/static" ]]; then
           n2nsrcdir="$basename/static"
@@ -85,22 +88,25 @@ cd "$N2N_TMP_DIR/Linux/" &&
         for acfile in edge supernode; do
           cp "$n2nsrcdir/$acfile" "$N2N_OPT_DIR/$acfile$file01" &&
             chmod 0755 "$N2N_OPT_DIR/$acfile$file01"
-          if [[ "$file01" =~ "el" ]]; then
-            cp -f "$N2N_OPT_DIR/$acfile$file01" "$N2N_OPT_DIR/$acfile${file01::-2}"le" &&
-              chmod 0755 "$N2N_OPT_DIR/$acfile${file01::-2}"le"
-          fi
-          if [[ "$file01" =~ "le" ]]; then
-            cp -f "$N2N_OPT_DIR/$acfile$file01" "$N2N_OPT_DIR/$acfile${file01::-2}"el" &&
-              chmod 0755 "$N2N_OPT_DIR/$acfile${file01::-2}"le"
-          fi
-          if [[ "$file01" =~ "x86" ]]; then
-            cp -f "$N2N_OPT_DIR/$acfile$file01" "$N2N_OPT_DIR/$acfile${file01::-2}"386" &&
-              chmod 0755 "$N2N_OPT_DIR/$acfile${file01::-2}"386"
-          fi
-          if [[ "$file01" =~ "x64" ]]; then
-            cp -f "$N2N_OPT_DIR/$acfile$file01" "$N2N_OPT_DIR/$acfile${file01::-2}"amd64" &&
-              chmod 0755 "$N2N_OPT_DIR/$acfile${file01::-2}"amd64"
-          fi
+          for line_rep in ${replaseKV}; do
+            echo "line_rep=${line_rep}"
+            line_rep_k="${line_rep%-*}"
+            line_rep_v="${line_rep#*-}"
+            echo "$file01 --- ${line_rep_k} --- ${line_rep_v}"
+
+            if [[ "$file01" == *"${line_rep_k}" ]]; then
+              src_file="$N2N_OPT_DIR/$acfile$file01"
+              to_file="$N2N_OPT_DIR/$acfile${file01%%${line_rep_k}}${line_rep_v}"
+              cp -f "${src_file}" "${to_file}" &&
+                chmod 0755 "${to_file}"
+            fi
+            if [[ "$file01" == *"${line_rep_v}" ]]; then
+              src_file="$N2N_OPT_DIR/$acfile$file01"
+              to_file="$N2N_OPT_DIR/$acfile${file01%%${line_rep_v}}${line_rep_k}"
+              cp -f "${src_file}" "${to_file}" &&
+                chmod 0755 "${to_file}"
+            fi
+          done
         done
       fi
     done &&
