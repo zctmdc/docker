@@ -42,36 +42,29 @@ cd "$N2N_TMP_DIR/Linux/" &&
           n2nsrcdir="$basename/static"
         fi
         for acfile in edge supernode; do
-          cp "$n2nsrcdir/$acfile" "$N2N_OPT_DIR/$acfile$file01" &&
-            chmod 0755 "$N2N_OPT_DIR/$acfile$file01"
-          cp "$n2nsrcdir/$acfile" "$N2N_OPT_DIR/$acfile$file02" &&
-            chmod 0755 "$N2N_OPT_DIR/$acfile$file02"
+          src_file="$n2nsrcdir/$acfile"
+          to_file_01="$N2N_OPT_DIR/$acfile$file01"
+          to_file_02="$N2N_OPT_DIR/$acfile$file02"
+          chmod 0755 "${src_file}" && cp "${src_file}" "${to_file_01}"
+          chmod 0755 "${src_file}" && cp "${src_file}" "${to_file_02}"
           for line_rep in ${replaseKV}; do
             line_rep_k="${line_rep%-*}"
             line_rep_v="${line_rep#*-}"
-            if [[ "$file01" == *"${line_rep_k}" ]]; then
-              src_file="$N2N_OPT_DIR/$acfile$file01"
-              to_file="$N2N_OPT_DIR/$acfile${file01%%${line_rep_k}}${line_rep_v}"
-              cp -f "${src_file}" "${to_file}" &&
-                chmod 0755 "${to_file}"
+            if [[ "${to_file_01}" == *"${line_rep_k}" ]]; then
+              o_to_file="${to_file_01%%${line_rep_k}}${line_rep_v}"
+              cp -f "${src_file}" "${o_to_file}"
             fi
-            if [[ "$file01" == *"${line_rep_v}" ]]; then
-              src_file="$N2N_OPT_DIR/$acfile$file01"
-              to_file="$N2N_OPT_DIR/$acfile${file01%%${line_rep_v}}${line_rep_k}"
-              cp -f "${src_file}" "${to_file}" &&
-                chmod 0755 "${to_file}"
+            if [[ "${to_file_01}" == *"${line_rep_v}" ]]; then
+              o_to_file="${to_file_01%%${line_rep_v}}${line_rep_k}"
+              cp -f "${src_file}" "${o_to_file}"
             fi
-            if [[ "$file02" == *"${line_rep_k}" ]]; then
-              src_file="$N2N_OPT_DIR/$acfile$file02"
-              to_file="$N2N_OPT_DIR/$acfile${file02%%${line_rep_k}}${line_rep_v}"
-              cp -f "${src_file}" "${to_file}" &&
-                chmod 0755 "${to_file}"
+            if [[ "${to_file_02}" == *"${line_rep_k}" ]]; then
+              o_to_file="${to_file_02%%${line_rep_k}}${line_rep_v}"
+              cp -f "${src_file}" "${o_to_file}"
             fi
-            if [[ "$file02" == *"${line_rep_v}" ]]; then
-              src_file="$N2N_OPT_DIR/$acfile$file02"
-              to_file="$N2N_OPT_DIR/$acfile${file02%%${line_rep_v}}${line_rep_k}"
-              cp -f "${src_file}" "${to_file}" &&
-                chmod 0755 "${to_file}"
+            if [[ "${to_file_02}" == *"${line_rep_v}" ]]; then
+              o_to_file="${to_file_02%%${line_rep_v}}${line_rep_k}"
+              cp -f "${src_file}" "${o_to_file}"
             fi
           done
         done
@@ -80,31 +73,24 @@ cd "$N2N_TMP_DIR/Linux/" &&
         machine=$(echo "$basename" | sed 's/.*_//')
         unzip -u -d "$basename" "$line_src_file"
         file01=$(echo "$line_src_file" | sed -e "s/$machine.*//" -e "s/n2n//")"$machine"
-        echo "file01=$file01"
         n2nsrcdir="$basename"
         if [[ -d "$basename/static" ]]; then
           n2nsrcdir="$basename/static"
         fi
         for acfile in edge supernode; do
-          cp "$n2nsrcdir/$acfile" "$N2N_OPT_DIR/$acfile$file01" &&
-            chmod 0755 "$N2N_OPT_DIR/$acfile$file01"
+          src_file="$n2nsrcdir/$acfile"
+          to_file_01="$N2N_OPT_DIR/$acfile$file01"
+          chmod 0755 "${src_file}" && cp "${src_file}" "${to_file_01}"
           for line_rep in ${replaseKV}; do
-            echo "line_rep=${line_rep}"
             line_rep_k="${line_rep%-*}"
             line_rep_v="${line_rep#*-}"
-            echo "$file01 --- ${line_rep_k} --- ${line_rep_v}"
-
-            if [[ "$file01" == *"${line_rep_k}" ]]; then
-              src_file="$N2N_OPT_DIR/$acfile$file01"
-              to_file="$N2N_OPT_DIR/$acfile${file01%%${line_rep_k}}${line_rep_v}"
-              cp -f "${src_file}" "${to_file}" &&
-                chmod 0755 "${to_file}"
+            if [[ "${to_file_01}" == *"${line_rep_k}" ]]; then
+              o_to_file="${to_file_01%%${line_rep_k}}${line_rep_v}"
+              cp -f "${src_file}" "${o_to_file}"
             fi
-            if [[ "$file01" == *"${line_rep_v}" ]]; then
-              src_file="$N2N_OPT_DIR/$acfile$file01"
-              to_file="$N2N_OPT_DIR/$acfile${file01%%${line_rep_v}}${line_rep_k}"
-              cp -f "${src_file}" "${to_file}" &&
-                chmod 0755 "${to_file}"
+            if [[ "${to_file_01}" == *"${line_rep_v}" ]]; then
+              o_to_file="${to_file_01%%${line_rep_v}}${line_rep_k}"
+              cp -f "${src_file}" "${o_to_file}"
             fi
           done
         done
