@@ -5,15 +5,15 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
 RUN set -x \
   && apk add --update --no-cache unzip curl git sed bash \
-  && mkdir -p /usr/local/sbin/
-run wget -O /tmp/qshell-linux-x64-v2.4.2.zip http://devtools.qiniu.com/qshell-linux-x64-v2.4.2.zip \
-  && unzip -u /tmp/qshell-linux-x64-v2.4.2.zip -d /tmp \
-  && mv /tmp/qshell-linux-x64-v2.4.2 /usr/local/sbin/
-COPY frp_download.sh /usr/local/sbin/
-COPY n2n_download.sh /usr/local/sbin/
-COPY run.sh /usr/local/sbin/
+  && mkdir -p /usr/local/bin/
 
-RUN chmod a+x /usr/local/sbin/*.sh
+COPY *.sh /usr/local/bin/
+
+RUN chmod a+x /usr/local/bin/*.sh
+
+RUN wget -O /tmp/qshell-linux-x64-v2.4.2.zip http://devtools.qiniu.com/qshell-linux-x64-v2.4.2.zip \
+  && unzip -u /tmp/qshell-linux-x64-v2.4.2.zip -d /tmp \
+  && mv /tmp/qshell-linux-x64-v2.4.2 /usr/local/bin/
 
 EXPOSE 80
 
@@ -30,4 +30,4 @@ ENV QINIUYUN_NAME ""
 
 ENV FORCE_UPDATE FALSE
 
-CMD ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
+CMD ["/bin/bash", "-c", "/usr/local/bin/run.sh"]

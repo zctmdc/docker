@@ -97,4 +97,4 @@ cd "$N2N_TMP_DIR/Linux/" &&
       fi
     done &&
   echo "$($N2N_OPT_DIR/edge_v2_linux_x64 | grep -Eo 'v\..*r[0-9]+')" >"$N2N_OPT_DIR"/n2n_version.txt &&
-  /usr/local/sbin/qshell-linux-x64-v2.4.2 qupload ~/.qshell/qupload.conf
+  /usr/local/bin/qshell-linux-x64-v2.4.2 qupload ~/.qshell/qupload.conf

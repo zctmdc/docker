@@ -6,7 +6,7 @@ services:
       dockerfile: Dockerfile
     image: zctmdc/file-server:Alpha
     # restart: always
-    volumes:
+    # volumes:
       # - C:\Users\ZCTMDC\OneDrive\cloud\apps\route:/workpath:ro
       # - C:\Users\ZCTMDC\Downloads\share:/workpath:ro
     ports:

@@ -30,3 +30,8 @@ services:
       context: easy-explorer
       dockerfile: Dockerfile
     image: zctmdc/easy-explorer:Alpha
+  frp:
+    build:
+      context: frp
+      dockerfile: Dockerfile
+    image: zctmdc/frp:Alpha

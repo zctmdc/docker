@@ -16,10 +16,10 @@ else
 fi
 
 cat >"/etc/tsocks.conf" <<EOF
-local=${local_sub}
-server=${ss5_server}
-server_port=${ss5_port}
-server_type=5
+local = ${local_sub}
+server = ${ss5_server}
+server_type = 5
+server_port = ${ss5_port}
 EOF
 
 /usr/local/sbin/qshell-linux-x64-v2.4.2 account "${QINIUYUN_AK}" "${QINIUYUN_SK}" "${QINIUYUN_NAME}"

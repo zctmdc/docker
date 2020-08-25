@@ -3,6 +3,8 @@ FROM alpine AS builder
 MAINTAINER zctmdc <zctmdc@outlook.com>
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+# RUN sed -i 's/snapshot.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list
+# RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
 
 WORKDIR /tmp
 RUN buildDeps=" \
