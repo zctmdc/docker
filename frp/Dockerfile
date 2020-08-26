@@ -19,22 +19,22 @@ RUN set -x \
   && rm -rf /tmp/frp_${frp_version}_linux_amd64* \
   &&chmod a+x /usr/local/bin/* && mkdir -p /etc/frp
 
-# 启用FRPC
+# bool 启用FRPC
 ENV FRPC_ENABLE true
 
-# 启用FRPS
+# bool 启用FRPS
 ENV FRPS_ENABLE true
 
-# 下载最新版本
+# bool 下载最新版本
 ENV DOWN_LATEST false
 
-# 检查状态
+# bool 检查状态
 ENV WATCH_STATUS false
 
 # string 鉴权使用的 token 值 客户端需要设置一样的值才能鉴权通过
 ENV token abcd1234
 
-# TCP流多路复用
+# bool TCP流多路复用
 ENV tcp_mux false
 
 # string 日志文件地址 ./frps.log 如果设置为 console，会将日志打印在标准输出中
