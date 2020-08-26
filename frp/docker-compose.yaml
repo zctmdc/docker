@@ -14,7 +14,8 @@ services:
       - FRPS_ENABLE=true
       # 下载最新版本
       - DOWN_LATEST=false
-
+      # 检查状态
+      - WATCH_STATUS=true
       # string 鉴权使用的 token 值 客户端需要设置一样的值才能鉴权通过
       - token=abcd1234
       # TCP流多路复用

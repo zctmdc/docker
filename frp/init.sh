@@ -1,6 +1,9 @@
 if [[ -z "$user" ]]; then
   export user="$(uname -n)"
 fi
+if [[ -z "$subdomain_host" ]]; then
+  export subdomain_host="${server_addr}"
+fi
 if [[ ! -f /etc/frp/frpc.ini || -f /opt/frp/frpc_user.ini ]]; then
   cat >"/etc/frp/frpc.ini" <<EOF
 # ========== 客户端基本配置 START ==========
@@ -47,7 +50,7 @@ dashboard_port = {{ .Envs.dashboard_port }}
 dashboard_user = {{ .Envs.dashboard_user }}
 dashboard_pwd = {{ .Envs.dashboard_pwd }}
 token = {{ .Envs.token }}
-subdomain_host = {{ .Envs.token }}
+subdomain_host = {{ .Envs.subdomain_host }}
 tcp_mux = {{ .Envs.tcp_mux }}
 
 # ========== 服务端基本配置 END ==========

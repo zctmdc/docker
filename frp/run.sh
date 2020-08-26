@@ -1,23 +1,17 @@
 check_status() {
-  while true
-  do
-  sleep 30
-  if [ "$FRPS_ENABLE" == true ]; then
-    if /usr/local/bin/healthcheck_frps.sh 2>&1; then
-      echo "STATUS - FRPS OK"
-    else
-      echo "STATUS - FRPS:ERRO"
-      run_frps
-    fi
+  if [[ ${WATCH_STATUS} != true ]]; then
+    return
   fi
-  if [ "$FRPC_ENABLE" == true ]; then
-    if /usr/local/bin/healthcheck_frpc.sh 2>&1; then
-      echo "STATUS - FRPC OK"
-    else
-      echo "STATUS - FRPC:ERRO"
-      run_frpc
+  while true; do
+    sleep 30
+    /usr/local/bin/healthcheck_frps.sh
+
+    if [ "$FRPC_ENABLE" == true ]; then
+      if ! /usr/local/bin/healthcheck_frpc.sh 2>&1; then
+
+        run_frpc
+      fi
     fi
-  fi
   done
 }
 run_frpc() {

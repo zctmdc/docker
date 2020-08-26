@@ -28,6 +28,9 @@ ENV FRPS_ENABLE true
 # 下载最新版本
 ENV DOWN_LATEST false
 
+# 检查状态
+ENV WATCH_STATUS false
+
 # string 鉴权使用的 token 值 客户端需要设置一样的值才能鉴权通过
 ENV token abcd1234
 
@@ -83,7 +86,7 @@ ENV vhost_http_port 7080
 ENV vhost_https_port 7443
 
 # string 二级域名后缀
-ENV subdomain_host frps.com
+ENV subdomain_host ""
 
 ### FRPC ###
 
@@ -116,4 +119,4 @@ ENV admin_pwd admin
 
 CMD ["/bin/bash", "-c", "/usr/local/bin/run.sh"]
 
-healthcheck --interval=5s --timeout=2s CMD /usr/local/bin/healthcheck_frpc.sh
+healthcheck --interval=5s --timeout=2s CMD /bin/sh /usr/local/bin/healthcheck_frpc.sh
