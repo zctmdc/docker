@@ -1,20 +1,23 @@
 #!/bin/bash
 set -x
-touch /var/log/proxy.log
-nohup /usr/local/sbin/n2n.sh >>/var/log/proxy.log 2>&1 &
-while [ -z $(ifconfig $N2N_TUN | grep "inet addr:" | awk '{print $2}' | cut -c 6-) ]; do
-  echo 等待n2n脚本完成 >>/var/log/proxy.log
-  sleep 1
-done
 if [[ "${N2N_ROUTE}" == "TRUE" ]]; then
   echo ${N2N_ROUTE} -- 启用路由表添加 >>/var/log/proxy.log
-  route add -net $N2N_DESTINATION gw $N2N_GATEWAY
+  if [ -z "${N2N_GATEWAY}" ]; then
+    N2N_GATEWAY="$(ifconfig $N2N_TUN | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')1"
+  fi
+  if [[ "$N2N_GATEWAY" != "$N2N_IP" ]]; then
+    route add -net $N2N_DESTINATION gw $N2N_GATEWAY
+    wan_eth="$(ifconfig | grep eth | awk '{print $1}')"
+    wan_gateway=$(ifconfig $wan_eth | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')1
+    wan_subnet=$(ifconfig $wan_eth | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')0/24
+    route add -net $wan_subnet gw $wan_gateway
+  fi
 fi
 if [[ "${N2N_NAT}" == "TRUE" ]]; then
   echo ${N2N_NAT} -- 启用NAT >>/var/log/proxy.log
 
   lan_eth=$N2N_TUN
-  wan_eth="eth0"
+  wan_eth="$(ifconfig | grep eth | awk '{print $1}')"
   lan_ip=$(ifconfig $lan_eth | grep "inet addr:" | awk '{print $2}' | cut -c 6-)
   lan_gateway=$(ifconfig $lan_eth | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')1
   lan_subnet=$(ifconfig $lan_eth | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')0/24

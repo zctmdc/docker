@@ -1,4 +1,5 @@
 version: "3"
+
 services:
   n2n_ntop:
     build:
@@ -29,3 +30,8 @@ services:
       context: easy-explorer
       dockerfile: Dockerfile
     image: zctmdc/easy-explorer:Alpha
+  frp:
+    build:
+      context: frp
+      dockerfile: Dockerfile
+    image: zctmdc/frp:Alpha

@@ -1,17 +1,18 @@
 FROM ginuerzh/gost as gost_src
 FROM zctmdc/n2n_ntop:Alpha
 
-MAINTAINER zctmdc <zctmdc@outlook.com>
+LABEL zctmdc <zctmdc@outlook.com>
 
 COPY --from=gost_src /bin/gost /bin/
 COPY run.sh /usr/local/sbin/
 COPY proxy.sh /usr/local/sbin/
 
 RUN set -x \
+  && apk add --update --no-cache psmisc \
   && chmod a+x /usr/local/sbin/*.sh
 
 ENV N2N_DESTINATION 192.168.0.0/16
-ENV N2N_GATEWAY 10.10.10.1
+ENV N2N_GATEWAY ""
 ENV N2N_ROUTE FALSE
 ENV N2N_NAT FALSE
 ENV N2N_PROXY TRUE

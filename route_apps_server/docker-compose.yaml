@@ -1,4 +1,5 @@
 version: "3"
+
 volumes:
   route_apps-data:
 services:
@@ -15,8 +16,11 @@ services:
       - FORCE_UPDATE=FALSE
       - FRP_TMP_DIR=/tmp/frp
       - FRP_OPT_DIR=/tmp/bin
+      - QINIUYUN_AK=n_wXv2dFzW0VRiu_gnrorwMtU06vlOXIaXppvEed
+      - QINIUYUN_SK=APYlQp34J-9_wURM6DQdNiKZ5vom2h0erb2XVs1Z
+      - QINIUYUN_NAME=ZCTMDC
     volumes:
       - route_apps-data:/tmp:rw
     ports:
       - 17880:80
-    command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
+    command: ["/bin/bash", "-c", "/usr/local/bin/run.sh"]

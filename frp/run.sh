@@ -5,8 +5,10 @@ check_status() {
   while true; do
     sleep 30
     /usr/local/bin/healthcheck_frps.sh
+
     if [ "$FRPC_ENABLE" == true ]; then
       if ! /usr/local/bin/healthcheck_frpc.sh 2>&1; then
+
         run_frpc
       fi
     fi
@@ -40,7 +42,6 @@ https://ras.lztesu.zctmdc.cn#RAS
 https://qiniu.cdn.rt.zctmdc.cn#七牛云CDN-LZtesu
 http://rt.zctmdc.cn:17880#N2N-LZtesu
 '
-    # echo "${cdn_uris}" | while read line; do
     for line in ${cdn_uris}; do
       c_cdn_uri="${line%#*}"
       if [[ -z ${c_cdn_uri} ]]; then

@@ -1,6 +1,6 @@
 FROM alpine
 
-MAINTAINER zctmdc <zctmdc@outlook.com>
+LABEL zctmdc <zctmdc@outlook.com>
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
@@ -12,7 +12,7 @@ COPY *.sh /usr/local/bin/
 RUN set -x \
   && frp_version=$(curl -s https://github.com/fatedier/frp/releases/latest | grep -Eo "[0-9]+\.[0-9]+\.[0-9]+") \
   && wget -O /tmp/frp_${frp_version}_linux_amd64.tar.gz \
-  https://github.com/fatedier/frp/releases/download/v${frp_version}/frp_${frp_version}_linux_amd64.tar.gz \
+    https://github.com/fatedier/frp/releases/download/v${frp_version}/frp_${frp_version}_linux_amd64.tar.gz \
   && tar -zxvf /tmp/frp_${frp_version}_linux_amd64.tar.gz -C /tmp \
   && mv /tmp/frp_${frp_version}_linux_amd64/frps /usr/local/bin/ \
   && mv /tmp/frp_${frp_version}_linux_amd64/frpc /usr/local/bin/ \
@@ -119,4 +119,4 @@ ENV admin_pwd admin
 
 CMD ["/bin/bash", "-c", "/usr/local/bin/run.sh"]
 
-healthcheck --interval=5s --timeout=2s CMD /bin/sh /usr/local/bin/healthcheck_frpc.sh
+HEALTHCHECK --interval=5s --timeout=2s CMD /bin/sh /usr/local/bin/healthcheck_frpc.sh
