@@ -5,10 +5,8 @@ check_status() {
   while true; do
     sleep 30
     /usr/local/bin/healthcheck_frps.sh
-
     if [ "$FRPC_ENABLE" == true ]; then
       if ! /usr/local/bin/healthcheck_frpc.sh 2>&1; then
-
         run_frpc
       fi
     fi
