@@ -1,0 +1,79 @@
+version: "3"
+services:
+  frp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: zctmdc/frp:Alpha
+    restart: always
+    environment:
+      - TZ=Asia/Shanghai
+      # 启用FRPC
+      - FRPC_ENABLE=true
+      # 启用FRPS
+      - FRPS_ENABLE=true
+      # 下载最新版本
+      - DOWN_LATEST=false
+      # 检查状态
+      - WATCH_STATUS=true
+      # string 鉴权使用的 token 值 客户端需要设置一样的值才能鉴权通过
+      - token=abcd1234
+      # TCP流多路复用
+      - tcp_mux=true
+      # string 日志文件地址 ./frps.log 如果设置为 console，会将日志打印在标准输出中
+      - log_file=console
+      # string 日志等级 trace, debug, info, warn, error
+      - log_level=info
+      # int 日志文件保留天数
+      - log_max_days=3
+      ### FRPS ###
+      # 基础配置 #
+      # string 服务端监听地址
+      - bind_addr=0.0.0.0
+      # int 服务端监听端口 接收 frpc 的连接
+      - bind_port=7000
+      # int 服务端监听KCP协议端口 用于接收采用 KCP 连接的 frpc
+      - kcp_bind_port=7000
+      # int 服务端监听UDP端口 用于辅助创建 P2P 连接
+      - bind_udp_port=7001
+      # string 启用 Dashboard 监听的本地地址
+      - dashboard_addr=0.0.0.0
+      # int 启用 Dashboard 监听的本地端口
+      - dashboard_port=7088
+      # string HTTP BasicAuth 用户名
+      - dashboard_user=admin
+      # string HTTP BasicAuth 密码
+      - dashboard_pwd=admin
+      # HTTP & HTTPS #
+      # int 为 HTTP 类型代理监听的端口 启用后才支持 HTTP 类型的代理，默认不启用
+      - vhost_http_port=7080
+      # int 为 HTTPS 类型代理监听的端口 启用后才支持 HTTPS 类型的代理，默认不启用
+      - vhost_https_port=7443
+      # string 二级域名后缀
+      - subdomain_host=frps.com
+      ### FRPC ###
+      # string 连接服务端的地址
+      - server_addr=localhost
+      # int 连接服务端的端口
+      - server_port=7000
+      # string 用户名 设置此参数后，代理名称会被修改为 {user}.{proxyName}，避免代理名称和其他用户冲突
+      - user=""
+      # string 连接服务端的通信协议 tcp, kcp, websocket
+      - protocol=tcp
+      # string 启用 AdminUI 监听的本地地址
+      - admin_addr=0.0.0.0
+      # int 启用 AdminUI 监听的本地端口
+      - admin_port=7089
+      # string HTTP BasicAuth 用户名
+      - admin_user=admin
+      # string HTTP BasicAuth 密码
+      - admin_pwd=admin
+
+    ports:
+      - 7000:7000
+      - 7001:7001
+      - 7088:7088
+      - 7089:7089
+      - 7080:7080
+      - 7443:7443
+    command: ["/bin/bash", "-c", "/usr/local/bin/run.sh"]

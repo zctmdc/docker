@@ -3,6 +3,8 @@ FROM alpine AS builder
 MAINTAINER zctmdc <zctmdc@outlook.com>
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+# RUN sed -i 's/snapshot.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list
+# RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
 
 WORKDIR /tmp
 RUN buildDeps=" \
@@ -11,6 +13,7 @@ RUN buildDeps=" \
     git \
     linux-headers \
     openssl-dev \
+    libpcap-dev \
   "; \
   \
   set -x \
@@ -42,5 +45,6 @@ ENV N2N_IP 10.10.10.10
 ENV N2N_COMMUNITY n2n
 ENV N2N_KEY test
 ENV N2N_SERVER n2n.lucktu.com:10086
-ENV N2N_ARGS -Av
+ENV N2N_ARGS -A -v
+ENV TZ Asia/Shanghai
 CMD [ "/bin/bash" , "-c" , "/usr/local/sbin/run.sh" ]

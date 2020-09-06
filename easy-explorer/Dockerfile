@@ -41,6 +41,7 @@ EXPOSE 8899
 VOLUME /mnt/share
 
 ENV USER_TOKEN ""
+ENV TZ Asia/Shanghai
 
 WORKDIR /opt/easy-explorer/
 

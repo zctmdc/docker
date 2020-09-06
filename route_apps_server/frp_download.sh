@@ -11,8 +11,7 @@ if [[ ! -s ${1} ]]; then
   FRP_OPT_DIR=/tmp/bin
 fi
 
-mkdir -p ${FRP_TMP_DIR}
-mkdir -p ${FRP_OPT_DIR}
+mkdir -p ${FRP_TMP_DIR} ${FRP_OPT_DIR}
 cd ${FRP_TMP_DIR}/
 frp_version=$(
   curl -s https://github.com/fatedier/frp/releases/latest |
@@ -24,7 +23,7 @@ if [[ "${FORCE_UPDATE}"="FALSE" && -e "${version_file}" && "$(cat ${version_file
   exit
 fi
 echo "FRP - 发现新版本,即将更新"
-rm -rf ${FRP_TMP_DIR} ${FRP_OPT_DIR}
+rm -rf ${FRP_TMP_DIR}/* ${FRP_OPT_DIR}/frp*
 curl -s https://github.com/fatedier/frp/releases/tag/v${frp_version} |
   grep v${frp_version} |
   grep -Eo "frp_.+(gz|zip)" |
@@ -65,3 +64,4 @@ curl -s https://github.com/fatedier/frp/releases/tag/v${frp_version} |
     echo ----------------------------------------------------------------
   done &&
   echo ${frp_version} >${version_file}
+

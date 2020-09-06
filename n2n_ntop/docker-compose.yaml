@@ -30,7 +30,7 @@ services:
       - N2N_COMMUNITY=n2n
       - N2N_KEY=test
       - N2N_SERVER=n2n.lucktu.com:10086
-      - N2N_ARGS=-Av
+      - N2N_ARGS=-A -v
     # volumes:
     #   - ./dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
     command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
@@ -53,7 +53,7 @@ services:
       - N2N_COMMUNITY=n2n
       - N2N_KEY=test
       - N2N_SERVER=n2n.lucktu.com:10086
-      - N2N_ARGS=-Avr
+      - N2N_ARGS=-A -vr
     command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
 
   n2n_edge_static:
@@ -75,5 +75,5 @@ services:
       - N2N_COMMUNITY=n2n
       - N2N_KEY=test
       - N2N_SERVER=n2n.lucktu.com:10086
-      - N2N_ARGS=-Av
+      - N2N_ARGS=-A -v
     command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]

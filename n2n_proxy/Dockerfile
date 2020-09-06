@@ -16,5 +16,6 @@ ENV N2N_ROUTE FALSE
 ENV N2N_NAT FALSE
 ENV N2N_PROXY TRUE
 ENV PROXY_ARGS -L=:14080
+ENV TZ Asia/Shanghai
 
 CMD ["/bin/bash","-c","/usr/local/sbin/run.sh"]

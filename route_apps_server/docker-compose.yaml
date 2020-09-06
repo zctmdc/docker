@@ -9,7 +9,7 @@ services:
     image: zctmdc/route_apps_server:Alpha
     restart: always
     environment:
-      - N2N_TMP_DIR=/tmp
+      - N2N_TMP_DIR=/tmp/n2n
       - N2N_OPT_DIR=/tmp/bin
       - WORK_PATH=/tmp
       - FORCE_UPDATE=FALSE
