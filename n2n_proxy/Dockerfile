@@ -1,7 +1,7 @@
 FROM ginuerzh/gost as gost_src
 FROM zctmdc/n2n_ntop:Alpha
 
-MAINTAINER zctmdc <zctmdc@outlook.com>
+LABEL zctmdc <zctmdc@outlook.com>
 
 COPY --from=gost_src /bin/gost /bin/
 COPY run.sh /usr/local/sbin/

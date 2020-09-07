@@ -1,6 +1,6 @@
 FROM alpine
 
-MAINTAINER zctmdc <zctmdc@outlook.com>
+LABEL zctmdc <zctmdc@outlook.com>
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
@@ -119,4 +119,4 @@ ENV admin_pwd admin
 
 CMD ["/bin/bash", "-c", "/usr/local/bin/run.sh"]
 
-healthcheck --interval=5s --timeout=2s CMD /bin/sh /usr/local/bin/healthcheck_frpc.sh
+HEALTHCHECK --interval=5s --timeout=2s CMD /bin/sh /usr/local/bin/healthcheck_frpc.sh

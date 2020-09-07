@@ -1,5 +1,6 @@
 FROM zctmdc/file-server:Alpha
-MAINTAINER zctmdc <zctmdc@outlook.com>
+
+LABEL zctmdc <zctmdc@outlook.com>
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
