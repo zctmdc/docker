@@ -17,7 +17,7 @@ run_frpc() {
     echo "RUN FRPC"
     killall frpc
     sleep 5
-    /usr/local/bin/frpc -v
+    echo "FRPC version - $(/usr/local/bin/frpc -v)"
     /usr/local/bin/frpc -c /etc/frp/frpc.ini &
   fi
 }
@@ -26,6 +26,7 @@ run_frps() {
     echo "RUN FRPS"
     killall frps
     sleep 5
+    echo "FRPS version - $(/usr/local/bin/frpc -v)"
     /usr/local/bin/frps -c /etc/frp/frps.ini &
   fi
 }
