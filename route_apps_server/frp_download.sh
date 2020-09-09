@@ -50,7 +50,7 @@ curl -s https://github.com/fatedier/frp/releases/tag/v${frp_version} |
       tar -zxvf ${FRP_TMP_DIR}/${file_name}
       ;;
     zip)
-      unzip -u ${FRP_TMP_DIR}/${file_name}
+      unzip -o ${FRP_TMP_DIR}/${file_name}
       ;;
     *)
       echo "未知文件 - ${file_name}"

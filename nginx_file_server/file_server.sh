@@ -1,6 +1,5 @@
 #!/bin/bash
 set -x
-touch /var/log/file_server.log
 DEFALS_PATH="/usr/share/nginx/html"
 if [ -d ${WORK_PATH} ]; then
   echo "${WORK_PATH} 是目录"

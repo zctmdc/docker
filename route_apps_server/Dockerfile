@@ -5,7 +5,7 @@ LABEL zctmdc <zctmdc@outlook.com>
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
 RUN set -x \
-  && apk add --update --no-cache unzip curl git sed bash \
+  && apk add --update --no-cache unzip curl sed bash \
   && mkdir -p /usr/local/bin/
 
 COPY *.sh /usr/local/bin/

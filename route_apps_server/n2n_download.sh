@@ -12,14 +12,9 @@ if [[ ! -s "$1" ]]; then
 fi
 cd "/tmp"
 rm -rf "$N2N_TMP_DIR"
-while [[ ! -d "$N2N_TMP_DIR" ]]; do
-  echo "N2N - 正在克隆"
-  git clone https://github.com/lucktu/n2n.git
-  echo "N2N - 克隆完毕"
-done
-
-mkdir -p "$N2N_OPT_DIR"
-
+wget -O /tmp/n2n-master.zip https://github.com/lucktu/n2n/archive/master.zip
+unzip -o -d "/tmp" /tmp/n2n-master.zip
+mv /tmp/n2n-master "$N2N_TMP_DIR"
 replaseKV='
 el-le
 amd64-x64
