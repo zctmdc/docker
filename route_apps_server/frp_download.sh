@@ -83,4 +83,4 @@ curl -s https://github.com/fatedier/frp/releases/tag/v${frp_version} |
     echo ----------------------------------------------------------------
   done &&
   echo ${frp_version} >${version_file} &&
-  /usr/local/sbin/qshell-linux-x64-v2.4.2 qupload ~/.qshell/qupload.conf
+  /usr/local/bin/qshell-linux-x64-v2.4.2 qupload ~/.qshell/qupload.conf

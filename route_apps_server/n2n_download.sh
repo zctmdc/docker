@@ -26,70 +26,49 @@ cd "$N2N_TMP_DIR/Linux/" &&
   awk '{print $9}' |
     grep "zip" |
     while read line_src_file; do
+      if [[ ! -z $flag_skip ]]; then
+        continue
+      fi
+      dir_name="$(echo $line_src_file | sed 's/\.zip//')"
+      n2nsrcdir="$(pwd)/$(echo $line_src_file | sed -e 's/_v[0-9]\{1,\}\..*//')"
+      machine=$(echo "$n2nsrcdir" | sed 's/.*_//')
+      unzip -o -d "$(pwd)/$dir_name" "$line_src_file"
+      mv -f "$(pwd)/$dir_name" "$n2nsrcdir"
+      if [[ -d "$n2nsrcdir/$dir_name" ]]; then
+        mv -f "$n2nsrcdir/$dir_name/*" "$n2nsrcdir"
+        rm -rf "$n2nsrcdir/$dir_name"
+      fi
+      if [[ -d "$n2nsrcdir/static" ]]; then
+        n2nsrcdir="$n2nsrcdir/static"
+      fi
       if [[ "$line_src_file" =~ "(" ]]; then
-        basename="$(pwd)/$(echo $line_src_file | sed -e 's/_v[0-9]\{1,\}\..*//')"
-        machine=$(echo "$basename" | sed 's/.*_//')
         file01=$(echo "$line_src_file" | sed -e "s/$machine.*//" -e "s/n2n//")$(echo "$machine" | sed -e 's/)//' -e 's/(.*//')
         file02=$(echo "$line_src_file" | sed -e "s/$machine.*//" -e "s/n2n//")$(echo "$machine" | sed -e 's/)//' -e 's/.*(//')
-        n2nsrcdir="$basename"
-        unzip -u -d "$basename" "$line_src_file"
-        if [[ -d "$basename/static" ]]; then
-          n2nsrcdir="$basename/static"
-        fi
-        for acfile in edge supernode; do
-          src_file="$n2nsrcdir/$acfile"
-          to_file_01="$N2N_OPT_DIR/$acfile$file01"
-          to_file_02="$N2N_OPT_DIR/$acfile$file02"
-          chmod 0755 "${src_file}" && cp "${src_file}" "${to_file_01}"
-          chmod 0755 "${src_file}" && cp "${src_file}" "${to_file_02}"
-          for line_rep in ${replaseKV}; do
-            line_rep_k="${line_rep%-*}"
-            line_rep_v="${line_rep#*-}"
-            if [[ "${to_file_01}" == *"${line_rep_k}" ]]; then
-              o_to_file="${to_file_01%%${line_rep_k}}${line_rep_v}"
-              cp -f "${src_file}" "${o_to_file}"
-            fi
-            if [[ "${to_file_01}" == *"${line_rep_v}" ]]; then
-              o_to_file="${to_file_01%%${line_rep_v}}${line_rep_k}"
-              cp -f "${src_file}" "${o_to_file}"
-            fi
-            if [[ "${to_file_02}" == *"${line_rep_k}" ]]; then
-              o_to_file="${to_file_02%%${line_rep_k}}${line_rep_v}"
-              cp -f "${src_file}" "${o_to_file}"
-            fi
-            if [[ "${to_file_02}" == *"${line_rep_v}" ]]; then
-              o_to_file="${to_file_02%%${line_rep_v}}${line_rep_k}"
-              cp -f "${src_file}" "${o_to_file}"
-            fi
-          done
-        done
+        file_n2ns="$file01 $file02"
       else
-        basename="$(pwd)/$(echo $line_src_file | sed -e 's/_v[0-9]\{1,\}\..*//')"
-        machine=$(echo "$basename" | sed 's/.*_//')
-        unzip -u -d "$basename" "$line_src_file"
         file01=$(echo "$line_src_file" | sed -e "s/$machine.*//" -e "s/n2n//")"$machine"
-        n2nsrcdir="$basename"
-        if [[ -d "$basename/static" ]]; then
-          n2nsrcdir="$basename/static"
-        fi
+        file_n2ns="$file01"
+      fi
+      for file_n2n in $file_n2ns; do
         for acfile in edge supernode; do
           src_file="$n2nsrcdir/$acfile"
-          to_file_01="$N2N_OPT_DIR/$acfile$file01"
-          chmod 0755 "${src_file}" && cp "${src_file}" "${to_file_01}"
+          to_file="$N2N_OPT_DIR/$acfile$file_n2n"
+          chmod 0755 "${src_file}" && cp "${src_file}" "${to_file}"
           for line_rep in ${replaseKV}; do
             line_rep_k="${line_rep%-*}"
             line_rep_v="${line_rep#*-}"
-            if [[ "${to_file_01}" == *"${line_rep_k}" ]]; then
-              o_to_file="${to_file_01%%${line_rep_k}}${line_rep_v}"
+            if [[ "${to_file}" == *"${line_rep_k}" ]]; then
+              o_to_file="${to_file%%${line_rep_k}}${line_rep_v}"
               cp -f "${src_file}" "${o_to_file}"
             fi
-            if [[ "${to_file_01}" == *"${line_rep_v}" ]]; then
-              o_to_file="${to_file_01%%${line_rep_v}}${line_rep_k}"
+            if [[ "${to_file}" == *"${line_rep_v}" ]]; then
+              o_to_file="${to_file%%${line_rep_v}}${line_rep_k}"
               cp -f "${src_file}" "${o_to_file}"
             fi
           done
         done
-      fi
+      done
+      flag_skip=true
     done &&
   echo "$($N2N_OPT_DIR/edge_v2_linux_x64 | grep -Eo 'v\..*r[0-9]+')" >"$N2N_OPT_DIR"/n2n_version.txt &&
   /usr/local/bin/qshell-linux-x64-v2.4.2 qupload ~/.qshell/qupload.conf

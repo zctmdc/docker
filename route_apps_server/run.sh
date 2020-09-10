@@ -22,7 +22,7 @@ server_type = 5
 server_port = ${ss5_port}
 EOF
 
-/usr/local/sbin/qshell-linux-x64-v2.4.2 account "${QINIUYUN_AK}" "${QINIUYUN_SK}" "${QINIUYUN_NAME}"
+/usr/local/bin/qshell-linux-x64-v2.4.2 account "${QINIUYUN_AK}" "${QINIUYUN_SK}" "${QINIUYUN_NAME}"
 cat >~/.qshell/qupload.conf <<EOF
 {
   "src_dir": "/tmp/",
@@ -36,9 +36,8 @@ EOF
 
 # echo "$(sed "0,/nameserver.*/s//nameserver 119.29.29.29/" /etc/resolv.conf)" >/etc/resolv.conf
 
-nohup tsocks /usr/local/sbin/frp_download.sh >>/var/log/run.log 2>&1 &
+tsocks /usr/local/bin/frp_download.sh &
 sleep 1
-nohup tsocks /usr/local/sbin/n2n_download.sh >>/var/log/run.log 2>&1 &
+tsocks /usr/local/bin/n2n_download.sh &
 sleep 1
-nohup /usr/local/sbin/file_server.sh >>/var/log/run.log 2>&1 &
-tail -f -n 20 /var/log/run.log
+/usr/local/sbin/file_server.sh
