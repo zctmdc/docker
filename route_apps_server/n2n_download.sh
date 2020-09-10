@@ -26,9 +26,6 @@ cd "$N2N_TMP_DIR/Linux/" &&
   awk '{print $9}' |
     grep "zip" |
     while read line_src_file; do
-      if [[ ! -z $flag_skip ]]; then
-        continue
-      fi
       dir_name="$(echo $line_src_file | sed 's/\.zip//')"
       n2nsrcdir="$(pwd)/$(echo $line_src_file | sed -e 's/_v[0-9]\{1,\}\..*//')"
       machine=$(echo "$n2nsrcdir" | sed 's/.*_//')
@@ -68,7 +65,6 @@ cd "$N2N_TMP_DIR/Linux/" &&
           done
         done
       done
-      flag_skip=true
     done &&
   echo "$($N2N_OPT_DIR/edge_v2_linux_x64 | grep -Eo 'v\..*r[0-9]+')" >"$N2N_OPT_DIR"/n2n_version.txt &&
   /usr/local/bin/qshell qupload ~/.qshell/qupload.conf
