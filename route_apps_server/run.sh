@@ -22,7 +22,7 @@ server_type = 5
 server_port = ${ss5_port}
 EOF
 
-/usr/local/bin/qshell-linux-x64-v2.4.2 account "${QINIUYUN_AK}" "${QINIUYUN_SK}" "${QINIUYUN_NAME}"
+/usr/local/bin/qshell account "${QINIUYUN_AK}" "${QINIUYUN_SK}" "${QINIUYUN_NAME}"
 cat >~/.qshell/qupload.conf <<EOF
 {
   "src_dir": "/tmp/",

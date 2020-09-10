@@ -13,9 +13,9 @@ COPY *.sh /usr/local/bin/
 RUN chmod a+x /usr/local/bin/*.sh
 
 RUN wget -O /tmp/qshell-linux-x64-v2.4.2.zip http://devtools.qiniu.com/qshell-linux-x64-v2.4.2.zip \
-  && unzip -u /tmp/qshell-linux-x64-v2.4.2.zip -d /tmp \
-  && chmod +x /tmp/qshell-linux-x64-v2.4 \
-  && mv /tmp/qshell-linux-x64-v2.4.2 /usr/local/bin/
+  && unzip -o  -d /tmp /tmp/qshell-linux-x64-v2.4.2.zip \
+  && chmod +x /tmp/qshell-linux-x64-v2.4.2 \
+  && mv /tmp/qshell-linux-x64-v2.4.2 /usr/local/bin/qshell
 
 EXPOSE 80
 
