@@ -1,5 +1,6 @@
 #!/bin/bash
-set -x
+# set -x
+
 
 touch /var/log/run.log
 

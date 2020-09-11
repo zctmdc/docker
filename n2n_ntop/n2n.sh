@@ -1,5 +1,6 @@
 #!/bin/bash
-set -x
+# set -x
+
 touch /var/log/n2n.log
 MODE=$(echo "$MODE" | tr '[a-z]' '[A-Z]')
 echo MODE=$(echo "$MODE" | tr '[a-z]' '[A-Z]')

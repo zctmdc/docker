@@ -1,5 +1,6 @@
 #!/bin/bash
-set -x
+# set -x
+
 if [[ "${N2N_ROUTE}" == "TRUE" ]]; then
   echo ${N2N_ROUTE} -- 启用路由表添加
   if [ -z "${N2N_GATEWAY}" ]; then

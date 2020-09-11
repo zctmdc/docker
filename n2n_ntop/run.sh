@@ -1,4 +1,4 @@
 #!/bin/bash
-set -x
+# set -x
 /usr/local/sbin/n2n.sh &
 tail -f /dev/null

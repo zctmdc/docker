@@ -1,5 +1,6 @@
 #!/bin/bash
-set -x
+# set -x
+
 DEFALS_PATH="/usr/share/nginx/html"
 if [ -d ${WORK_PATH} ]; then
   echo "${WORK_PATH} 是目录"

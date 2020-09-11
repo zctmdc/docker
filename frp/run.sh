@@ -1,3 +1,7 @@
+
+#!/bin/bash
+# set -x
+
 check_status() {
   while true; do
     sleep 30

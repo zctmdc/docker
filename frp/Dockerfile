@@ -119,4 +119,4 @@ ENV admin_pwd admin
 
 CMD ["/bin/bash", "-c", "/usr/local/bin/run.sh"]
 
-HEALTHCHECK --interval=5s --timeout=2s CMD /bin/sh /usr/local/bin/healthcheck_frpc.sh
+HEALTHCHECK --interval=5s --timeout=2s CMD /usr/local/bin/healthcheck_frpc.sh

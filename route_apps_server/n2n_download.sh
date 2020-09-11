@@ -1,5 +1,6 @@
 #!/bin/bash
-set -x
+# set -x
+
 
 if [[ -s "$1" ]]; then
   FORCE_UPDATE="$1"
