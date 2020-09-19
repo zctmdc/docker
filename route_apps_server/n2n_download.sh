@@ -30,12 +30,13 @@ cd "$N2N_TMP_DIR/Linux/" &&
       dir_name="$(echo $line_src_file | sed 's/\.zip//')"
       n2nsrcdir="$(pwd)/$(echo $line_src_file | sed -e 's/_v[0-9]\{1,\}\..*//')"
       machine=$(echo "$n2nsrcdir" | sed 's/.*_//')
+      rm -rf "$(pwd)/$dir_name" "$n2nsrcdir"
       unzip -o -d "$(pwd)/$dir_name" "$line_src_file"
-      mv -f "$(pwd)/$dir_name" "$n2nsrcdir"
-      if [[ -d "$n2nsrcdir/$dir_name" ]]; then
-        mv -f "$n2nsrcdir/$dir_name/*" "$n2nsrcdir"
-        rm -rf "$n2nsrcdir/$dir_name"
+      if [[ -d "$(pwd)/$dir_name/$dir_name" ]]; then
+        mv -f "$(pwd)/$dir_name/$dir_name/"* "$(pwd)/$dir_name/"
+        rm -rf "$(pwd)/$dir_name/$dir_name/"
       fi
+      mv -f "$(pwd)/$dir_name" "$n2nsrcdir"
       if [[ -d "$n2nsrcdir/static" ]]; then
         n2nsrcdir="$n2nsrcdir/static"
       fi
