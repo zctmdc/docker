@@ -32,8 +32,8 @@ RUN apk add --update --no-cache openssl dhclient dhcp-server-ldap bash
 COPY --from=builder /usr/local/bin/n2n-benchmark /usr/local/sbin/
 COPY --from=builder /usr/local/sbin/supernode /usr/local/sbin/
 COPY --from=builder /usr/local/sbin/edge /usr/local/sbin/
-COPY n2n.sh /usr/local/sbin/
-COPY run.sh /usr/local/sbin/
+COPY *.sh /usr/local/sbin/
+
 
 RUN set -x \
   && chmod a+x /usr/local/sbin/*.sh
