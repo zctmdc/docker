@@ -1,7 +1,8 @@
 #!/bin/bash
-set -x
+# set -x
+
 if [[ "${N2N_ROUTE}" == "TRUE" ]]; then
-  echo ${N2N_ROUTE} -- 启用路由表添加 >>/var/log/proxy.log
+  echo ${N2N_ROUTE} -- 启用路由表添加
   if [ -z "${N2N_GATEWAY}" ]; then
     N2N_GATEWAY="$(ifconfig $N2N_TUN | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')1"
   fi
@@ -14,7 +15,7 @@ if [[ "${N2N_ROUTE}" == "TRUE" ]]; then
   fi
 fi
 if [[ "${N2N_NAT}" == "TRUE" ]]; then
-  echo ${N2N_NAT} -- 启用NAT >>/var/log/proxy.log
+  echo ${N2N_NAT} -- 启用NAT
 
   lan_eth=$N2N_TUN
   wan_eth="$(ifconfig | grep eth | awk '{print $1}')"
@@ -32,7 +33,6 @@ if [[ "${N2N_NAT}" == "TRUE" ]]; then
 fi
 route -n
 if [[ "${N2N_PROXY}" == "TRUE" ]]; then
-  echo ${N2N_PROXY} -- 启用代理 >>/var/log/proxy.log
-  nohup /bin/gost $PROXY_ARGS >>/var/log/proxy.log 2>&1 &
+  echo ${N2N_PROXY} -- 启用代理
+  /bin/gost $PROXY_ARGS &
 fi
-tail -f -n 20 /var/log/proxy.log

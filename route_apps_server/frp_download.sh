@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x
+# set -x
 
 if [[ -s ${1} ]]; then
   FORCE_UPDATE=${1}
@@ -50,7 +50,7 @@ curl -s https://github.com/fatedier/frp/releases/tag/v${frp_version} |
       tar -zxvf ${FRP_TMP_DIR}/${file_name}
       ;;
     zip)
-      unzip -u ${FRP_TMP_DIR}/${file_name}
+      unzip -o ${FRP_TMP_DIR}/${file_name}
       ;;
     *)
       echo "未知文件 - ${file_name}"
@@ -83,4 +83,4 @@ curl -s https://github.com/fatedier/frp/releases/tag/v${frp_version} |
     echo ----------------------------------------------------------------
   done &&
   echo ${frp_version} >${version_file} &&
-  /usr/local/sbin/qshell-linux-x64-v2.4.2 qupload ~/.qshell/qupload.conf
+  /usr/local/bin/qshell qupload ~/.qshell/qupload.conf
