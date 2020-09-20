@@ -11,7 +11,6 @@ check_status() {
     /usr/local/bin/healthcheck_frps.sh
     if [ "$FRPC_ENABLE" == true ]; then
       if ! /usr/local/bin/healthcheck_frpc.sh 2>&1; then
-        run_frpc
         exit
       fi
     fi
