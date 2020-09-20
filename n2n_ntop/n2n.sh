@@ -1,7 +1,9 @@
 #!/bin/bash
 # set -x
-
-touch /var/log/n2n.log
+N2N_LOG_RUN(){
+  echo $*
+  $*
+}
 MODE=$(echo "$MODE" | tr '[a-z]' '[A-Z]')
 echo MODE=$(echo "$MODE" | tr '[a-z]' '[A-Z]')
 if [[ "${N2N_ARGS:0:1}" != "-" ]]; then
@@ -26,7 +28,7 @@ EOF
 }
 mode_supernode() {
   echo ${MODE} -- 超级节点模式
-  supernode -l $N2N_POR &
+  N2N_LOG_RUN "supernode -l $N2N_POR "&
 }
 
 mode_dhcpd() {
@@ -35,21 +37,24 @@ mode_dhcpd() {
   init_dhcpd_conf
   edge -h
   # N2N_IP=`echo $N2N_IP | grep -Eo "([0-9]{1,3}[\.]){3}"`1
-  edge -d $N2N_TUN -a $N2N_IP -c $N2N_COMMUNITY -k $N2N_KEY -l $N2N_SERVER -f ${N2N_ARGS} &
+  N2N_LOG_RUN "edge -d $N2N_TUN -a $N2N_IP -c $N2N_COMMUNITY -k $N2N_KEY -l $N2N_SERVER -f ${N2N_ARGS}"&
+  while [ -z $(ifconfig $N2N_TUN | grep "inet addr:" | awk '{print $2}' | cut -c 6-) ]; do
+    sleep 1
+  done
   echo DHCPD 服务启动中
   dhcpd -q -d $N2N_TUN &
 }
 
 mode_dhcp() {
   echo ${MODE} -- DHCP客户端模式
-  edge -d $N2N_TUN -a dhcp:0.0.0.0 -c $N2N_COMMUNITY -k $N2N_KEY -l $N2N_SERVER -r -f ${N2N_ARGS} &
+  N2N_LOG_RUN "edge -d $N2N_TUN -a dhcp:0.0.0.0 -c $N2N_COMMUNITY -k $N2N_KEY -l $N2N_SERVER -r -f ${N2N_ARGS}"&
   while [ -z $(ifconfig $N2N_TUN | grep "inet addr:" | awk '{print $2}' | cut -c 6-) ]; do
     dhclient $N2N_TUN
   done
 }
 mode_static() {
   echo ${MODE} -- 静态地址模式
-  edge -d $N2N_TUN -a $N2N_IP -c $N2N_COMMUNITY -k $N2N_KEY -l $N2N_SERVE -f ${N2N_ARGS} &
+  N2N_LOG_RUN "edge -d $N2N_TUN -a $N2N_IP -c $N2N_COMMUNITY -k $N2N_KEY -l $N2N_SERVER -f ${N2N_ARGS}"&
   2>&1 &
   while [ -z $(ifconfig $N2N_TUN | grep "inet addr:" | awk '{print $2}' | cut -c 6-) ]; do
     sleep 1
