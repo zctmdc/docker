@@ -3,7 +3,7 @@ set -x
 
 apt-get update && apt-get upgrade -y
 work_dir=/opt/docker
-if [[ ! -f "${work_dir}" ]]; then
+if [[ ! -d "${work_dir}" ]]; then
   work_dir="$(pwd)"
 fi
 chmod a+x ${work_dir}/my_settings/*.sh
