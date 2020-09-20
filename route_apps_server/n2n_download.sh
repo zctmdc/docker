@@ -1,14 +1,13 @@
 #!/bin/bash
 # set -x
 
-
-if [[ -s "$1" ]]; then
-  FORCE_UPDATE="$1"
+if [[ -z "$FORCE_UPDATE" ]]; then
+  FORCE_UPDATE=FALSE
 fi
-if [[ ! -s "$N2N_TMP_DIR" ]]; then
+if [[ -z "$N2N_TMP_DIR" ]]; then
   N2N_TMP_DIR=/tmp/n2n
 fi
-if [[ ! -s "$1" ]]; then
+if [[ -z "$N2N_OPT_DIR" ]]; then
   N2N_OPT_DIR=/tmp/bin
 fi
 cd "/tmp"

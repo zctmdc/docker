@@ -1,13 +1,13 @@
 #!/bin/bash
 # set -x
 
-if [[ -s ${1} ]]; then
-  FORCE_UPDATE=${1}
+if [[ -z ${FORCE_UPDATE} ]]; then
+  FORCE_UPDATE=FALSE
 fi
-if [[ ! -s ${FRP_TMP_DIR} ]]; then
+if [[ -z ${FRP_TMP_DIR} ]]; then
   FRP_TMP_DIR=/tmp/frp
 fi
-if [[ ! -s ${1} ]]; then
+if [[ -z ${FRP_OPT_DIR} ]]; then
   FRP_OPT_DIR=/tmp/bin
 fi
 
@@ -18,7 +18,7 @@ frp_version=$(
     grep -Eo "[0-9]+\.[0-9]+\.[0-9]+"
 )
 version_file=${FRP_OPT_DIR}/frp_version.txt
-if [[ "${FORCE_UPDATE}"="FALSE" && -e "${version_file}" && "$(cat ${version_file})"=="${frp_version}" ]]; then
+if [[ "${FORCE_UPDATE}"="FALSE" && -e "${version_file}" && "$(cat ${version_file})" == "${frp_version}" ]]; then
   echo "FRP - 已为最新版本"
   exit
 fi
