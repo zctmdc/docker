@@ -23,7 +23,7 @@ if [[ "${FORCE_UPDATE}"="FALSE" && -e "${version_file}" && "$(cat ${version_file
   exit
 fi
 echo "FRP - 发现新版本,即将更新"
-rm -rf ${FRP_TMP_DIR}/* ${FRP_OPT_DIR}/frp*
+rm -rf ${FRP_TMP_DIR}/* ${FRP_OPT_DIR}/frp* ${version_file}
 
 replaseKV='
 el-le
