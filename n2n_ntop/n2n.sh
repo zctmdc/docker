@@ -38,7 +38,7 @@ mode_dhcpd() {
   init_dhcpd_conf
   edge -h
   # N2N_IP=`echo $N2N_IP | grep -Eo "([0-9]{1,3}[\.]){3}"`1
-  N2N_LOG_RUN "edge -d $N2N_TUN -a $N2N_IP -c $N2N_COMMUNITY -k $N2N_KEY -l $N2N_SERVER_IP -f ${N2N_ARGS}" &
+  N2N_LOG_RUN "edge -d $N2N_TUN -a $N2N_IP -c $N2N_COMMUNITY -k $N2N_KEY -l $N2N_SERVER_IP_PORT -f ${N2N_ARGS}" &
   while [ -z $(ifconfig $N2N_TUN | grep "inet addr:" | awk '{print $2}' | cut -c 6-) ]; do
     sleep 1
   done
@@ -48,14 +48,14 @@ mode_dhcpd() {
 
 mode_dhcp() {
   echo ${MODE} -- DHCP客户端模式
-  N2N_LOG_RUN "edge -d $N2N_TUN -a dhcp:0.0.0.0 -c $N2N_COMMUNITY -k $N2N_KEY -l $N2N_SERVER_IP -r -f ${N2N_ARGS}" &
+  N2N_LOG_RUN "edge -d $N2N_TUN -a dhcp:0.0.0.0 -c $N2N_COMMUNITY -k $N2N_KEY -l $N2N_SERVER_IP_PORT -r -f ${N2N_ARGS}" &
   while [ -z $(ifconfig $N2N_TUN | grep "inet addr:" | awk '{print $2}' | cut -c 6-) ]; do
     dhclient $N2N_TUN
   done
 }
 mode_static() {
   echo ${MODE} -- 静态地址模式
-  N2N_LOG_RUN "edge -d $N2N_TUN -a $N2N_IP -c $N2N_COMMUNITY -k $N2N_KEY -l $N2N_SERVER_IP -f ${N2N_ARGS}" &
+  N2N_LOG_RUN "edge -d $N2N_TUN -a $N2N_IP -c $N2N_COMMUNITY -k $N2N_KEY -l $N2N_SERVER_IP_PORT -f ${N2N_ARGS}" &
   2>&1 &
   while [ -z $(ifconfig $N2N_TUN | grep "inet addr:" | awk '{print $2}' | cut -c 6-) ]; do
     sleep 1
@@ -63,13 +63,17 @@ mode_static() {
 }
 
 check_server() {
-  if nslookup $N2N_SERVER 223.5.5.5 >/dev/null 2>&1; then
-    N2N_SERVER_IP=$(nslookup -type=a $N2N_SERVER 223.5.5.5 | grep -v 223.5.5.5 | grep ddress | awk '{print $2}')
-    echo 'N2N_SERVER_IP 解析成功 : $N2N_SERVER_IP'
+  N2N_SERVER_IP=${N2N_SERVER%:*}
+  N2N_SERVER_PORT=${N2N_SERVER#*:}
+  if nslookup $N2N_SERVER_IP 223.5.5.5 >/dev/null 2>&1; then
+    N2N_SERVER_IP=$(nslookup -type=a $N2N_SERVER_IP 223.5.5.5 | grep -v 223.5.5.5 | grep ddress | awk '{print $2}')
+    echo "N2N_SERVER_IP 解析成功 : ${N2N_SERVER_IP}"
+
   else
-    N2N_SERVER_IP=$N2N_SERVER
-    echo 'N2N_SERVER_IP : $N2N_SERVER_IP'
+    echo "N2N_SERVER_IP : ${N2N_SERVER_IP}"
   fi
+  N2N_SERVER_IP_PORT=$N2N_SERVER_IP:$N2N_SERVER_PORT
+  echo "N2N_SERVER_IP_PORT : $N2N_SERVER_IP_PORT"
 }
 
 #main
@@ -96,7 +100,7 @@ ifconfig
 
 while true; do
   sleep 10
-  last_server_ip=$N2N_SERVER
+  last_server_ip=$N2N_SERVER_IP
   check_server
   if [[ $last_server_ip != $N2N_SERVER_IP ]]; then
     killall tail
