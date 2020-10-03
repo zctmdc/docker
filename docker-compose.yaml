@@ -1,4 +1,4 @@
-version: "3"
+version: "3.2"
 
 services:
   n2n_ntop:
@@ -25,11 +25,6 @@ services:
       dockerfile: Dockerfile
     image: zctmdc/route_apps_server:Alpha
 
-  easy_explore:
-    build:
-      context: easy-explorer
-      dockerfile: Dockerfile
-    image: zctmdc/easy-explorer:Alpha
   frp:
     build:
       context: frp

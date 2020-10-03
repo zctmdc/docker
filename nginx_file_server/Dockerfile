@@ -14,8 +14,7 @@ RUN set -x \
   && mv /etc/nginx/conf.d/default.conf /etc/nginx/conf.d/default.conf.example \
   && chmod 0444 /etc/nginx/conf.d/default.conf.example
 
-COPY file_server.sh /usr/local/sbin/
-COPY run.sh /usr/local/sbin/
+COPY *.sh  /usr/local/sbin/
 
 RUN chmod a+x /usr/local/sbin/*.sh
 

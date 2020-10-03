@@ -4,8 +4,7 @@ FROM zctmdc/n2n_ntop:Alpha
 LABEL zctmdc <zctmdc@outlook.com>
 
 COPY --from=gost_src /bin/gost /bin/
-COPY run.sh /usr/local/sbin/
-COPY proxy.sh /usr/local/sbin/
+COPY *.sh  /usr/local/sbin/
 
 RUN set -x \
   && apk add --update --no-cache psmisc \

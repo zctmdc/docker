@@ -1,3 +1,6 @@
+#!/bin/bash
+# set -x
+
 if [[ -z "$user" ]]; then
   export user="$(uname -n)"
 fi

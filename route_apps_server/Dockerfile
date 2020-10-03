@@ -5,7 +5,7 @@ LABEL zctmdc <zctmdc@outlook.com>
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
 RUN set -x \
-  && apk add --update --no-cache unzip curl git sed bash \
+  && apk add --update --no-cache unzip curl sed bash \
   && mkdir -p /usr/local/bin/
 
 COPY *.sh /usr/local/bin/
@@ -13,8 +13,9 @@ COPY *.sh /usr/local/bin/
 RUN chmod a+x /usr/local/bin/*.sh
 
 RUN wget -O /tmp/qshell-linux-x64-v2.4.2.zip http://devtools.qiniu.com/qshell-linux-x64-v2.4.2.zip \
-  && unzip -u /tmp/qshell-linux-x64-v2.4.2.zip -d /tmp \
-  && mv /tmp/qshell-linux-x64-v2.4.2 /usr/local/bin/
+  && unzip -o  -d /tmp /tmp/qshell-linux-x64-v2.4.2.zip \
+  && chmod +x /tmp/qshell-linux-x64-v2.4.2 \
+  && mv /tmp/qshell-linux-x64-v2.4.2 /usr/local/bin/qshell
 
 EXPOSE 80
 

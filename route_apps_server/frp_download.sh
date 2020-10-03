@@ -1,13 +1,13 @@
 #!/bin/bash
-set -x
+# set -x
 
-if [[ -s ${1} ]]; then
-  FORCE_UPDATE=${1}
+if [[ -z ${FORCE_UPDATE} ]]; then
+  FORCE_UPDATE=FALSE
 fi
-if [[ ! -s ${FRP_TMP_DIR} ]]; then
+if [[ -z ${FRP_TMP_DIR} ]]; then
   FRP_TMP_DIR=/tmp/frp
 fi
-if [[ ! -s ${1} ]]; then
+if [[ -z ${FRP_OPT_DIR} ]]; then
   FRP_OPT_DIR=/tmp/bin
 fi
 
@@ -18,12 +18,12 @@ frp_version=$(
     grep -Eo "[0-9]+\.[0-9]+\.[0-9]+"
 )
 version_file=${FRP_OPT_DIR}/frp_version.txt
-if [[ "${FORCE_UPDATE}"="FALSE" && -e "${version_file}" && "$(cat ${version_file})"=="${frp_version}" ]]; then
+if [[ "${FORCE_UPDATE}"="FALSE" && -e "${version_file}" && "$(cat ${version_file})" == "${frp_version}" ]]; then
   echo "FRP - 已为最新版本"
   exit
 fi
 echo "FRP - 发现新版本,即将更新"
-rm -rf ${FRP_TMP_DIR}/* ${FRP_OPT_DIR}/frp*
+rm -rf ${FRP_TMP_DIR}/* ${FRP_OPT_DIR}/frp* ${version_file}
 
 replaseKV='
 el-le
@@ -50,7 +50,7 @@ curl -s https://github.com/fatedier/frp/releases/tag/v${frp_version} |
       tar -zxvf ${FRP_TMP_DIR}/${file_name}
       ;;
     zip)
-      unzip -u ${FRP_TMP_DIR}/${file_name}
+      unzip -o ${FRP_TMP_DIR}/${file_name}
       ;;
     *)
       echo "未知文件 - ${file_name}"
@@ -83,4 +83,4 @@ curl -s https://github.com/fatedier/frp/releases/tag/v${frp_version} |
     echo ----------------------------------------------------------------
   done &&
   echo ${frp_version} >${version_file} &&
-  /usr/local/sbin/qshell-linux-x64-v2.4.2 qupload ~/.qshell/qupload.conf
+  /usr/local/bin/qshell qupload ~/.qshell/qupload.conf
