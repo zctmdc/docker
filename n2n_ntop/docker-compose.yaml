@@ -1,7 +1,7 @@
 version: "3"
 services:
   n2n_supernode:
-    image: zctmdc/n2n_ntop:Alpha
+    image: zctmdc/n2n_ntop:Beta
     restart: always
     privileged: true
     ports:
@@ -18,7 +18,7 @@ services:
       dockerfile: Dockerfile
     depends_on:
       - n2n_supernode
-    image: zctmdc/n2n_ntop:Alpha
+    image: zctmdc/n2n_ntop:Beta
     restart: always
     privileged: true
     # network_mode: host
@@ -42,7 +42,7 @@ services:
     depends_on:
       - n2n_edge_dhcpd
       - n2n_supernode
-    image: zctmdc/n2n_ntop:Alpha
+    image: zctmdc/n2n_ntop:Beta
     restart: always
     privileged: true
     # network_mode: host
@@ -63,7 +63,7 @@ services:
     depends_on:
       - n2n_edge_dhcpd
       - n2n_supernode
-    image: zctmdc/n2n_ntop:Alpha
+    image: zctmdc/n2n_ntop:Beta
     restart: always
     privileged: true
     # network_mode: host
