@@ -1,3 +1,16 @@
+FROM golang:alpine as buildDeps
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+RUN set -x \
+  && apk add --update --no-cache git make
+
+RUN git clone https://github.com/fatedier/frp.git /tmp/frp/ 
+
+WORKDIR /tmp/frp
+
+RUN go env -w GOPROXY=https://goproxy.cn \
+  && make \
+  $$ echo "frp version: `/tmp/frp/bin/frps --version`"
+
 FROM alpine
 
 LABEL zctmdc <zctmdc@outlook.com>
@@ -5,19 +18,15 @@ LABEL zctmdc <zctmdc@outlook.com>
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
 RUN set -x \
-  && apk add --update --no-cache bash psmisc curl wget make
+  && apk add --update --no-cache bash psmisc curl  
+  # wget 
+
+RUN  mkdir -p /etc/frp
 
 COPY *.sh /usr/local/bin/
+COPY --from=buildDeps /tmp/frp/bin/frps  /usr/local/bin/frps
+COPY --from=buildDeps /tmp/frp/bin/frpc  /usr/local/bin/frpc
 
-RUN set -x \
-  && frp_version=$(curl -s https://github.com/fatedier/frp/releases/latest | grep -Eo "[0-9]+\.[0-9]+\.[0-9]+") \
-  && wget -O /tmp/frp_${frp_version}_linux_amd64.tar.gz \
-    https://github.com/fatedier/frp/releases/download/v${frp_version}/frp_${frp_version}_linux_amd64.tar.gz \
-  && tar -zxvf /tmp/frp_${frp_version}_linux_amd64.tar.gz -C /tmp \
-  && mv /tmp/frp_${frp_version}_linux_amd64/frps /usr/local/bin/ \
-  && mv /tmp/frp_${frp_version}_linux_amd64/frpc /usr/local/bin/ \
-  && rm -rf /tmp/frp_${frp_version}_linux_amd64* \
-  &&chmod a+x /usr/local/bin/* && mkdir -p /etc/frp
 
 # 启用FRPC
 ENV FRPC_ENABLE true

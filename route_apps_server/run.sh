@@ -1,11 +1,6 @@
 #!/bin/bash
 # set -x
 
-
-touch /var/log/run.log
-
-apk add tsocks
-
 if ping -c 1 -W 1 proxy_server >/dev/null 2>&1; then
   local_sub=172.0.0.0/255.0.0.0
   ss5_server=proxy_server
@@ -37,8 +32,11 @@ EOF
 
 # echo "$(sed "0,/nameserver.*/s//nameserver 119.29.29.29/" /etc/resolv.conf)" >/etc/resolv.conf
 
-tsocks /usr/local/bin/frp_download.sh &
+# tsocks /usr/local/bin/frp_download.sh &
 sleep 1
 tsocks /usr/local/bin/n2n_download.sh &
 sleep 1
-/usr/local/sbin/file_server.sh
+# /usr/local/sbin/file_server.sh
+
+tsocks /usr/local/sbin/frp_build.sh.sh
+go run /usr/local/bin/fileserver.go
