@@ -9,7 +9,7 @@ WORKDIR /tmp/frp
 
 RUN go env -w GOPROXY=https://goproxy.cn \
   && make \
-  $$ echo "frp version: `/tmp/frp/bin/frps --version`"
+  && echo "frp version: `/tmp/frp/bin/frps --version`"
 
 FROM alpine
 

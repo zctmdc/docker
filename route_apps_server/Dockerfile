@@ -5,8 +5,7 @@ LABEL zctmdc <zctmdc@outlook.com>
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
-RUN set -x \
-  && apk add --update --no-cache make git unzip curl wget sed bash tsocks
+RUN  apk add --update --no-cache make git unzip curl wget sed bash tsocks
 
 RUN echo -e "local = 192.168.0.0/255.255.0.0\nserver = 192.168.1.92\nserver_type = 5\nserver_port = 10808" >"/etc/tsocks.conf"
 
