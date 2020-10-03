@@ -26,7 +26,7 @@ RUN  mkdir -p /etc/frp
 COPY *.sh /usr/local/bin/
 COPY --from=buildDeps /tmp/frp/bin/frps  /usr/local/bin/frps
 COPY --from=buildDeps /tmp/frp/bin/frpc  /usr/local/bin/frpc
-
+RUN chmod a+x /usr/local/bin/*
 
 # 启用FRPC
 ENV FRPC_ENABLE true
