@@ -1,4 +1,3 @@
-/tmp/frp/
 git clone https://github.com/fatedier/frp.git /tmp/frp/
 cd /tmp/frp/
 ./package.sh
