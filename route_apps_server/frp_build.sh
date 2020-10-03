@@ -45,4 +45,6 @@ for os in $os_all; do
             done
         done
     done
-done
+done &&
+    echo ${frp_version} >${version_file} &&
+    /usr/local/bin/qshell qupload ~/.qshell/qupload.conf
