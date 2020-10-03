@@ -12,7 +12,7 @@
 docker run -ti --rm \
  -v path-to-dir:/workpath \
  -p 80:80 \
- zctmdc/file-server:Alpha
+ zctmdc/file-server:Beta
 ```
 
 ### docker-compose
@@ -33,7 +33,7 @@ docker run \
  -ti --rm \
  -v path-to-iso:/workpath \
  -p 8088:80 \
- zctmdc/file-server:Alpha
+ zctmdc/file-server:Beta
 ```
 
 > 挂载文件的方式为 `mount -o loop $file` ，其他类型文件可能会出错！
