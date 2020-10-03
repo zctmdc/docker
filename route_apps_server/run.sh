@@ -29,14 +29,13 @@ cat >~/.qshell/qupload.conf <<EOF
   "check_hash" : true
 }
 EOF
-
 # echo "$(sed "0,/nameserver.*/s//nameserver 119.29.29.29/" /etc/resolv.conf)" >/etc/resolv.conf
-
+sleep 1
 # tsocks /usr/local/bin/frp_download.sh &
 sleep 1
 tsocks /usr/local/bin/n2n_download.sh &
 sleep 1
+tsocks /usr/local/bin/frp_build.sh &
+# sleep 1
 # /usr/local/sbin/file_server.sh
-
-tsocks /usr/local/sbin/frp_build.sh.sh
 go run /usr/local/bin/fileserver.go
