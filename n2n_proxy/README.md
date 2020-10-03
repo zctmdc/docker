@@ -26,10 +26,10 @@ docker run \
   -e SUPERNODE_HOST=n2n.lucktu.com \
   -e SUPERNODE_PORT=10086 \
   -e EDGE_ENCRYPTION=A3 \
-  -e EDGE_ARGS="-v" \
+  -e N2N_ARGS="-f" \
   # -v path/to/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro \
-  -e N2N_NAT=TRUE \
-  -e N2N_PROXY=FALSE \
+  -e EDGE_NAT=TRUE \
+  -e EDGE_PROXY=FALSE \
   zctmdc/n2n_proxy:Alpha
 ```
 
@@ -46,9 +46,9 @@ docker run \
   -e SUPERNODE_HOST=n2n.lucktu.com \
   -e SUPERNODE_PORT=10086 \
   -e EDGE_ENCRYPTION=A3 \
-  -e EDGE_ARGS="-v" \
-  -e N2N_GATEWAY="10.10.10.1"\
-  -e N2N_PROXY=TRUE \
+  -e N2N_ARGS="-f" \
+  -e EDGE_GATEWAY="10.10.10.1"\
+  -e EDGE_PROXY=TRUE \
   -e PROXY_ARGS="-L=:14080" \
   -p 14080:14080 \
   zctmdc/n2n_proxy:Alpha
@@ -60,11 +60,11 @@ docker run \
 
 ```shell
 docker exec -t n2n_proxy_gw \
-  route add [-net|-host] $N2N_DESTINATION gw $N2N_GATEWAY
+  route add [-net|-host] $EDGE_DESTINATION gw $EDGE_GATEWAY
 
 ```
 
-> 请修改 *$N2N_DESTINATION* 和 *$N2N_GATEWAY*
+> 请修改 *$EDGE_DESTINATION* 和 *$EDGE_GATEWAY*
 
 ```shell
 #  比如增加192.168.77.1-255网域的下一跳为10.0.10.77

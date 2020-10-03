@@ -96,7 +96,7 @@ docker run \
   -e SUPERNODE_HOST=n2n.lucktu.com \
   -e SUPERNODE_PORT=10086 \
   -e EDGE_ENCRYPTION=A3 \
-  -e N2N_ARGS="-v" \
+  -e N2N_ARGS="-f" \
   zctmdc/n2n_ntop:Alpha
 ```
 
@@ -129,7 +129,7 @@ docker run \
   -e SUPERNODE_HOST=n2n.lucktu.com \
   -e SUPERNODE_PORT=10086 \
   -e EDGE_ENCRYPTION=A3 \
-  -e N2N_ARGS="-v" \
+  -e N2N_ARGS="-f" \
   zctmdc/n2n_ntop:Alpha
 ```
 
@@ -154,7 +154,7 @@ docker run \
   -e SUPERNODE_HOST=n2n.lucktu.com \
   -e SUPERNODE_PORT=10086 \
   -e EDGE_ENCRYPTION=A3 \
-  -e N2N_ARGS="-v" \
+  -e N2N_ARGS="-f" \
   zctmdc/n2n_ntop:Alpha
 ```
 
@@ -174,7 +174,7 @@ docker run \
   -e SUPERNODE_HOST=n2n.lucktu.com \
   -e SUPERNODE_PORT=10086 \
   -e EDGE_ENCRYPTION=A3 \
-  -e N2N_ARGS="-v" \
+  -e N2N_ARGS="-f" \
   zctmdc/n2n_ntop:Alpha
 ```
 

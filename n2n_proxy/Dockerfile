@@ -7,7 +7,7 @@ COPY --from=gost_src /bin/gost /bin/
 COPY *.sh  /usr/local/sbin/
 
 RUN set -x \
-  && apk add --update --no-cache psmisc \
+  && apk add --update --no-cache psmisc curl \
   && chmod a+x /usr/local/sbin/*.sh
 
 ENV EDGE_DESTINATION 192.168.0.0/16
@@ -16,6 +16,9 @@ ENV EDGE_ROUTE FALSE
 ENV EDGE_NAT FALSE
 ENV EDGE_PROXY TRUE
 ENV PROXY_ARGS -L=:14080
+ENV PROXY_HEALTHCHECK_URL baidu.com
 ENV TZ Asia/Shanghai
 
 CMD ["/bin/bash","-c","/usr/local/sbin/run.sh"]
+
+HEALTHCHECK --interval=5s --timeout=2s CMD /usr/local/sbin/proxy_healthcheck.sh

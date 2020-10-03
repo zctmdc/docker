@@ -1,16 +1,29 @@
 #!/bin/bash
 # set -x
 
+EDGE_ROUTE=$(echo $EDGE_ROUTE | tr '[a-z]' '[A-Z]')
+echo EDGE_ROUTE=$EDGE_ROUTE
+
+EDGE_NAT=$(echo $EDGE_NAT | tr '[a-z]' '[A-Z]')
+echo EDGE_NAT=$EDGE_NAT
+
+EDGE_PROXY=$(echo $EDGE_PROXY | tr '[a-z]' '[A-Z]')
+echo EDGE_PROXY=$EDGE_PROXY
+
 if [[ "${EDGE_ROUTE}" == "TRUE" ]]; then
   echo 启用路由表添加
   if [ -z "${EDGE_GATEWAY}" ]; then
     EDGE_GATEWAY="$(ifconfig $EDGE_TUN | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')1"
+  fi
+  if [[ $MODE == DHCP ]]; then
+    EDGE_IP=$(ifconfig $EDGE_TUN | grep "inet addr:" | awk '{print $2}' | cut -c 6-)
   fi
   if [[ "$EDGE_GATEWAY" != "$EDGE_IP" ]]; then
     route add -net $EDGE_DESTINATION gw $EDGE_GATEWAY
     wan_eth="$(ifconfig | grep eth | awk '{print $1}')"
     wan_gateway=$(ifconfig $wan_eth | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')1
     wan_subnet=$(ifconfig $wan_eth | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')0/24
+
     route add -net $wan_subnet gw $wan_gateway
   fi
 fi
@@ -32,6 +45,6 @@ if [[ "${EDGE_NAT}" == "TRUE" ]]; then
 fi
 route -n
 if [[ "${EDGE_PROXY}" == "TRUE" ]]; then
-  echo ${EDGE_PROXY} -- 启用代理
+  echo 启用代理
   /bin/gost $PROXY_ARGS &
 fi

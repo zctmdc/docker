@@ -7,17 +7,5 @@ while [ -z $(ifconfig $N2N_TUN | grep "inet addr:" | awk '{print $2}' | cut -c 6
   sleep 1
 done
 /usr/local/sbin/proxy.sh &
-status_check() {
-  while true; do
-    echo "STATUS - CHECKING"
-    sleep 30
-    if [[ "$(tail -n 1 /var/log/run.log | grep trying)" ]]; then
-      echo "STATUS - RESTART"
-      killall tail
-    else
-      echo "STATUS - RUNNING"
-    fi
-  done
-}
-# status_check &
+
 tail -f /dev/null
