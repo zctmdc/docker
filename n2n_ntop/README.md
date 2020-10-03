@@ -1,4 +1,4 @@
-# docker n2n_ntop:Alpha
+# docker n2n_ntop:Beta
 
 ## 关于
 
@@ -45,7 +45,7 @@ n2n尽可能在edge节点之间建立直接的P2P连接;如果不可能（通常
 
 ```bash
 docker run --rm -ti \
- -p 10086:10086 zctmdc/n2n_ntop:Alpha \
+ -p 10086:10086 zctmdc/n2n_ntop:Beta \
  supernode -l 10086 -v
 ```
 
@@ -58,7 +58,7 @@ docker run \
   --rm -ti \
   -e MODE="SUPERNODE" \
   -p 10086:10086/udp \
-  zctmdc/n2n_ntop:Alpha
+  zctmdc/n2n_ntop:Beta
 ```
 
 * 后台模式
@@ -71,7 +71,7 @@ docker run \
   -e N2N_PORT=10086 \
   -e N2N_ARGS="-v" \
   -p 10086:10086/udp \
-  zctmdc/n2n_ntop:Alpha
+  zctmdc/n2n_ntop:Beta
 ```
 
 ### 建立 *edge*
@@ -79,7 +79,7 @@ docker run \
 * 前台模式
 
 ```bash
-docker run --rm -ti --privileged zctmdc/n2n_ntop:Alpha
+docker run --rm -ti --privileged zctmdc/n2n_ntop:Beta
 ```
 
 * 后台模式
@@ -96,7 +96,7 @@ docker run \
   -e N2N_KEY="test" \
   -e N2N_SERVER="n2n.lucktu.com:10086" \
   -e N2N_ARGS="-Av" \
-  zctmdc/n2n_ntop:Alpha
+  zctmdc/n2n_ntop:Beta
 ```
 
 ## 更多模式
@@ -110,7 +110,7 @@ docker run \
   -e MODE="SUPERNODE" \
   -e N2N_PORT=10086 \
   -p 10086:10086/udp \
-  zctmdc/n2n_ntop:Alpha
+  zctmdc/n2n_ntop:Beta
 ```
 
 ### DHCPD - DHCP服务模式
@@ -126,7 +126,7 @@ docker run \
   -e N2N_COMMUNITY="n2n" \
   -e N2N_KEY="test" \
   -e N2N_SERVER="n2n.lucktu.com:10086" \
-  zctmdc/n2n_ntop:Alpha
+  zctmdc/n2n_ntop:Beta
 ```
 
 如果你需要自定义DHCPD服务配置文件
@@ -148,7 +148,7 @@ docker run \
   -e N2N_KEY="test" \
   -e N2N_SERVER="n2n.lucktu.com:10086" \
   -e N2N_ARGS="-Avr" \
-  zctmdc/n2n_ntop:Alpha
+  zctmdc/n2n_ntop:Beta
 ```
 
 ### STATIC - 静态模式
@@ -164,7 +164,7 @@ docker run \
   -e N2N_COMMUNITY="n2n" \
   -e N2N_KEY="test" \
   -e N2N_SERVER="n2n.lucktu.com:10086" \
-  zctmdc/n2n_ntop:Alpha
+  zctmdc/n2n_ntop:Beta
 ```
 
 ## 环境变量介绍
