@@ -1,26 +1,32 @@
 #!/bin/bash
 # set -x
+
 N2N_LOG_RUN() {
   echo $*
   $*
 }
 
-MODE=$(echo "$MODE" | tr '[a-z]' '[A-Z]')
-echo MODE=$(echo "$MODE" | tr '[a-z]' '[A-Z]')
-if [[ "${N2N_ARGS:0:1}" != "-" ]]; then
-  N2N_ARGS=-${N2N_ARGS}
+MODE=$(echo $MODE | tr '[a-z]' '[A-Z]')
+echo MODE=$MODE
+echo N2N_ARGS=$N2N_ARGS
+if [[ "${EDGE_ENCRYPTION:0:1}" != "-" ]]; then
+  EDGE_ENCRYPTION=-$EDGE_ENCRYPTION
 fi
-echo N2N_ARGS=${N2N_ARGS}
+
+echo EDGE_ENCRYPTION=$EDGE_ENCRYPTION
+if [[ "${N2N_ARGS:0:1}" != "-" ]]; then
+  N2N_ARGS=-$N2N_ARGS
+fi
 
 init_dhcpd_conf() {
-  IP_PREFIX=$(echo $N2N_IP | grep -Eo "([0-9]{1,3}[\.]){3}")
+  IP_PREFIX=$(echo $EDGE_IP | grep -Eo "([0-9]{1,3}[\.]){3}")
   if [ ! -f "/etc/dhcp/dhcpd.conf" ]; then
     mkdir -p /etc/dhcp/
     cat >"/etc/dhcp/dhcpd.conf" <<EOF
   authoritative;
   ddns-update-style none;
   ignore client-updates;
-  subnet ${IP_PREFIX}0 netmask 255.255.255.0 {
+  subnet ${IP_PREFIX}0 netmask ${EDGE_NETMASK} {
     range ${IP_PREFIX}60 ${IP_PREFIX}180;
     default-lease-time 600;
     max-lease-time 7200;
@@ -28,53 +34,66 @@ init_dhcpd_conf() {
 EOF
   fi
 }
+
 mode_supernode() {
-  echo ${MODE} -- 超级节点模式
-  N2N_LOG_RUN "supernode -l $N2N_POR " &
+  echo $MODE -- 超级节点模式
+  N2N_LOG_RUN "supernode -l $SUPERNODE_PORT " &
+}
+
+check_edge() {
+  while [ -z $(ifconfig $EDGE_TUN | grep "inet addr:" | awk '{print $2}' | cut -c 6-) ]; do
+    if [[ $MODE == "DHCP" ]]; then
+      dhclient $EDGE_TUN
+    fi
+    sleep 1
+  done
+}
+
+run_edge() {
+  if [[ $EDGE_KEY ]]; then
+    N2N_LOG_RUN "edge -d $EDGE_TUN -a $EDGE_IP_AGE -c $EDGE_COMMUNITY -s $EDGE_NETMASK -i $EDGE_REG_INTERVAL -l $SUPERNODE_IP:$SUPERNODE_PORT $N2N_ARGS" &
+  else
+    N2N_LOG_RUN "edge -d $EDGE_TUN -a $EDGE_IP_AGE -c $EDGE_COMMUNITY -k $EDGE_KEY -s $EDGE_NETMASK -i $EDGE_REG_INTERVAL -l $SUPERNODE_IP:$SUPERNODE_PORT $EDGE_ENCRYPTION $N2N_ARGS" &
+  fi
 }
 
 mode_dhcpd() {
   touch /var/lib/dhcp/dhcpd.leases
-  echo ${MODE} -- DHCPD 服务器模式
+  echo $MODE -- DHCPD 服务器模式
   init_dhcpd_conf
-  edge -h
-  # N2N_IP=`echo $N2N_IP | grep -Eo "([0-9]{1,3}[\.]){3}"`1
-  N2N_LOG_RUN "edge -d $N2N_TUN -a $N2N_IP -c $N2N_COMMUNITY -k $N2N_KEY -l $N2N_SERVER_IP_PORT -f ${N2N_ARGS}" &
-  while [ -z $(ifconfig $N2N_TUN | grep "inet addr:" | awk '{print $2}' | cut -c 6-) ]; do
-    sleep 1
-  done
+  # EDGE_IP=`echo $EDGE_IP | grep -Eo "([0-9]{1,3}[\.]){3}"`1
+  EDGE_IP_AGE=$EDGE_IP
+  run_edge
+  check_edge
   echo DHCPD 服务启动中
-  dhcpd -q -d $N2N_TUN &
+  dhcpd -q -d $EDGE_TUN &
 }
 
 mode_dhcp() {
-  echo ${MODE} -- DHCP客户端模式
-  N2N_LOG_RUN "edge -d $N2N_TUN -a dhcp:0.0.0.0 -c $N2N_COMMUNITY -k $N2N_KEY -l $N2N_SERVER_IP_PORT -r -f ${N2N_ARGS}" &
-  while [ -z $(ifconfig $N2N_TUN | grep "inet addr:" | awk '{print $2}' | cut -c 6-) ]; do
-    dhclient $N2N_TUN
-  done
+  echo $MODE -- DHCP客户端模式
+  EDGE_IP_AGE="dhcp:0.0.0.0 -r"
+  run_edge
+  check_edge
 }
 
 mode_static() {
-  echo ${MODE} -- 静态地址模式
-  N2N_LOG_RUN "edge -d $N2N_TUN -a $N2N_IP -c $N2N_COMMUNITY -k $N2N_KEY -l $N2N_SERVER_IP_PORT -f ${N2N_ARGS}" &
-  2>&1 &
-  while [ -z $(ifconfig $N2N_TUN | grep "inet addr:" | awk '{print $2}' | cut -c 6-) ]; do
-    sleep 1
-  done
+  echo $MODE -- 静态地址模式
+  EDGE_IP_AGE=$EDGE_IP
+  run_edge
+  check_edge
 }
 
 check_server() {
-  N2N_SERVER_IP=${N2N_SERVER%:*}
-  N2N_SERVER_PORT=${N2N_SERVER#*:}
-  if nslookup $N2N_SERVER_IP 223.5.5.5 >/dev/null 2>&1; then
-    N2N_SERVER_IP=$(nslookup -type=a $N2N_SERVER_IP 223.5.5.5 | grep -v 223.5.5.5 | grep ddress | awk '{print $2}')
-    echo "N2N_SERVER_IP 解析成功 : ${N2N_SERVER_IP}"
+  if ping -c 1 $SUPERNODE_HOST >/dev/null 2>&1; then
+    SUPERNODE_IP=$(ping -c 1 $SUPERNODE_HOST | grep -Eo "([0-9]{1,3}\.){3}[0-9]{1,3}" | head -n 1)
+    echo "成功PING SUPERNODE_IP : $SUPERNODE_IP"
+  elif nslookup $SUPERNODE_HOST 223.5.5.5 >/dev/null 2>&1; then
+    SUPERNODE_IP=$(nslookup -type=a $SUPERNODE_HOST 223.5.5.5 | grep -v 223.5.5.5 | grep ddress | awk '{print $2}')
+    echo "成功nslookup SUPERNODE_IP : $SUPERNODE_IP"
   else
-    echo "N2N_SERVER_IP : ${N2N_SERVER_IP}"
+    SUPERNODE_IP=$SUPERNODE_HOST
+    echo "SUPERNODE_IP : $SUPERNODE_IP"
   fi
-  N2N_SERVER_IP_PORT=$N2N_SERVER_IP:$N2N_SERVER_PORT
-  echo "N2N_SERVER_IP_PORT : $N2N_SERVER_IP_PORT"
 }
 
 #main
@@ -93,18 +112,26 @@ STATIC)
   mode_static
   ;;
 *)
-  echo ${MODE} -- 判断失败,使用DHCP模式
-  mode_dhcp
+  echo $MODE -- 判断失败
+  exit 1
   ;;
 esac
+
 ifconfig
 
 while true; do
-  sleep 10
-  last_server_ip=$N2N_SERVER_IP
-  check_server
-  if [[ $last_server_ip != $N2N_SERVER_IP ]]; then
-    killall tail
+  sleep 30
+  case $MODE in
+  DHCPD | DHCP | STATIC)
+    last_supernode_ip=$SUPERNODE_IP
+    check_server
+    if [[ $last_supernode_ip != $SUPERNODE_IP ]]; then
+      killall tail
+      break
+    fi
+    ;;
+  *)
     break
-  fi
+    ;;
+  esac
 done

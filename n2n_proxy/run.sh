@@ -19,5 +19,5 @@ status_check() {
     fi
   done
 }
-# status_check &s
+# status_check &
 tail -f /dev/null

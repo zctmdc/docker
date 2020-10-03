@@ -68,8 +68,7 @@ docker run \
   -d --restart=always \
   --name=supernode \
   -e MODE="SUPERNODE" \
-  -e N2N_PORT=10086 \
-  -e N2N_ARGS="-v" \
+  -e SUPERNODE_PORT=10086 \
   -p 10086:10086/udp \
   zctmdc/n2n_ntop:Alpha
 ```
@@ -91,11 +90,13 @@ docker run \
   --privileged \
   --net=host \
   -e MODE="STATIC" \
-  -e N2N_IP="10.10.10.10" \
-  -e N2N_COMMUNITY="n2n" \
-  -e N2N_KEY="test" \
-  -e N2N_SERVER="n2n.lucktu.com:10086" \
-  -e N2N_ARGS="-Av" \
+  -e EDGE_IP="10.10.10.10" \
+  -e EDGE_COMMUNITY="n2n" \
+  -e EDGE_KEY="test" \
+  -e SUPERNODE_HOST=n2n.lucktu.com \
+  -e SUPERNODE_PORT=10086 \
+  -e EDGE_ENCRYPTION=A3 \
+  -e N2N_ARGS="-v" \
   zctmdc/n2n_ntop:Alpha
 ```
 
@@ -108,26 +109,30 @@ docker run \
   -d --restart=always \
   --name=supernode \
   -e MODE="SUPERNODE" \
-  -e N2N_PORT=10086 \
+  -e SUPERNODE_PORT=10086 \
   -p 10086:10086/udp \
   zctmdc/n2n_ntop:Alpha
 ```
 
-### DHCPD - DHCP服务模式
+### DHCPD - DHCP服务端模式
 
 ```bash
 docker run \
   -d --restart=always \
-  --name n2n_edge_dhcpd \
+  --name n2n_edge \
   --privileged \
   --net=host \
   -e MODE="DHCPD" \
-  -e N2N_IP="10.10.10.1" \
-  -e N2N_COMMUNITY="n2n" \
-  -e N2N_KEY="test" \
-  -e N2N_SERVER="n2n.lucktu.com:10086" \
+  -e EDGE_IP="10.10.10.1" \
+  -e EDGE_COMMUNITY="n2n" \
+  -e EDGE_KEY="test" \
+  -e SUPERNODE_HOST=n2n.lucktu.com \
+  -e SUPERNODE_PORT=10086 \
+  -e EDGE_ENCRYPTION=A3 \
+  -e N2N_ARGS="-v" \
   zctmdc/n2n_ntop:Alpha
 ```
+
 
 如果你需要自定义DHCPD服务配置文件
 
@@ -135,50 +140,58 @@ docker run \
  -v path/to/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro \
  ```
 
-### DHCP - DHCP客户模式
+### DHCP - DHCP动态IP模式
 
 ```bash
 docker run \
   -d --restart=always \
-  --name n2n_edge_dhcp \
+  --name n2n_edge \
   --privileged \
   --net=host \
   -e MODE="DHCP" \
-  -e N2N_COMMUNITY="n2n" \
-  -e N2N_KEY="test" \
-  -e N2N_SERVER="n2n.lucktu.com:10086" \
-  -e N2N_ARGS="-Avr" \
+  -e EDGE_COMMUNITY="n2n" \
+  -e EDGE_KEY="test" \
+  -e SUPERNODE_HOST=n2n.lucktu.com \
+  -e SUPERNODE_PORT=10086 \
+  -e EDGE_ENCRYPTION=A3 \
+  -e N2N_ARGS="-v" \
   zctmdc/n2n_ntop:Alpha
 ```
 
-### STATIC - 静态模式
+
+### STATIC - 静态IP模式
 
 ```bash
 docker run \
   -d --restart=always \
-  --name n2n_edge_static \
+  --name n2n_edge \
   --privileged \
   --net=host \
   -e MODE="STATIC" \
-  -e N2N_IP="10.10.10.100" \
-  -e N2N_COMMUNITY="n2n" \
-  -e N2N_KEY="test" \
-  -e N2N_SERVER="n2n.lucktu.com:10086" \
+  -e EDGE_IP="10.10.10.10" \
+  -e EDGE_COMMUNITY="n2n" \
+  -e EDGE_KEY="test" \
+  -e SUPERNODE_HOST=n2n.lucktu.com \
+  -e SUPERNODE_PORT=10086 \
+  -e EDGE_ENCRYPTION=A3 \
+  -e N2N_ARGS="-v" \
   zctmdc/n2n_ntop:Alpha
 ```
+
 
 ## 环境变量介绍
 
 |变量名|变量说明|备注|对应参数|
 |---:|:---|:---|:---|
-|MODE|模式|对应启动的模式| *`SUPERNODE`* *`DHCP`* *`STATIC`* *`DHCPD`* |
-|N2N_PORT|超级节点端口|在SUPERNODE中使用|-l|
-|N2N_SERVER|要连接的N2N超级节点|IP:port|-l|
-|N2N_IP|静态IP|在静态模式和DHCPD使用|-a|
-|N2N_COMMUNITY|组网名称|在EDGE中使用|-c|
-|N2N_KEY|组网密码|在EDGE中使用|-k|
-|N2N_TUN|网卡名|edge生成的网卡名字|-d|
-|N2N_ARGS|更多参数|运行时附加的更多参数|-Av|
+|MODE|模式|对应启动的模式| *`SUPERNODE`* *`DHCPD`*  *`DHCP`* *`STATIC`* |
+|SUPERNODE_PORT|超级节点端口|在SUPERNODE/EDGE中使用|-l $SUPERNODE_PORT|
+|SUPERNODE_HOST|要连接的N2N超级节点|IP/HOST|-l $SUPERNODE_HOST:$SUPERNODE_PORT|
+|EDGE_IP|静态IP|在静态模式和DHCPD使用|-a $EDGE_IP|
+|EDGE_COMMUNITY|组网名称|在EDGE中使用|-c $EDGE_COMMUNITY|
+|EDGE_KEY|组网密码|在EDGE中使用|-k $EDGE_KEY|
+|EDGE_ENCRYPTION|加密方式|edge间连接加密方式|-A2 = Twofish (default), -A3 or -A (deprecated) = AES-CBC, -A4 = ChaCha20, -A5 = Speck-CTR.|
+|EDGE_TUN|网卡名|edge使用的网卡名|-d $EDGE_TUN|
+|N2N_ARGS|更多参数|运行时附加的更多参数|-v -f|
 
 更多帮助请参考 [好运博客][好运博客] 中 [N2N 新手向导及最新信息][N2N 新手向导及最新信息]
 
@@ -188,7 +201,7 @@ docker run \
 
 ```bash
 git clone -b alpha https://github.com/zctmdc/docker.git
-# docker-compose build #编译全部
+# docker-compose build #编译
 
 #启动 n2n_edge_dhcp
 cd n2n_ntop

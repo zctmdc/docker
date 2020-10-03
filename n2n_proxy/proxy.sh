@@ -1,23 +1,22 @@
 #!/bin/bash
 # set -x
 
-if [[ "${N2N_ROUTE}" == "TRUE" ]]; then
-  echo ${N2N_ROUTE} -- 启用路由表添加
-  if [ -z "${N2N_GATEWAY}" ]; then
-    N2N_GATEWAY="$(ifconfig $N2N_TUN | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')1"
+if [[ "${EDGE_ROUTE}" == "TRUE" ]]; then
+  echo 启用路由表添加
+  if [ -z "${EDGE_GATEWAY}" ]; then
+    EDGE_GATEWAY="$(ifconfig $EDGE_TUN | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')1"
   fi
-  if [[ "$N2N_GATEWAY" != "$N2N_IP" ]]; then
-    route add -net $N2N_DESTINATION gw $N2N_GATEWAY
+  if [[ "$EDGE_GATEWAY" != "$EDGE_IP" ]]; then
+    route add -net $EDGE_DESTINATION gw $EDGE_GATEWAY
     wan_eth="$(ifconfig | grep eth | awk '{print $1}')"
     wan_gateway=$(ifconfig $wan_eth | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')1
     wan_subnet=$(ifconfig $wan_eth | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')0/24
     route add -net $wan_subnet gw $wan_gateway
   fi
 fi
-if [[ "${N2N_NAT}" == "TRUE" ]]; then
-  echo ${N2N_NAT} -- 启用NAT
-
-  lan_eth=$N2N_TUN
+if [[ "${EDGE_NAT}" == "TRUE" ]]; then
+  echo 启用NAT
+  lan_eth=$EDGE_TUN
   wan_eth="$(ifconfig | grep eth | awk '{print $1}')"
   lan_ip=$(ifconfig $lan_eth | grep "inet addr:" | awk '{print $2}' | cut -c 6-)
   lan_gateway=$(ifconfig $lan_eth | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')1
@@ -32,7 +31,7 @@ if [[ "${N2N_NAT}" == "TRUE" ]]; then
   iptables -t nat -A POSTROUTING -s $lan_subnet -o $wan_eth -j MASQUERADE
 fi
 route -n
-if [[ "${N2N_PROXY}" == "TRUE" ]]; then
-  echo ${N2N_PROXY} -- 启用代理
+if [[ "${EDGE_PROXY}" == "TRUE" ]]; then
+  echo ${EDGE_PROXY} -- 启用代理
   /bin/gost $PROXY_ARGS &
 fi

@@ -1,6 +1,9 @@
 version: "3"
 services:
   n2n_supernode:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: zctmdc/n2n_ntop:Alpha
     restart: always
     privileged: true
@@ -8,14 +11,10 @@ services:
       - 10086:10086/udp
     environment:
       - MODE=SUPERNODE
-      - N2N_PORT=10086
+      - SUPERNODE_PORT=10086
       - N2N_ARGS=-v
-    command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
 
   n2n_edge_dhcpd:
-    build:
-      context: .
-      dockerfile: Dockerfile
     depends_on:
       - n2n_supernode
     image: zctmdc/n2n_ntop:Alpha
@@ -24,21 +23,20 @@ services:
     # network_mode: host
     environment:
       - MODE=DHCPD
-      - N2N_PORT=10086
-      - N2N_TUN=edge_dhcpd
-      - N2N_IP=10.10.10.1
-      - N2N_COMMUNITY=n2n
-      - N2N_KEY=test
-      - N2N_SERVER=n2n.lucktu.com:10086
-      - N2N_ARGS=-A -v
+      - SUPERNODE_HOST=n2n_supernode
+      - SUPERNODE_PORT=10086
+      - EDGE_TUN=edge_dhcpd
+      - EDGE_IP=10.10.10.1
+      - EDGE_COMMUNITY=n2n
+      - EDGE_KEY=
+      - EDGE_ENCRYPTION=A3
+      - N2N_ARGS=-v
     # volumes:
     #   - ./dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
-    command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
+    external_links:
+      - n2n_supernode:n2n_supernode
 
   n2n_edge_dhcp:
-    build:
-      context: .
-      dockerfile: Dockerfile
     depends_on:
       - n2n_edge_dhcpd
       - n2n_supernode
@@ -48,20 +46,18 @@ services:
     # network_mode: host
     environment:
       - MODE=DHCP
-      - N2N_PORT=10086
-      - N2N_TUN=edge_dhcp
-      - N2N_COMMUNITY=n2n
-      - N2N_KEY=test
-      - N2N_SERVER=n2n.lucktu.com:10086
-      - N2N_ARGS=-A -vr
-    command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
+      - SUPERNODE_HOST=n2n_supernode
+      - SUPERNODE_PORT=10086
+      - EDGE_TUN=edge_dhcp
+      - EDGE_COMMUNITY=n2n
+      - EDGE_KEY=
+      - EDGE_ENCRYPTION=A3
+      - N2N_ARGS=-v
+    external_links:
+      - n2n_supernode:n2n_supernode
 
   n2n_edge_static:
-    build:
-      context: .
-      dockerfile: Dockerfile
     depends_on:
-      - n2n_edge_dhcpd
       - n2n_supernode
     image: zctmdc/n2n_ntop:Alpha
     restart: always
@@ -69,11 +65,13 @@ services:
     # network_mode: host
     environment:
       - MODE=STATIC
-      - N2N_PORT=10086
-      - N2N_TUN=edge_static
-      - N2N_IP=10.10.10.100
-      - N2N_COMMUNITY=n2n
-      - N2N_KEY=test
-      - N2N_SERVER=n2n.lucktu.com:10086
-      - N2N_ARGS=-A -v
-    command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
+      - SUPERNODE_HOST=n2n_supernode
+      - SUPERNODE_PORT=10086
+      - EDGE_TUN=edge_static
+      - EDGE_IP=10.10.10.9
+      - EDGE_COMMUNITY=n2n
+      - EDGE_KEY=
+      - EDGE_ENCRYPTION=A3
+      - N2N_ARGS=-v
+    external_links:
+      - n2n_supernode:n2n_supernode
