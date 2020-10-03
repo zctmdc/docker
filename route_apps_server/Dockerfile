@@ -1,5 +1,5 @@
 
-FROM hkjn/fileserver
+FROM golang:alpine
 
 LABEL zctmdc <zctmdc@outlook.com>
 
