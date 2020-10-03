@@ -24,6 +24,6 @@ func main() {
 	s := &http.Server{
 		Addr: addr,
 	}
-	fmt.Println("服务器启动中 %s : %s..\n", filesDir,addr)
+	fmt.Printf("服务器启动中 : %s - %s..\n", filesDir,addr)
 	log.Fatal(s.ListenAndServe())
 }
