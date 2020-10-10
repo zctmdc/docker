@@ -21,4 +21,4 @@ ENV TZ Asia/Shanghai
 
 CMD ["/bin/bash","-c","/usr/local/sbin/run.sh"]
 
-HEALTHCHECK --interval=5s --timeout=2s CMD /usr/local/sbin/proxy_healthcheck.sh
+HEALTHCHECK --interval=20s --timeout=10s CMD /usr/local/sbin/proxy_healthcheck.sh
