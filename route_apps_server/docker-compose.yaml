@@ -23,4 +23,3 @@ services:
       - route_apps-data:/tmp:rw
     ports:
       - 17880:80
-    command: ["/bin/bash", "-c", "/usr/local/bin/run.sh"]

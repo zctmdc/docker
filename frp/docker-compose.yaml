@@ -76,4 +76,3 @@ services:
       - 7089:7089
       - 7080:7080
       - 7443:7443
-    command: ["/bin/bash", "-c", "/usr/local/bin/run.sh"]

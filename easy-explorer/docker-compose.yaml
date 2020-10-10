@@ -16,4 +16,3 @@ services:
     ports:
       - 2300:2300
       - 8899:8899
-    command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
