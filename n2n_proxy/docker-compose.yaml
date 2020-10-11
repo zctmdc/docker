@@ -1,6 +1,9 @@
 version: "3"
 services:
   n2n_supernode:
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: zctmdc/n2n_ntop:Alpha
     restart: always
     privileged: true
@@ -11,10 +14,7 @@ services:
       - SUPERNODE_PORT=10086
       - N2N_ARGS=-v -f
 
-  n2n_proxy_nat:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  n2n_proxy_dhcpd:
     image: zctmdc/n2n_proxy:Alpha
     restart: always
     privileged: true
@@ -22,7 +22,7 @@ services:
       - MODE=DHCPD
       - SUPERNODE_HOST=n2n_supernode
       - SUPERNODE_PORT=10086
-      - EDGE_TUN=proxy_dhcpd
+      - EDGE_TUN=edge_proxy_dhcpd
       - EDGE_IP=10.10.10.1
       - EDGE_COMMUNITY=n2n
       - EDGE_KEY=test
@@ -35,10 +35,11 @@ services:
     #   - ./dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
     external_links:
       - n2n_supernode:n2n_supernode
+    depends_on:
+      - n2n_supernode
 
   n2n_proxy_dhcp:
-    depends_on:
-      - n2n_proxy_nat
+
     image: zctmdc/n2n_proxy:Alpha
     restart: always
     privileged: true
@@ -46,7 +47,7 @@ services:
       - MODE=DHCP
       - SUPERNODE_HOST=n2n_supernode
       - SUPERNODE_PORT=10086
-      - EDGE_TUN=proxy_dhcp
+      - EDGE_TUN=edge_proxy_dhcp
       - EDGE_COMMUNITY=n2n
       - EDGE_KEY=test
       - EDGE_ENCRYPTION=A3
@@ -57,6 +58,9 @@ services:
       - EDGE_GATEWAY=10.10.10.10
     external_links:
       - n2n_supernode:n2n_supernode
+    depends_on:
+      - n2n_supernode
+      - n2n_proxy_dhcpd
 
   n2n_proxy_static:
     image: zctmdc/n2n_proxy:Alpha
@@ -66,7 +70,7 @@ services:
       - MODE=STATIC
       - SUPERNODE_HOST=n2n_supernode
       - SUPERNODE_PORT=10086
-      - EDGE_TUN=proxy_static
+      - EDGE_TUN=edge_proxy_static
       - EDGE_IP=10.10.10.10
       - EDGE_COMMUNITY=n2n
       - EDGE_KEY=test
@@ -78,3 +82,5 @@ services:
       - 14080:14080
     external_links:
       - n2n_supernode:n2n_supernode
+    depends_on:
+      - n2n_supernode
