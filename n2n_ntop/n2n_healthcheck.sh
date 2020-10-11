@@ -35,7 +35,8 @@ DHCPD)
     check_ip=${SUPERNODE_IP}
     ;;
 DHCP)
-    NOW_EDGE_IP=$(ifconfig $EDGE_TUN | grep "inet addr:" | awk '{print $2}' | cut -c 6-)
+    # NOW_EDGE_IP=$(ifconfig $EDGE_TUN | grep "inet addr:" | awk '{print $2}' | cut -c 6-)
+    NOW_EDGE_IP=$(ifconfig $EDGE_TUN | grep "inet" | awk '{print $2}')
     if [[ -n $NOW_EDGE_IP ]]; then
         check_ip=$(echo $NOW_EDGE_IP | grep -Eo "([0-9]{1,3}[\.]){3}")1
     else
@@ -44,7 +45,8 @@ DHCP)
     fi
     ;;
 STATIC)
-    NOW_EDGE_IP=$(ifconfig $EDGE_TUN | grep "inet addr:" | awk '{print $2}' | cut -c 6-)
+    # NOW_EDGE_IP=$(ifconfig $EDGE_TUN | grep "inet addr:" | awk '{print $2}' | cut -c 6-)
+    NOW_EDGE_IP=$(ifconfig $EDGE_TUN | grep "inet" | awk '{print $2}')
     check_ip=$(echo $NOW_EDGE_IP | grep -Eo "([0-9]{1,3}[\.]){3}")1
     ;;
 *)

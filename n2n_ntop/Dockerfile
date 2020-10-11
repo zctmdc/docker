@@ -23,25 +23,29 @@
 #   && cmake . \
 #   && make install
 
-FROM alpine
+# FROM alpine
 
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+# RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+# RUN apk add --update --no-cache openssl dhclient dhcp-server-ldap bash
 
-RUN apk add --update --no-cache openssl dhclient dhcp-server-ldap bash
+FROM ubuntu
+
+RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
+RUN apt-get update && apt-get install wget openssl \
+  isc-dhcp-client isc-dhcp-server net-tools iputils-ping \
+  curl traceroute htop psmisc iptables -y && apt-get clean
 
 # COPY --from=builder /usr/local/bin/n2n-benchmark /usr/local/sbin/
 # COPY --from=builder /usr/local/sbin/supernode /usr/local/sbin/
 # COPY --from=builder /usr/local/sbin/edge /usr/local/sbin/
 
 RUN mkdir -p /usr/local/sbin/
-RUN wget -O /usr/local/sbin/edge http://rt.qiniu.zctmdc.cn/bin/edge_v2_linux_x86 
-RUN wget -O /usr/local/sbin/supernode http://rt.qiniu.zctmdc.cn/bin/supernode_v2_linux_x86
+RUN wget -O /usr/local/sbin/edge http://rt.qiniu.zctmdc.cn/bin/edge_v2_linux_x64
+RUN wget -O /usr/local/sbin/supernode http://rt.qiniu.zctmdc.cn/bin/supernode_v2_linux_x64
 
 COPY *.sh /usr/local/sbin/
 
-
 RUN set -x \
-  # && chmod a+x /usr/local/sbin/*.sh \
   && chmod a+x /usr/local/sbin/*
 
 ENV MODE DHCP

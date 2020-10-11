@@ -1,13 +1,18 @@
-FROM ginuerzh/gost as gost_src
 FROM zctmdc/n2n_ntop:Alpha
 
 LABEL zctmdc <zctmdc@outlook.com>
 
-COPY --from=gost_src /bin/gost /bin/
+RUN set -x \
+  && gost_version=$(curl https://github.com/ginuerzh/gost/releases/latest | grep -Eo "[0-9]+\.[0-9]+\.[0-9]+") \
+  && wget -O /tmp/gost-linux-amd64-${gost_version}.gz https://github.com/ginuerzh/gost/releases/download/v${gost_version}/gost-linux-amd64-${gost_version}.gz \
+  && gunzip /tmp/gost-linux-amd64-${gost_version}.gz \
+  && chmod +x /tmp/gost-linux-amd64-2.11.1 \
+  && mv /tmp/gost-linux-amd64-2.11.1 /bin/gost
+
 COPY *.sh  /usr/local/sbin/
 
 RUN set -x \
-  && apk add --update --no-cache psmisc curl \
+  # && apk add --update --no-cache psmisc curl \
   && chmod a+x /usr/local/sbin/*.sh
 
 ENV EDGE_DESTINATION 192.168.0.0/16

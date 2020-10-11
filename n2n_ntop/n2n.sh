@@ -20,7 +20,7 @@ fi
 
 init_dhcpd_conf() {
   IP_PREFIX=$(echo $EDGE_IP | grep -Eo "([0-9]{1,3}[\.]){3}")
-  if [ ! -f "/etc/dhcp/dhcpd.conf" ]; then
+  # if [ ! -f "/etc/dhcp/dhcpd.conf" ]; then
     mkdir -p /etc/dhcp/
     cat >"/etc/dhcp/dhcpd.conf" <<EOF
   authoritative;
@@ -32,7 +32,7 @@ init_dhcpd_conf() {
     max-lease-time 7200;
   }
 EOF
-  fi
+  # fi
 }
 
 mode_supernode() {
@@ -41,9 +41,10 @@ mode_supernode() {
 }
 
 check_edge() {
-  while [ -z $(ifconfig $EDGE_TUN | grep "inet addr:" | awk '{print $2}' | cut -c 6-) ]; do
+  # while [ -z $(ifconfig $EDGE_TUN | grep "inet addr:" | awk '{print $2}' | cut -c 6-) ]; do
+  while [ -z $(ifconfig $EDGE_TUN | grep "inet" | awk '{print $2}') ]; do
     if [[ $MODE == "DHCP" ]]; then
-      dhclient $EDGE_TUN
+      dhclient --dad-wait-time 5 $EDGE_TUN
     fi
     sleep 1
   done
@@ -66,7 +67,7 @@ mode_dhcpd() {
   run_edge
   check_edge
   echo DHCPD 服务启动中
-  dhcpd -q -d $EDGE_TUN &
+  dhcpd -f -d $EDGE_TUN &
 }
 
 mode_dhcp() {
