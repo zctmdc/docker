@@ -4,7 +4,7 @@ LABEL zctmdc <zctmdc@outlook.com>
 
 RUN set -x \
   && gost_version=$(curl https://github.com/ginuerzh/gost/releases/latest | grep -Eo "[0-9]+\.[0-9]+\.[0-9]+") \
-  && wget -O /tmp/gost-linux-amd64-${gost_version}.gz https://github.com/ginuerzh/gost/releases/download/v${gost_version}/gost-linux-amd64-${gost_version}.gz \
+  && wget -Y on -e  "http_proxy=http://192.168.1.59:10808" -O /tmp/gost-linux-amd64-${gost_version}.gz https://github.com/ginuerzh/gost/releases/download/v${gost_version}/gost-linux-amd64-${gost_version}.gz \
   && gunzip /tmp/gost-linux-amd64-${gost_version}.gz \
   && chmod +x /tmp/gost-linux-amd64-2.11.1 \
   && mv /tmp/gost-linux-amd64-2.11.1 /bin/gost
