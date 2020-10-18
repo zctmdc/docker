@@ -3,8 +3,12 @@
 # LABEL zctmdc <zctmdc@outlook.com>
 
 # RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
-# # RUN sed -i 's/snapshot.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list
-# # RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
+
+# RUN sed -i 's/snapshot.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list
+# RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list
+
+# RUN sed -i 's/security.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
+# RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
 
 # WORKDIR /tmp
 # RUN buildDeps=" \
@@ -28,9 +32,18 @@
 # RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 # RUN apk add --update --no-cache openssl dhclient dhcp-server-ldap bash
 
+# RUN apk add --update --no-cache tzdata \
+#   && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+#   && echo "Asia/Shanghai" > /etc/timezone \
+#   && apk del tzdata
+
 FROM ubuntu
 
 RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
+
+RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+  && echo "Asia/Shanghai" > /etc/timezone 
+
 RUN apt-get update && apt-get install wget openssl \
   isc-dhcp-client isc-dhcp-server net-tools iputils-ping \
   curl traceroute htop psmisc iptables -y && apt-get clean

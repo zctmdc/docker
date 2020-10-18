@@ -5,6 +5,11 @@ LABEL zctmdc <zctmdc@outlook.com>
 
 RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
+RUN apk add --update --no-cache tzdata \
+  && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+  && echo "Asia/Shanghai" > /etc/timezone \
+  && apk del tzdata
+
 RUN  apk add --update --no-cache make git unzip curl wget sed bash tsocks
 
 RUN echo -e "local = 192.168.0.0/255.255.0.0\nserver = 192.168.1.92\nserver_type = 5\nserver_port = 10808" >"/etc/tsocks.conf"

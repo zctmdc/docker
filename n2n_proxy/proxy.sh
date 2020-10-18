@@ -60,15 +60,20 @@ if [[ "${EDGE_NAT}" == "TRUE" ]]; then
   echo 启用NAT
   # lan_eth=$EDGE_TUN
   # lan_eth="$(ifconfig | grep eth | awk '{print $1}')"
+  # edge_ip=$(ifconfig $lan_eth | grep "inet addr:" | awk '{print $2}' | cut -c 6-)
+  # edge_prefix=$(ifconfig $lan_eth | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')
+  # edge_gateway=${edge_prefix}1
+  # edge_subnet=${edge_prefix}0/24
+
+
   # lan_ip=$(ifconfig $lan_eth | grep "inet addr:" | awk '{print $2}' | cut -c 6-)
-  # lan_gateway=$(ifconfig $lan_eth | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')1
-  # lan_subnet=$(ifconfig $lan_eth | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')0/24
-  # lan_ip=$(ifconfig $lan_eth | grep "inet addr:" | awk '{print $2}' | cut -c 6-)
-  # lan_gateway=$(ifconfig $lan_eth | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')1
-  # lan_subnet=$(ifconfig $lan_eth | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')0/24
+  # lan_prefix=$(ifconfig $lan_eth | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')
+  # lan_gateway=${lan_prefix}1
+  # lan_subnet=${lan_prefix}0/24
+
 
   edge_ip=$(ifconfig $EDGE_TUN | grep "inet" | awk '{print $2}')
-  edge_prefix=$(ifconfig $EDGE_TUN | grep inet | awk '{print $2}' | grep -Eo "([0-9]{1,3}.){3}")1
+  edge_prefix=$(ifconfig $EDGE_TUN | grep inet | awk '{print $2}' | grep -Eo "([0-9]{1,3}.){3}")
   edge_gateway=${edge_prefix}1
   edge_subnet=${edge_prefix}0/24
 
@@ -90,10 +95,10 @@ if [[ "${EDGE_NAT}" == "TRUE" ]]; then
   iptables -P FORWARD ACCEPT
   iptables -t nat -A POSTROUTING -o $EDGE_TUN -j MASQUERADE
   iptables -t nat -A POSTROUTING -o $lan_eth -j MASQUERADE
-
+  route -n
 fi
-route -n
+
 if [[ "${EDGE_PROXY}" == "TRUE" ]]; then
   echo 启用代理
-  /bin/gost $PROXY_ARGS &
+   /usr/local/bin/gost $PROXY_ARGS &
 fi
