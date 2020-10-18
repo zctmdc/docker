@@ -22,7 +22,7 @@ services:
       - MODE=DHCPD
       - SUPERNODE_HOST=n2n_supernode
       - SUPERNODE_PORT=10086
-      - EDGE_TUN=edge_proxy_dhcpd
+      - EDGE_TUN=edge_dhcpd
       - EDGE_IP=10.10.10.1
       - EDGE_COMMUNITY=n2n
       - EDGE_KEY=test
@@ -47,7 +47,7 @@ services:
       - MODE=DHCP
       - SUPERNODE_HOST=n2n_supernode
       - SUPERNODE_PORT=10086
-      - EDGE_TUN=edge_proxy_dhcp
+      - EDGE_TUN=edge_dhcp
       - EDGE_COMMUNITY=n2n
       - EDGE_KEY=test
       - EDGE_ENCRYPTION=A3
@@ -70,7 +70,7 @@ services:
       - MODE=STATIC
       - SUPERNODE_HOST=n2n_supernode
       - SUPERNODE_PORT=10086
-      - EDGE_TUN=edge_proxy_static
+      - EDGE_TUN=edge_static
       - EDGE_IP=10.10.10.10
       - EDGE_COMMUNITY=n2n
       - EDGE_KEY=test

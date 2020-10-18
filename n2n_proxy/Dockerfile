@@ -2,14 +2,14 @@ FROM zctmdc/n2n_ntop:Alpha
 
 LABEL zctmdc <zctmdc@outlook.com>
 
+COPY *.sh  /usr/local/sbin/
+
 RUN set -x \
   && gost_version=$(curl https://github.com/ginuerzh/gost/releases/latest | grep -Eo "[0-9]+\.[0-9]+\.[0-9]+") \
-  && wget -Y on -e  "http_proxy=http://192.168.1.59:10808" -O /tmp/gost-linux-amd64-${gost_version}.gz https://github.com/ginuerzh/gost/releases/download/v${gost_version}/gost-linux-amd64-${gost_version}.gz \
-  && gunzip /tmp/gost-linux-amd64-${gost_version}.gz \
+  && wget -O /tmp/gost-linux-amd64-${gost_version}.gz https://github.com/ginuerzh/gost/releases/download/v${gost_version}/gost-linux-amd64-${gost_version}.gz \
+  && gunzip -f /tmp/gost-linux-amd64-${gost_version}.gz \
   && chmod +x /tmp/gost-linux-amd64-2.11.1 \
-  && mv /tmp/gost-linux-amd64-2.11.1 /bin/gost
-
-COPY *.sh  /usr/local/sbin/
+  && cp -f /tmp/gost-linux-amd64-2.11.1 /usr/local/bin/gost
 
 RUN set -x \
   # && apk add --update --no-cache psmisc curl \
