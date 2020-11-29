@@ -1,4 +1,3 @@
-MODE=$(echo $MODE | tr '[a-z]' '[A-Z]')
 check_server() {
     if ping -c 1 $SUPERNODE_HOST >/dev/null 2>&1; then
         SUPERNODE_IP=$(ping -c 1 $SUPERNODE_HOST | grep -Eo "([0-9]{1,3}\.){3}[0-9]{1,3}" | head -n 1)
@@ -13,19 +12,20 @@ check_server() {
 }
 
 status_check() {
-  while true; do
-    echo "STATUS - CHECKING"
-    sleep 30
-    if [[ "$(tail -n 1 /var/log/run.log | grep trying)" ]]; then
-      echo "STATUS - RESTART"
-      killall tail
-    else
-      echo "STATUS - RUNNING"
-    fi
-  done
+    while true; do
+        echo "STATUS - CHECKING"
+        sleep 30
+        if [[ "$(tail -n 1 /var/log/run.log | grep trying)" ]]; then
+            echo "STATUS - RESTART"
+            killall tail
+        else
+            echo "STATUS - RUNNING"
+        fi
+    done
 }
 # status_check &
 
+MODE=$(echo $MODE | tr '[a-z]' '[A-Z]')
 case $MODE in
 SUPERNODE)
     check_ip=127.0.0.1

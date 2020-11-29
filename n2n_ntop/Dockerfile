@@ -40,13 +40,15 @@
 FROM ubuntu
 
 RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
+RUN sed -i 's/security.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
 
-RUN cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
-  && echo "Asia/Shanghai" > /etc/timezone 
-
-RUN apt-get update && apt-get install wget openssl \
+RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get install -y  wget openssl \
   isc-dhcp-client isc-dhcp-server net-tools iputils-ping \
-  curl traceroute htop psmisc iptables -y && apt-get clean
+  curl traceroute htop psmisc iptables tzdata && apt-get clean\
+  && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+  && echo "Asia/Shanghai" > /etc/timezone \
+  && dpkg-reconfigure -f noninteractive tzdata \
+  && rm -rf /etc/dhcp/dhcpd.conf
 
 # COPY --from=builder /usr/local/bin/n2n-benchmark /usr/local/sbin/
 # COPY --from=builder /usr/local/sbin/supernode /usr/local/sbin/
