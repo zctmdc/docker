@@ -19,6 +19,7 @@ replaseKV='
 el-le
 amd64-x64
 386-x86
+i386-x86
 '
 
 cd "$N2N_TMP_DIR/Linux/" &&

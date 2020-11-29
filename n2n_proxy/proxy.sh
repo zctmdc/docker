@@ -16,10 +16,12 @@ if [[ "${EDGE_ROUTE}" == "TRUE" ]]; then
     # edge_gateway="$(ifconfig $EDGE_TUN | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')1"
     edge_gateway=$(ifconfig $EDGE_TUN | grep inet | awk '{print $2}' | grep -Eo "([0-9]{1,3}.){3}")1
   fi
+  
   if [[ $MODE == DHCP ]]; then
     # edge_ip=$(ifconfig $EDGE_TUN | grep "inet addr:" | awk '{print $2}' | cut -c 6-)
     edge_ip=$(ifconfig $EDGE_TUN | grep "inet" | awk '{print $2}')
   fi
+
   if [[ "$edge_gateway" != "$edge_ip" ]]; then
     route add -net $EDGE_DESTINATION gw $edge_gateway
     # lan_eth="$(ifconfig | awk '{print $1}' | grep eth )"
@@ -36,9 +38,10 @@ if [[ "${EDGE_ROUTE}" == "TRUE" ]]; then
     # lan_prefix=$(route -ne | grep -Eo "^0.0.0.0.*" | awk '{print $2}' | tail -n 1 | grep -Eo "([0-9]{1,3}.){3}")
     # lan_gateway=${lan_prefix}1
     # lan_subnet=${lan_prefix}0/24
-    
+
     lan_eth=$(route -ne | grep 0.0.0.0 | tail -n 1 | awk '{print $8}')
-    lan_prefix=$(route -ne | grep 0.0.0.0 | tail -n 1 | awk '{print $1}' | grep -Eo "([0-9]{1,3}.){3}")
+    lan_prefix=$(route -ne | grep 0.0.0.0 | tail -n 1 | awk '{print $1}' | grep -Eo "(..){3}")
+    lan_ip=echo $(ifconfig $lan_eth  | grep inet | grep -Eo "$lan_prefix[0-9]{1,3}")
     lan_gateway=${lan_prefix}1
     lan_subnet=${lan_prefix}0/24
 
@@ -65,14 +68,12 @@ if [[ "${EDGE_NAT}" == "TRUE" ]]; then
   # edge_gateway=${edge_prefix}1
   # edge_subnet=${edge_prefix}0/24
 
-
   # lan_ip=$(ifconfig $lan_eth | grep "inet addr:" | awk '{print $2}' | cut -c 6-)
   # lan_prefix=$(ifconfig $lan_eth | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')
   # lan_gateway=${lan_prefix}1
   # lan_subnet=${lan_prefix}0/24
 
-
-  edge_ip=$(ifconfig $EDGE_TUN | grep "inet" | awk '{print $2}')
+  edge_ip=$(ifconfig $EDGE_TUN | grep "inet" | awk '{print $2}' | grep -Eo "([0-9]{1,3}.){3}[0-9]{1,3}" | tail -n 1)
   edge_prefix=$(ifconfig $EDGE_TUN | grep inet | awk '{print $2}' | grep -Eo "([0-9]{1,3}.){3}")
   edge_gateway=${edge_prefix}1
   edge_subnet=${edge_prefix}0/24
@@ -100,5 +101,5 @@ fi
 
 if [[ "${EDGE_PROXY}" == "TRUE" ]]; then
   echo 启用代理
-   /usr/local/bin/gost $PROXY_ARGS &
+  /usr/local/bin/gost $PROXY_ARGS &
 fi

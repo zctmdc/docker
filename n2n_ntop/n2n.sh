@@ -1,26 +1,30 @@
 #!/bin/bash
 # set -x
-
-N2N_LOG_RUN() {
+N2N_LOG(){
   echo $*
+  logger [N2N] $*
+}
+N2N_LOG_RUN() {
+  N2N_LOG $*
   $*
 }
 
 MODE=$(echo $MODE | tr '[a-z]' '[A-Z]')
 echo MODE=$MODE
-echo N2N_ARGS=$N2N_ARGS
+
 if [[ "${EDGE_ENCRYPTION:0:1}" != "-" ]]; then
   EDGE_ENCRYPTION=-$EDGE_ENCRYPTION
 fi
-
 echo EDGE_ENCRYPTION=$EDGE_ENCRYPTION
+
 if [[ "${N2N_ARGS:0:1}" != "-" ]]; then
   N2N_ARGS=-$N2N_ARGS
 fi
+echo N2N_ARGS=$N2N_ARGS
 
 init_dhcpd_conf() {
   IP_PREFIX=$(echo $EDGE_IP | grep -Eo "([0-9]{1,3}[\.]){3}")
-  # if [ ! -f "/etc/dhcp/dhcpd.conf" ]; then
+  if [ ! -f "/etc/dhcp/dhcpd.conf" ]; then
     mkdir -p /etc/dhcp/
     cat >"/etc/dhcp/dhcpd.conf" <<EOF
   authoritative;
@@ -32,12 +36,12 @@ init_dhcpd_conf() {
     max-lease-time 7200;
   }
 EOF
-  # fi
+  fi
 }
 
 mode_supernode() {
   echo $MODE -- 超级节点模式
-  N2N_LOG_RUN "supernode -l $SUPERNODE_PORT " &
+  N2N_LOG_RUN "supernode -l $SUPERNODE_PORT $N2N_ARGS" &
 }
 
 check_edge() {
@@ -96,7 +100,9 @@ check_server() {
     echo "SUPERNODE_IP : $SUPERNODE_IP"
   fi
 }
-
+restart_edge() {
+  killall tail
+}
 #main
 check_server
 case $MODE in
@@ -127,7 +133,7 @@ while true; do
     last_supernode_ip=$SUPERNODE_IP
     check_server
     if [[ $last_supernode_ip != $SUPERNODE_IP ]]; then
-      killall tail
+      restart_edge
       break
     fi
     ;;

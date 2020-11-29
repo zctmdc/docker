@@ -29,6 +29,7 @@ replaseKV='
 el-le
 amd64-x64
 386-x86
+i386-x86
 '
 
 curl -s https://github.com/fatedier/frp/releases/tag/v${frp_version} |
