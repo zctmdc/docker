@@ -16,7 +16,7 @@ if [[ "${EDGE_ROUTE}" == "TRUE" ]]; then
     # edge_gateway="$(ifconfig $EDGE_TUN | sed -n '/inet addr/s/^[^:]*:\(\([0-9]\{1,3\}\.\)\{3\}\).*/\1/p')1"
     edge_gateway=$(ifconfig $EDGE_TUN | grep inet | awk '{print $2}' | grep -Eo "([0-9]{1,3}.){3}")1
   fi
-  
+
   if [[ $MODE == DHCP ]]; then
     # edge_ip=$(ifconfig $EDGE_TUN | grep "inet addr:" | awk '{print $2}' | cut -c 6-)
     edge_ip=$(ifconfig $EDGE_TUN | grep "inet" | awk '{print $2}')
@@ -86,16 +86,21 @@ if [[ "${EDGE_NAT}" == "TRUE" ]]; then
   sed -i 's/.*et\.ipv4\.ip_forward.*/net\.ipv4\.ip_forward = 1/' /etc/sysctl.conf
   sysctl -p
 
-  iptables -A INPUT -i $EDGE_TUN -j ACCEPT
-  iptables -A FORWARD -i $EDGE_TUN -j ACCEPT
-  iptables -A FORWARD -i $lan_eth -j ACCEPT
-  iptables -t nat -A POSTROUTING -s $edge_subnet -o $lan_eth -j MASQUERADE
-  iptables -t nat -A POSTROUTING -s $lan_subnet -o $EDGE_TUN -j MASQUERADE
-
   iptables -P INPUT ACCEPT
   iptables -P FORWARD ACCEPT
+
+  iptables -A INPUT -i $EDGE_TUN -j ACCEPT
+  iptables -A FORWARD -i $EDGE_TUN -j ACCEPT
+
+  iptables -A INPUT -i $lan_eth -j ACCEPT
+  iptables -A FORWARD -i $lan_eth -j ACCEPT
+
+  # iptables -t nat -A POSTROUTING -s $edge_subnet -j MASQUERADE
+  # iptables -t nat -A POSTROUTING -s $lan_subnet -o $EDGE_TUN -j MASQUERADE
+
   iptables -t nat -A POSTROUTING -o $EDGE_TUN -j MASQUERADE
   iptables -t nat -A POSTROUTING -o $lan_eth -j MASQUERADE
+  iptables -t nat -A PREROUTING -p tcp --dport 22 -j DNAT --to-destination $lan_eth:22
   route -n
 fi
 

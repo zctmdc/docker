@@ -44,7 +44,8 @@ RUN sed -i 's/security.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
 
 RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get install -y  wget openssl \
   isc-dhcp-client isc-dhcp-server net-tools iputils-ping \
-  curl traceroute htop psmisc iptables tzdata && apt-get clean\
+  curl traceroute htop psmisc iptables tzdata apt-utils \
+  && apt-get clean\
   && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
   && echo "Asia/Shanghai" > /etc/timezone \
   && dpkg-reconfigure -f noninteractive tzdata \
