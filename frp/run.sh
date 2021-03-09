@@ -3,6 +3,7 @@
 # set -x
 
 check_status() {
+  faild_time=0
   while true; do
     sleep 30
     if [[ ${WATCH_STATUS} != true ]]; then
@@ -11,7 +12,11 @@ check_status() {
     /usr/local/bin/healthcheck_frps.sh
     if [ "$FRPC_ENABLE" == true ]; then
       if ! /usr/local/bin/healthcheck_frpc.sh 2>&1; then
-        exit
+        if [[ ${faild_time} > 3 ]] ;then 
+          exit 1
+        else 
+          faild_time=`expr ${faild_time} "+" 1`
+        fi
       fi
     fi
   done

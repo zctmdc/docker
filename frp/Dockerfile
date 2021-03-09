@@ -9,6 +9,9 @@ RUN apk add --update --no-cache tzdata \
 RUN set -x \
   && apk add --update --no-cache git make
 
+RUN git config --global url."https://gitclone.com/".insteadOf https://
+RUN go env -w GOPROXY=https://goproxy.cn 
+
 RUN git clone https://github.com/fatedier/frp.git /tmp/frp/ 
 
 WORKDIR /tmp/frp

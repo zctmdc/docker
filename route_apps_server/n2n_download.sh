@@ -12,9 +12,12 @@ if [[ -z "$N2N_OPT_DIR" ]]; then
 fi
 cd "/tmp"
 rm -rf "$N2N_TMP_DIR"
-wget -O /tmp/n2n-master.zip https://github.com/lucktu/n2n/archive/master.zip
-unzip -o -d "/tmp" /tmp/n2n-master.zip
-mv /tmp/n2n-master "$N2N_TMP_DIR"
+# wget -O /tmp/n2n-master.zip https://github.com/lucktu/n2n/archive/master.zip
+# unzip -o -d "/tmp" /tmp/n2n-master.zip
+# mv /tmp/n2n-master "$N2N_TMP_DIR"
+
+git clone https://github.com/lucktu/n2n.git
+
 replaseKV='
 el-le
 amd64-x64

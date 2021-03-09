@@ -1,6 +1,6 @@
 #!/bin/bash
 # set -x
-N2N_LOG(){
+N2N_LOG() {
   echo $*
   logger [N2N] $*
 }
@@ -22,19 +22,32 @@ if [[ "${N2N_ARGS:0:1}" != "-" ]]; then
 fi
 echo N2N_ARGS=$N2N_ARGS
 
+init_edge_mac() {
+  ignore_Iface="ztbpaislgc|docker"
+  lan_eth=$(route -ne | grep 0.0.0.0 | grep -Ev "$ignore_Iface" | tail -n 1 | awk '{print $8}')
+  lan_mac=$(cat /sys/class/net/$lan_eth/address)
+  lan_mac_prefix=${lan_mac%:*}
+  if [[ $(echo $(expr $((16#${lan_mac##*:})) - 1) | awk '{printf "%x\n",$0}') != 0 ]]; then
+    lan_mac_suffix=$(echo $(expr $((16#${lan_mac##*:})) - 1) | awk '{printf "%02x\n",$0}')
+  else
+    lan_mac_suffix=$(echo $(expr $(echo 0x${lan_mac##*:} | awk '{printf "%d\n",$0}') - 1) | awk '{printf "%02x\n",$0}')
+  fi
+  edge_mac="${lan_mac_prefix}:${lan_mac_suffix}"
+}
+
 init_dhcpd_conf() {
   IP_PREFIX=$(echo $EDGE_IP | grep -Eo "([0-9]{1,3}[\.]){3}")
   if [ ! -f "/etc/dhcp/dhcpd.conf" ]; then
     mkdir -p /etc/dhcp/
     cat >"/etc/dhcp/dhcpd.conf" <<EOF
-  authoritative;
-  ddns-update-style none;
-  ignore client-updates;
-  subnet ${IP_PREFIX}0 netmask ${EDGE_NETMASK} {
-    range ${IP_PREFIX}60 ${IP_PREFIX}180;
-    default-lease-time 600;
-    max-lease-time 7200;
-  }
+authoritative;
+ddns-update-style none;
+ignore client-updates;
+subnet ${IP_PREFIX}0 netmask ${EDGE_NETMASK} {
+  range ${IP_PREFIX}60 ${IP_PREFIX}180;
+  default-lease-time 600;
+  max-lease-time 7200;
+}
 EOF
   fi
 }
@@ -55,10 +68,11 @@ check_edge() {
 }
 
 run_edge() {
+  init_edge_mac
   if [[ $EDGE_KEY ]]; then
-    N2N_LOG_RUN "edge -d $EDGE_TUN -a $EDGE_IP_AGE -c $EDGE_COMMUNITY -k $EDGE_KEY -s $EDGE_NETMASK -i $EDGE_REG_INTERVAL -l $SUPERNODE_IP:$SUPERNODE_PORT $EDGE_ENCRYPTION $N2N_ARGS" &
+    N2N_LOG_RUN "edge -d $EDGE_TUN -m $edge_mac -a $EDGE_IP_AGE -c $EDGE_COMMUNITY -k $EDGE_KEY -s $EDGE_NETMASK -i $EDGE_REG_INTERVAL -l $SUPERNODE_IP:$SUPERNODE_PORT $EDGE_ENCRYPTION $N2N_ARGS" &
   else
-    N2N_LOG_RUN "edge -d $EDGE_TUN -a $EDGE_IP_AGE -c $EDGE_COMMUNITY -s $EDGE_NETMASK -i $EDGE_REG_INTERVAL -l $SUPERNODE_IP:$SUPERNODE_PORT $N2N_ARGS" &
+    N2N_LOG_RUN "edge -d $EDGE_TUN -m $edge_mac -a $EDGE_IP_AGE -c $EDGE_COMMUNITY -s $EDGE_NETMASK -i $EDGE_REG_INTERVAL -l $SUPERNODE_IP:$SUPERNODE_PORT $N2N_ARGS" &
   fi
 }
 

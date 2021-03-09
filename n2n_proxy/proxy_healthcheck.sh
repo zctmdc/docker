@@ -1,5 +1,5 @@
 if [[ $MODE == DHCP ]]; then
-    # EDGE_IP=$(ifconfig $EDGE_TUN | grep "inet addr:" | awk '{print $2}' | cut -c 6-)
+    # EDGE_IP=$(ifconfig $EDGE_TUN | grep "inet" | awk '{print $2}' | cut -c 6-)
     EDGE_IP=$(ifconfig $EDGE_TUN | grep "inet" | awk '{print $2}')
 fi
 

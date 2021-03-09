@@ -37,6 +37,8 @@ EOF
     cat /opt/frp/frpc_user.ini >>/etc/frp/frpc.ini
   fi
 fi
+
+
 if [[ ! -f /etc/frp/frps.ini || -f /opt/frp/frps_user.ini ]]; then
   cat >"/etc/frp/frps.ini" <<EOF
 # ========== 服务端基本配置 START ==========
