@@ -3,10 +3,8 @@
 # LABEL zctmdc <zctmdc@outlook.com>
 
 # RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
-
 # RUN sed -i 's/snapshot.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list
 # RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list
-
 # RUN sed -i 's/security.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
 # RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
 # RUN sed -i 's/ports.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
@@ -31,12 +29,9 @@
 # FROM alpine
 
 # RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
-# RUN apk add --update --no-cache openssl dhclient dhcp-server-ldap bash
-
-# RUN apk add --update --no-cache tzdata \
+# RUN apk add --update --no-cache openssl dhclient dhcp-server-ldap bash tzdata \
 #   && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
-#   && echo "Asia/Shanghai" > /etc/timezone \
-#   && apk del tzdata
+#   && echo "Asia/Shanghai" > /etc/timezone
 
 FROM ubuntu
 
@@ -61,9 +56,8 @@ RUN mkdir -p /usr/local/sbin/
 
 COPY *.sh /usr/local/sbin/
 
-RUN chmod a+x /usr/local/sbin/*
-
-RUN . /usr/local/sbin/init.sh \
+RUN chmod a+x /usr/local/sbin/* \
+  && . /usr/local/sbin/init.sh \
   && wget -O /usr/local/sbin/edge http://rt.qiniu.zctmdc.cn/bin/edge_v2_${myos}_${mycpu} \
   && wget -O /usr/local/sbin/supernode http://rt.qiniu.zctmdc.cn/bin/supernode_v2_${myos}_${mycpu}
 
