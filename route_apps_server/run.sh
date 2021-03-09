@@ -33,9 +33,11 @@ EOF
 sleep 1
 # tsocks /usr/local/bin/frp_download.sh &
 sleep 1
-tsocks /usr/local/bin/n2n_download.sh &
+# tsocks /usr/local/bin/n2n_download.sh &
+/usr/local/bin/n2n_download.sh &
 sleep 1
-tsocks /usr/local/bin/frp_build.sh &
+# tsocks /usr/local/bin/frp_build.sh &
+/usr/local/bin/frp_build.sh &
 # sleep 1
 # /usr/local/sbin/file_server.sh
 go run /usr/local/bin/fileserver.go

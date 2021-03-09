@@ -9,6 +9,7 @@
 
 # RUN sed -i 's/security.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
 # RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
+# RUN sed -i 's/ports.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
 
 # WORKDIR /tmp
 # RUN buildDeps=" \
@@ -41,10 +42,12 @@ FROM ubuntu
 
 RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
 RUN sed -i 's/security.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
+RUN sed -i 's/ports.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
 
 RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get install -y  wget openssl \
   isc-dhcp-client isc-dhcp-server net-tools iputils-ping \
-  curl traceroute htop psmisc iptables tzdata && apt-get clean\
+  curl traceroute htop psmisc iptables tzdata apt-utils \
+  && apt-get clean\
   && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
   && echo "Asia/Shanghai" > /etc/timezone \
   && dpkg-reconfigure -f noninteractive tzdata \
@@ -55,10 +58,14 @@ RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get install -
 # COPY --from=builder /usr/local/sbin/edge /usr/local/sbin/
 
 RUN mkdir -p /usr/local/sbin/
-RUN wget -O /usr/local/sbin/edge http://rt.qiniu.zctmdc.cn/bin/edge_v2_linux_x64
-RUN wget -O /usr/local/sbin/supernode http://rt.qiniu.zctmdc.cn/bin/supernode_v2_linux_x64
 
 COPY *.sh /usr/local/sbin/
+
+RUN chmod a+x /usr/local/sbin/*
+
+RUN . /usr/local/sbin/init.sh \
+  && wget -O /usr/local/sbin/edge http://rt.qiniu.zctmdc.cn/bin/edge_v2_${myos}_${mycpu} \
+  && wget -O /usr/local/sbin/supernode http://rt.qiniu.zctmdc.cn/bin/supernode_v2_${myos}_${mycpu}
 
 RUN set -x \
   && chmod a+x /usr/local/sbin/*

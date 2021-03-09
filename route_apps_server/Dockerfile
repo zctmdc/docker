@@ -10,21 +10,24 @@ RUN apk add --update --no-cache tzdata \
   && echo "Asia/Shanghai" > /etc/timezone \
   && apk del tzdata
 
-RUN  apk add --update --no-cache make git unzip curl wget sed bash tsocks
+RUN  apk add --update --no-cache make git unzip curl wget sed bash # tsocks
 
-RUN echo -e "local = 192.168.0.0/255.255.0.0\nserver = 192.168.1.92\nserver_type = 5\nserver_port = 10808" >"/etc/tsocks.conf"
+# RUN echo -e "local = 192.168.0.0/255.255.0.0\nserver = 192.168.1.92\nserver_type = 5\nserver_port = 10808" >"/etc/tsocks.conf"
 
-RUN  go env -w GOPROXY=https://goproxy.cn 
+RUN go env -w GOPROXY=https://goproxy.cn 
+RUN git config --global url."https://gitclone.com/".insteadOf https://
 
 COPY *.sh /usr/local/bin/
 COPY *.go /usr/local/bin/
 
 RUN chmod a+x /usr/local/bin/*.sh
 
-RUN wget -O /tmp/qshell-linux-x64-v2.4.2.zip http://devtools.qiniu.com/qshell-linux-x64-v2.4.2.zip \
-  && unzip -o  -d /tmp /tmp/qshell-linux-x64-v2.4.2.zip \
-  && chmod +x /tmp/qshell-linux-x64-v2.4.2 \
-  && mv /tmp/qshell-linux-x64-v2.4.2 /usr/local/bin/qshell
+RUN set -x \
+&& . /usr/local/bin/init.sh \
+&&  qshell_version=$(curl https://github.com/qiniu/qshell/releases/latest | grep -Eo "[vV][0-9]+.[0-9]+.[0-9]+") \
+&& wget -O /tmp/qshell-${qshell_version}-${myos}-${mycpu}.tar.gz http://devtools.qiniu.com/qshell-${qshell_version}-${myos}-${mycpu}.tar.gz \
+  && tar -zxvf  /tmp/qshell-${qshell_version}-${myos}-${mycpu}.tar.gz -C /tmp \
+  && mv /tmp/qshell /usr/local/bin/qshell
 
 EXPOSE 80
 
