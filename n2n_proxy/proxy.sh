@@ -102,7 +102,8 @@ if [[ "${EDGE_NAT}" == "TRUE" ]]; then
 
   iptables -t nat -A POSTROUTING -o $EDGE_TUN -j MASQUERADE
   iptables -t nat -A POSTROUTING -o $lan_eth -j MASQUERADE
-  iptables -t nat -A PREROUTING -p tcp --dport 22 -j DNAT --to-destination $lan_eth:22
+  
+  # iptables -t nat -A PREROUTING -p tcp --dport 22 -j DNAT --to-destination $lan_eth:22
   route -n
 fi
 

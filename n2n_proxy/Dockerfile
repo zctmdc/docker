@@ -2,7 +2,7 @@ FROM golang as builder
 
 WORKDIR /tmp
 
-RUN go env -w GOPROXY=https://goproxy.cn \
+RUN go env -w GOPROXY=https://goproxy.io \
   && git config --global url."https://gitclone.com/".insteadOf https:// \
   && git clone https://github.com/ginuerzh/gost.git \
   && cd gost/cmd/gost \
