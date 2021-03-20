@@ -1,23 +1,6 @@
 #!/bin/bash
 # set -x
 
-if ping -c 1 -W 1 proxy_server >/dev/null 2>&1; then
-  local_sub=172.0.0.0/255.0.0.0
-  ss5_server=proxy_server
-  ss5_port=10808
-else
-  local_sub=110.53.0.0/255.255.0.0
-  ss5_server=home.zctmdc.cn
-  ss5_port=10808
-fi
-
-cat >"/etc/tsocks.conf" <<EOF
-local = ${local_sub}
-server = ${ss5_server}
-server_type = 5
-server_port = ${ss5_port}
-EOF
-
 /usr/local/bin/qshell account "${QINIUYUN_AK}" "${QINIUYUN_SK}" "${QINIUYUN_NAME}"
 cat >~/.qshell/qupload.conf <<EOF
 {
@@ -29,15 +12,16 @@ cat >~/.qshell/qupload.conf <<EOF
   "check_hash" : true
 }
 EOF
-# echo "$(sed "0,/nameserver.*/s//nameserver 119.29.29.29/" /etc/resolv.conf)" >/etc/resolv.conf
-sleep 1
-# tsocks /usr/local/bin/frp_download.sh &
-sleep 1
-# tsocks /usr/local/bin/n2n_download.sh &
-/usr/local/bin/n2n_download.sh &
-sleep 1
-# tsocks /usr/local/bin/frp_build.sh &
-/usr/local/bin/frp_build.sh &
-# sleep 1
-# /usr/local/sbin/file_server.sh
-go run /usr/local/bin/fileserver.go
+/usr/local/bin/qshell account "${QINIUYUN_AK}" "${QINIUYUN_SK}" "${QINIUYUN_NAME}"
+
+echo "Start n2n_download"
+/usr/local/bin/n2n_download.sh
+echo "Finished n2n_download"
+
+echo "Start frp_download"
+/usr/local/bin/frp_download.sh
+echo "Finished frp_download"
+
+/usr/local/bin/qshell qupload ~/.qshell/qupload.conf
+
+nginx -g "daemon off;"

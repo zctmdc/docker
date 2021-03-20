@@ -1,52 +1,29 @@
-# FROM alpine AS builder
+FROM debian
 
-# LABEL zctmdc <zctmdc@outlook.com>
+RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
-# RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
-# RUN sed -i 's/snapshot.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list
-# RUN sed -i 's/deb.debian.org/mirrors.aliyun.com/g' /etc/apt/sources.list
-# RUN sed -i 's/security.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
-# RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
-# RUN sed -i 's/ports.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
+RUN sed -i 's/archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
+RUN sed -i 's/security.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
+RUN sed -i 's/ports.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
 
-# WORKDIR /tmp
-# RUN buildDeps=" \
-#     build-base \
-#     cmake \
-#     git \
-#     linux-headers \
-#     openssl-dev \
-#     libpcap-dev \
-#   "; \
-#   \
-#   set -x \
-#   && apk add --update --no-cache --virtual .build-deps $buildDeps \
-#   && git clone https://github.com/ntop/n2n.git \
-#   && cd n2n \
-#   && cmake . \
-#   && make install
+RUN sed -i 's/snapshot.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
+RUN sed -i 's/security.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
+RUN sed -i 's/deb.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
 
-# FROM alpine
-
-# RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
-# RUN apk add --update --no-cache openssl dhclient dhcp-server-ldap bash tzdata \
-#   && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
-#   && echo "Asia/Shanghai" > /etc/timezone
-
-FROM ubuntu
-
-RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
-RUN sed -i 's/security.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
-RUN sed -i 's/ports.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list
-
-RUN export DEBIAN_FRONTEND=noninteractive && apt-get update && apt-get install -y  wget openssl \
-  isc-dhcp-client isc-dhcp-server net-tools iputils-ping \
-  curl traceroute htop psmisc iptables tzdata apt-utils \
-  && apt-get clean\
+RUN export DEBIAN_FRONTEND=noninteractive \
+  && apt-get update \
+  && apt-get install -y --no-install-recommends tzdata \
   && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
   && echo "Asia/Shanghai" > /etc/timezone \
   && dpkg-reconfigure -f noninteractive tzdata \
-  && rm -rf /etc/dhcp/dhcpd.conf
+  && apt-get clean
+
+RUN apt-get update \
+  && apt-get install -y --no-install-recommends wget openssl \
+  isc-dhcp-client isc-dhcp-server net-tools iputils-ping \
+  curl traceroute htop psmisc iptables  apt-utils \
+  && rm -rf /etc/dhcp/dhcpd.conf \
+  && apt-get clean 
 
 # COPY --from=builder /usr/local/bin/n2n-benchmark /usr/local/sbin/
 # COPY --from=builder /usr/local/sbin/supernode /usr/local/sbin/
