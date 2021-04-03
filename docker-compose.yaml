@@ -31,8 +31,8 @@ services:
       dockerfile: Dockerfile
     image: zctmdc/frp:Alpha
 
-  caddy:
+  caddy-alidns:
     build:
-      context: caddy
+      context: caddy-alidns
       dockerfile: Dockerfile
     image: zctmdc/caddy-alidns:Alpha

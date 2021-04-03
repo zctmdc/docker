@@ -41,7 +41,7 @@ RUN chmod a+x /usr/local/bin/*.sh
 
 RUN set -x \
   && . /usr/local/bin/init.sh \
-  &&  qshell_version=$(curl -sSL https://github.com/qiniu/qshell/releases/latest | grep -Eo "[vV][0-9]+.[0-9]+.[0-9]+") \
+  && qshell_version=$(curl -sS https://github.com/qiniu/qshell/releases/latest | grep -Eo "[vV][0-9]+.[0-9]+.[0-9]+"| head -n 1 ) \
   && wget -O /tmp/qshell-${qshell_version}-${myos}-${mycpu}.tar.gz http://devtools.qiniu.com/qshell-${qshell_version}-${myos}-${mycpu}.tar.gz \
   && tar -zxvf  /tmp/qshell-${qshell_version}-${myos}-${mycpu}.tar.gz -C /tmp \
   && mv /tmp/qshell /usr/local/bin/qshell

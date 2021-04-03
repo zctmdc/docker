@@ -10,10 +10,10 @@ services:
     image: zctmdc/route_apps_server:Alpha
     restart: always
     environment:
-      - N2N_TMP_DIR=/tmp/n2n
-      - N2N_OPT_DIR=/tmp/bin
       - WORK_PATH=/tmp
       - FORCE_UPDATE=FALSE
+      - N2N_TMP_DIR=/tmp/n2n
+      - N2N_OPT_DIR=/tmp/bin
       - FRP_TMP_DIR=/tmp/frp
       - FRP_OPT_DIR=/tmp/bin
       - QINIUYUN_AK=n_wXv2dFzW0VRiu_gnrorwMtU06vlOXIaXppvEed
