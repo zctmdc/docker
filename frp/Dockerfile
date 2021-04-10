@@ -9,15 +9,11 @@ RUN apk add --update --no-cache tzdata \
 RUN set -x \
   && apk add --update --no-cache git make
 
-RUN git config --global url."https://gitclone.com/".insteadOf https://
-RUN go env -w GOPROXY=https://goproxy.cn 
-
 RUN git clone https://github.com/fatedier/frp.git /tmp/frp/ 
 
 WORKDIR /tmp/frp
 
-RUN go env -w GOPROXY=https://goproxy.cn \
-  && make \
+RUN make \
   && echo "frp version: `/tmp/frp/bin/frps --version`"
 
 FROM alpine
@@ -28,7 +24,7 @@ RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
 RUN set -x \
   && apk add --update --no-cache bash psmisc curl  
-  # wget 
+# wget 
 
 RUN  mkdir -p /etc/frp
 

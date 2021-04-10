@@ -17,6 +17,6 @@ docker buildx ls --builder remotebuilder
 skip_path="caddy my_settings"
 for project in $(ls); do
     if [[ -d $project && "*$project*" != "${skip_path}" ]]; then
-        docker buildx build --platform=linux/amd64,linux/arm64 --tag zctmdc/${project}:Alpha --push ./${project}
+        docker buildx build --build-arg  HTTP_PROXY="http://home.zctmdc.cn:21089" --build-arg  HTTPS_PROXY="http://home.zctmdc.cn:21089" --platform=linux/amd64,linux/arm64 --tag zctmdc/${project}:Alpha --push ./${project}
     fi
 done
