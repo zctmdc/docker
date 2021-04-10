@@ -1,7 +1,7 @@
 if [[ ! $(docker buildx ls | grep remotebuilder) ]]; then
 
-    ARM64=ssh://root@10.20.30.1
-    AMD64=ssh://root@10.20.30.58
+    ARM64=ssh://root@192.168.66.61
+    AMD64=ssh://root@192.168.60.58
 
     ## 注意: 这里指定名称 remotebuilder
     DOCKER_HOST=${AMD64} docker buildx create --name remotebuilder --node zctmdc-amd64 --platform=amd64
