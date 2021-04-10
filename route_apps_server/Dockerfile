@@ -32,7 +32,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   && apt-get update \
   && apt-get install -y --no-install-recommends git unzip curl wget sed bash 
 
-RUN git config --global url."https://gitclone.com/".insteadOf https://
+# RUN git config --global url."https://gitclone.com/".insteadOf https://
 #RUN go env -w GOPROXY=https://goproxy.cn 
 
 COPY *.sh /usr/local/bin/
@@ -45,8 +45,6 @@ RUN set -x \
   && wget -O /tmp/qshell-${qshell_version}-${myos}-${mycpu}.tar.gz http://devtools.qiniu.com/qshell-${qshell_version}-${myos}-${mycpu}.tar.gz \
   && tar -zxvf  /tmp/qshell-${qshell_version}-${myos}-${mycpu}.tar.gz -C /tmp \
   && mv /tmp/qshell /usr/local/bin/qshell
-
-
 
 ENV WORK_PATH /tmp/
 

@@ -1,6 +1,6 @@
 #!/bin/bash
 # set -x
-if [[ -d N2N_TMP_DIR ]]; then
+if [[ -d $N2N_TMP_DIR ]]; then
   cd $N2N_TMP_DIR && git pull
 else
   git clone https://github.com/lucktu/n2n.git $N2N_TMP_DIR
