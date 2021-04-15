@@ -1,7 +1,7 @@
 if [[ ! $(docker buildx ls | grep remotebuilder) ]]; then
 
-    ARM64=ssh://root@192.168.66.61
-    AMD64=ssh://root@192.168.60.58
+    ARM64=ssh://root@192.168.169.66
+    AMD64=ssh://root@192.168.169.58
 
     ## 注意: 这里指定名称 remotebuilder
     DOCKER_HOST=${AMD64} docker buildx create --name remotebuilder --node zctmdc-amd64 --platform=amd64
@@ -17,6 +17,6 @@ docker buildx ls --builder remotebuilder
 skip_path="caddy my_settings"
 for project in $(ls); do
     if [[ -d $project && "*$project*" != "${skip_path}" ]]; then
-        docker buildx build --build-arg  HTTP_PROXY="http://home.zctmdc.cn:21089" --build-arg  HTTPS_PROXY="http://home.zctmdc.cn:21089" --platform=linux/amd64,linux/arm64 --tag zctmdc/${project}:Alpha --push ./${project}
+        docker buildx build --platform=linux/amd64,linux/arm64 --tag zctmdc/${project}:Alpha --push ./${project}
     fi
 done
