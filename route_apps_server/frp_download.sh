@@ -24,7 +24,6 @@ i386-x86
 '
 
 curl -sS https://github.com/fatedier/frp/releases/tag/v${frp_version} |
-  head -n 1 |
   grep v${frp_version} |
   grep -Eo "frp_.+(gz|zip)" |
   while read line; do
