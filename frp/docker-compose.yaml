@@ -71,8 +71,6 @@ services:
           # else \
           #   echo [ FRPC adminUI check pass ]; \
           # fi",
-          # "||",
-          "||",
           "exit 11",
         ]
       interval: 30s
