@@ -30,7 +30,7 @@ services:
           "CMD",
           "sh",
           "-c",
-          "if [[ $$(curl -u $$ADMIN_USER:$$ADMIN_PWD -H -I -m 2 -o /dev/null -s -w %{http_code} http://$$SUBDOMAIN_HOST:$$ADMIN_PORT/api/serverinfo) != 200 ]]; then exit 1; fi",
+          "if [[ $$(curl -u $$ADMIN_USER:$$ADMIN_PWD -H -I -m 2 -o /dev/null -s -w %{http_code} http://$$SUBDOMAIN_HOST:$$ADMIN_PORT/api/serverinfo) != 200 ]]; then echo FRPS is not running; exit 1; else echo FRPS is running; fi",
           "||",
           "exit 1",
         ]
@@ -54,7 +54,7 @@ services:
           "CMD",
           "sh",
           "-c",
-          "if [[ $$(curl -u $$ADMIN_USER:$$ADMIN_PWD -H -I -m 2 -o /dev/null -s -w %{http_code} http://$$(hostname -s).$$SUBDOMAIN_HOST:$$VHOST_HTTP_PORT/api/status) != 200 ]]; then exit 1 ;fi ",
+          "if [[ $$(curl -u $$ADMIN_USER:$$ADMIN_PWD -H -I -m 2 -o /dev/null -s -w %{http_code} http://$$(hostname -s).$$SUBDOMAIN_HOST:$$VHOST_HTTP_PORT/api/status) != 200 ]]; then echo FRPS and FRPC is not running; exit 1; else echo FRPS and FRPC is running; fi",
           "||",
           "exit 1",
         ]
