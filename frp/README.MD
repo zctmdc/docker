@@ -41,11 +41,12 @@ frp 是一个专注于内网穿透的高性能的反向代理应用，支持 TCP
 docker run \
   -d \
   --restart always \
-  --name frps \
+  --name frpc \
   --network host \
   -v /path/to/conf:/etc/frp/ \
+  -e SUBDOMAIN_HOST="frp.zctmdc.cc" \
   zctmdc/frp:Alpha \
-  /usr/sbin/frps -c /etc/frp/frps.ini
+  /usr/sbin/frpc -c /etc/frp/frpc.ini
 ```
 
 ### 更多请看
