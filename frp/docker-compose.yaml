@@ -2,7 +2,7 @@ version: "3"
 volumes:
   conf-frp:
 services:
-  frps:
+  zctmdc-frps:
     build:
       context: .
       dockerfile: Dockerfile
@@ -31,35 +31,52 @@ services:
     #       "CMD",
     #       "sh",
     #       "-c",
-    #       "if [[ $$(curl -u $$ADMIN_USER:$$ADMIN_PWD -H -I -m 2 -o /dev/null -s -w %{http_code} http://$$SUBDOMAIN_HOST:$$ADMIN_PORT/api/serverinfo) != 200 ]]; then echo FRPS is not running; exit 1; else echo FRPS is running; fi",
+    #       "http_code=$$(curl -u $$ADMIN_USER:$$ADMIN_PWD -H -I -m 2 -o /dev/null -s -w %{http_code} http://$$SUBDOMAIN_HOST:$$ADMIN_PORT/api/serverinfo) && \
+    #       if [[ $$http_code != 200 ]]; then \
+    #         echo [ FRPS Dashboard check faild ]; \
+    #         exit 11; \
+    #       else \
+    #         echo [ FRPS Dashboard check pass ]; \
+    #       fi",
     #       "||",
-    #       "exit 1",
+    #       "exit 11",
     #     ]
     #   interval: 30s
     #   timeout: 10s
     #   retries: 3
 
-  frpc:
+  zctmdc-frpc:
     image: zctmdc/frp:Alpha
     hostname: zctmdc-frpc
     container_name: zctmdc-frpc
-    network_mode: host
+    # network_mode: host
     restart: always
     command: ["/usr/sbin/frpc", "-c", "/etc/frp/frpc.ini"]
     environment:
       - SUBDOMAIN_HOST=frp.zctmdc.cc
     # volumes:
     #   - conf-frp:/etc/frp/
-    # healthcheck:
-    #   test:
-    #     [
-    #       "CMD",
-    #       "sh",
-    #       "-c",
-    #       "if [[ $$(curl -u $$ADMIN_USER:$$ADMIN_PWD -H -I -m 2 -o /dev/null -s -w %{http_code} http://$$(hostname -s).$$SUBDOMAIN_HOST:$$VHOST_HTTP_PORT/api/status) != 200 ]]; then echo FRPS and FRPC is not running; exit 1; else echo FRPS and FRPC is running; fi",
-    #       "||",
-    #       "exit 1",
-    #     ]
-    #   interval: 30s
-    #   timeout: 10s
-    #   retries: 3
+    healthcheck:
+      test: [
+          "CMD",
+          "bash",
+          "-f",
+          "/opt/healthcheck/healthcheck-frpc.sh",
+          "||",
+          # "sh", "-c",
+          # "http_code=$$(curl -u $$ADMIN_USER:$$ADMIN_PWD -H -I -m 2 -o /dev/null -s -w %{http_code} http://$$(hostname -s).$$SUBDOMAIN_HOST:$$VHOST_HTTP_PORT/api/status) && \
+          # if [[ $$http_code != 200 ]]; then \
+          #   echo [ FRPC adminUI check faild ]; \
+          #   exit 11; \
+          # else \
+          #   echo [ FRPC adminUI check pass ]; \
+          # fi",
+          # "||",
+          "||",
+          "exit 11",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    # depends_on:
+    #   - zctmdc-frps

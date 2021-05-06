@@ -19,17 +19,19 @@ RUN apk add --update --no-cache tzdata \
   && echo "Asia/Shanghai" > /etc/timezone \
   && apk del tzdata
 
-RUN apk add --update --no-cache bash curl  
+RUN apk add --update --no-cache bash curl procps 
 # wget 
 
-RUN  mkdir -p /etc/frp
+RUN mkdir -p /etc/frp
 
 COPY --from=buildDeps /tmp/frp/bin/frps  /usr/sbin/frps
 COPY --from=buildDeps /tmp/frp/bin/frpc  /usr/sbin/frpc
 
 COPY ./frpc.ini /etc/frp/
 COPY ./frps.ini /etc/frp/
+COPY ./healthcheck /opt/healthcheck
 
+RUN chmod +x /usr/sbin/frpc /usr/sbin/frps /opt/healthcheck/* 
 
 # string 二级域名后缀/服务器地址
 ENV SUBDOMAIN_HOST localhost
@@ -57,9 +59,9 @@ ENV ADMIN_PWD admin
 # stcp、xtcp 验证码
 ENV SK abcdefg
 
-CMD ["echo" ,"-e", "'RUN FRPS\n  /usr/sbin/frps -c /etc/frp/frps.ini\nRUN FRPC\n  /usr/sbin/frpc -c /etc/frp/frpc.ini'" , "&&" ,"sleep"," 300"]
+CMD ["echo" ,"-e", "'RUN FRPS\n  /usr/sbin/frps -c /etc/frp/frps.ini\nRUN FRPC\n  /usr/sbin/frpc -c /etc/frp/frpc.ini\nDEFAULT RUN FRPC'" , "&&" ,"/usr/sbin/frpc", "-c", "/etc/frp/frpc.ini"]
 
 # CMD ["/usr/sbin/frps", "-c", "/etc/frp/frps.ini"]
 # CMD ["/usr/sbin/frpc", "-c", "/etc/frp/frpc.ini"]
 
-HEALTHCHECK --interval=30s --timeout=10s CMD "if [[ `curl -u $ADMIN_USER:$ADMIN_PWD -H -I -m 2 -o /dev/null -s -w %{http_code} http://`hostname -a`.$SUBDOMAIN_HOST:$VHOST_HTTP_PORT/api/serverinfo` != 200 ]]; then exit 1 ; else exit 0; fi " 
+HEALTHCHECK --interval=30s --timeout=10s CMD /opt/healthcheck/healthcheck.sh || exit 11
