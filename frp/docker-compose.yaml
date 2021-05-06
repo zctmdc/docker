@@ -7,7 +7,6 @@ services:
       context: .
       dockerfile: Dockerfile
     image: zctmdc/frp:Alpha
-    hostname: zctmdc-frps
     container_name: zctmdc-frps
     # network_mode: host
     restart: always
@@ -47,7 +46,7 @@ services:
 
   zctmdc-frpc:
     image: zctmdc/frp:Alpha
-    hostname: zctmdc-frpc
+    # hostname: your-name
     container_name: zctmdc-frpc
     # network_mode: host
     restart: always
