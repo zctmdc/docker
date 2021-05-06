@@ -7,8 +7,20 @@ services:
       context: .
       dockerfile: Dockerfile
     image: zctmdc/frp:Alpha
+    hostname: zctmdc-frps
+    container_name: frps
     restart: always
-    network_mode: host
+    environment:
+      - SUBDOMAIN_HOST=frp.zctmdc.cc
+      - VHOST_HTTP_PORT=3080
+      - VHOST_HTTPS_PORT=3443
+    ports:
+      - 7000:7000/tcp
+      - 7000:7000/udp
+      - 7001:7001/udp
+      - 7400:7400
+      - 3080:3080
+      - 3443:3443
     # volumes:
     #   - /path/to/conf:/etc/frp/:ro
     command: ["/usr/sbin/frps", "-c", "/etc/frp/frps.ini"]
@@ -16,7 +28,11 @@ services:
       test:
         [
           "CMD",
-          "if [[ `curl -u admin:admin -H -I -m 2 -o /dev/null -s -w %{http_code} http://localhost:7400/api/serverinfo` != 200 ]]; then exit 1; else exit 0; fi",
+          "sh",
+          "-c",
+          "if [[ $$(curl -u $$ADMIN_USER:$$ADMIN_PWD -H -I -m 2 -o /dev/null -s -w %{http_code} http://$$SUBDOMAIN_HOST:$$ADMIN_PORT/api/serverinfo) != 200 ]]; then exit 1; fi",
+          "||",
+          "exit 1",
         ]
       interval: 30s
       timeout: 10s
@@ -24,16 +40,23 @@ services:
 
   frpc:
     image: zctmdc/frp:Alpha
+    # hostname: zctmdc-frpc
+    container_name: frpc
     restart: always
-    network_mode: host
     command: ["/usr/sbin/frpc", "-c", "/etc/frp/frpc.ini"]
+    environment:
+      - SUBDOMAIN_HOST=frp.zctmdc.cc
     # volumes:
     #   - conf-frp:/etc/frp/
     healthcheck:
       test:
         [
           "CMD",
-          "if [[ `curl -u admin:admin -H -I -m 2 -o /dev/null -s -w %{http_code} http://localhost:7500/api/serverinfo` != 200 ]]; then exit 1 ; else exit 0; fi ",
+          "sh",
+          "-c",
+          "if [[ $$(curl -u $$ADMIN_USER:$$ADMIN_PWD -H -I -m 2 -o /dev/null -s -w %{http_code} http://$$(hostname -s).$$SUBDOMAIN_HOST:$$VHOST_HTTP_PORT/api/status) != 200 ]]; then exit 1 ;fi ",
+          "||",
+          "exit 1",
         ]
       interval: 30s
       timeout: 10s
