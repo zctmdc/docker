@@ -59,7 +59,7 @@ ENV ADMIN_PWD admin
 # stcp、xtcp 验证码
 ENV SK abcdefg
 
-CMD ["echo" ,"-e", "'RUN FRPS\n  /usr/sbin/frps -c /etc/frp/frps.ini\nRUN FRPC\n  /usr/sbin/frpc -c /etc/frp/frpc.ini\nDEFAULT RUN FRPC'" , "&&" ,"/usr/sbin/frpc", "-c", "/etc/frp/frpc.ini"]
+CMD ["echo" ,"-e", "'RUN FRPS\n  /usr/sbin/frps -c /etc/frp/frps.ini\nRUN FRPC\n  /usr/sbin/frpc -c /etc/frp/frpc.ini\nDEFAULT RUN FRPC" , "&&" ,"/usr/sbin/frpc", "-c", "/etc/frp/frpc.ini"]
 
 # CMD ["/usr/sbin/frps", "-c", "/etc/frp/frps.ini"]
 # CMD ["/usr/sbin/frpc", "-c", "/etc/frp/frpc.ini"]

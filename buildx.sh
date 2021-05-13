@@ -1,3 +1,4 @@
+#!/bin/bash
 if [[ ! $(docker buildx ls | grep remotebuilder) ]]; then
 
     ARM64=ssh://root@192.168.169.66

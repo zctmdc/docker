@@ -1,3 +1,4 @@
+#!/bin/bash
 ### 自定义日志功能
 zctmdc_logger() {
     logger -t "【ZCTMDC】" "$*"
