@@ -53,11 +53,20 @@ if [[ -z ${MACHINE} ]]; then
 fi
 
 FILE_NAME=$(
-    curl -sS https://github.com/lucktu/n2n/tree/master/$(echo ${KERNEL} | sed -e 's/\b\(.\)/\u\1/g') |
+    curl -sS -k https://github.com/lucktu/n2n/tree/master/$(echo ${KERNEL} | sed -e 's/\b\(.\)/\u\1/g') |
         grep -oP "(?<=\")n2n_v3_${KERNEL}_${MACHINE}.*?zip"
 )
+
+if [[ -z ${FILE_NAME} ]]; then
+    LOG_ERROR "错误的文件名 - ${FILE_NAME}"
+    LOG_ERROR "检查相关变量 - KERNEL:${KERNEL}, MACHINE:${MACHINE}"
+    exit 11
+fi
 wget -O "/tmp/n2n.zip" "https://raw.githubusercontent.com/lucktu/n2n/master/$(echo ${KERNEL} | sed -e 's/\b\(.\)/\u\1/g')/${FILE_NAME}"
-unzip unzip -o -d "/tmp/n2n" "/tmp/n2n.zip"
+
+unzip -o -d "/tmp/n2n" "/tmp/n2n.zip"
 if [[ -d "/tmp/n2n/static" ]]; then
     cp -r "/tmp/n2n/static/*" "/tmp/n2n/"
 fi
+
+ls -l /tmp/n2n

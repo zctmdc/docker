@@ -3,7 +3,7 @@ FROM debian:buster-slim as builder
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install --no-install-recommends --no-install-suggests -y \
-  bash curl wget 
+  bash curl ca-certificates wget
 
 WORKDIR /tmp/
 

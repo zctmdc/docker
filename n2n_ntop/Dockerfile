@@ -3,11 +3,13 @@ FROM debian:buster-slim as builder
 ARG DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install --no-install-recommends --no-install-suggests -y \
-  bash curl wget  unzip
+  bash curl ca-certificates wget unzip
 
 WORKDIR /tmp/
 
+COPY *.sh /tmp/
 
+RUN chmod +x /tmp/*.sh && /tmp/down_n2n.sh
 
 FROM debian:buster-slim
 

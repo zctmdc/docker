@@ -28,7 +28,7 @@ RUN  apt-get update \
   && apt-get clean
 
 RUN  apt-get update \
-  && apt-get install --no-install-recommends --no-install-suggests -y git unzip curl wget sed bash 
+  && apt-get install --no-install-recommends --no-install-suggests -y git unzip curl ca-certificates wget sed bash 
 
 # RUN git config --global url."https://gitclone.com/".insteadOf https://
 # RUN go env -w GOPROXY=https://goproxy.cn
