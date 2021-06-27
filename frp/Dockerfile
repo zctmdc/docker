@@ -1,4 +1,4 @@
-FROM debian:buster-slim as buildDeps
+FROM debian:buster-slim as builder
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -43,7 +43,7 @@ RUN apt-get update \
 
 RUN mkdir -p /etc/frp
 
-COPY --from=buildDeps \
+COPY --from=builder \
   /tmp/frp/frps \
   /tmp/frp/frpc \
   /usr/sbin/

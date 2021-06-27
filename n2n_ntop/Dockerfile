@@ -1,4 +1,4 @@
-FROM debian:buster-slim as buildDeps
+FROM debian:buster-slim as builder
 
 ARG DEBIAN_FRONTEND=noninteractive
 
