@@ -1,43 +1,48 @@
-FROM debian
+FROM debian:buster-slim as buildDeps
 
-# RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+ARG DEBIAN_FRONTEND=noninteractive
 
-# RUN sed -i 's/archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
-# RUN sed -i 's/security.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
-# RUN sed -i 's/ports.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
+RUN apt-get update && apt-get install --no-install-recommends --no-install-suggests -y \
+  bash curl wget  unzip
 
-# RUN sed -i 's/ftp.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
-# RUN sed -i 's/snapshot.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
-# RUN sed -i 's/security.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
-# RUN sed -i 's/deb.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
+WORKDIR /tmp/
 
-RUN export DEBIAN_FRONTEND=noninteractive \
-  && apt-get update \
-  && apt-get install -y --no-install-recommends tzdata \
+
+
+FROM debian:buster-slim
+
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update \
+  && apt-get install --no-install-recommends --no-install-suggests -y \
+  apt-utils tzdata \
   && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
   && echo "Asia/Shanghai" > /etc/timezone \
   && dpkg-reconfigure -f noninteractive tzdata \
   && apt-get clean
 
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends wget openssl \
-  isc-dhcp-client isc-dhcp-server net-tools iputils-ping \
-  curl traceroute htop psmisc iptables  apt-utils \
+  && apt-get install --no-install-recommends --no-install-suggests -y \
+  wget openssl isc-dhcp-client isc-dhcp-server net-tools iputils-ping \
+  curl traceroute htop psmisc iptables \
   && rm -rf /etc/dhcp/dhcpd.conf \
   && apt-get clean 
 
-# COPY --from=builder /usr/local/bin/n2n-benchmark /usr/local/sbin/
-# COPY --from=builder /usr/local/sbin/supernode /usr/local/sbin/
-# COPY --from=builder /usr/local/sbin/edge /usr/local/sbin/
-
 RUN mkdir -p /usr/local/sbin/
+
+COPY --from=builder \
+  /tmp/n2n/supernode \
+  /tmp/n2n/edge \
+  /usr/local/sbin/
+
 
 COPY *.sh /usr/local/sbin/
 
-RUN chmod a+x /usr/local/sbin/* \
-  && . /usr/local/sbin/init.sh \
-  && wget -O /usr/local/sbin/edge http://rt.qiniu.zctmdc.cn/bin/edge_v2_${myos}_${mycpu} \
-  && wget -O /usr/local/sbin/supernode http://rt.qiniu.zctmdc.cn/bin/supernode_v2_${myos}_${mycpu}
+# RUN chmod a+x /usr/local/sbin/* \
+#   && . /usr/local/sbin/init.sh \
+#   && wget -O /usr/local/sbin/edge http://rt.qiniu.zctmdc.cn/bin/edge_v2_${myos}_${mycpu} \
+#   && wget -O /usr/local/sbin/supernode http://rt.qiniu.zctmdc.cn/bin/supernode_v2_${myos}_${mycpu}
+
 
 RUN set -x \
   && chmod a+x /usr/local/sbin/*

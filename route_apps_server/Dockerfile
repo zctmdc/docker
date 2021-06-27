@@ -3,12 +3,11 @@ FROM nginx
 
 LABEL zctmdc <zctmdc@outlook.com>
 
-
 #RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
 
-#RUN sed -i 's/archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
-#RUN sed -i 's/security.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
-#RUN sed -i 's/ports.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
+# RUN sed -i 's/archive.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
+# RUN sed -i 's/security.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
+# RUN sed -i 's/ports.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
 
 # RUN sed -i 's/snapshot.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
 # RUN sed -i 's/security.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
@@ -19,21 +18,20 @@ RUN set -x \
   && sed -i '0,/root.*/s//root   \/tmp;/' /etc/nginx/conf.d/default.conf \
   && sed -i '0,/index.*/s//autoindex on;/'  /etc/nginx/conf.d/default.conf 
 
-
-RUN export DEBIAN_FRONTEND=noninteractive \ 
-  && apt-get update \
-  && apt-get install -y --no-install-recommends tzdata \
+ARG DEBIAN_FRONTEND=noninteractive
+RUN  apt-get update \
+  && apt-get install --no-install-recommends --no-install-suggests -y \
+  apt-utils tzdata \
   && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
   && echo "Asia/Shanghai" > /etc/timezone \
   && dpkg-reconfigure -f noninteractive tzdata \
   && apt-get clean
 
-RUN export DEBIAN_FRONTEND=noninteractive \ 
-  && apt-get update \
-  && apt-get install -y --no-install-recommends git unzip curl wget sed bash 
+RUN  apt-get update \
+  && apt-get install --no-install-recommends --no-install-suggests -y git unzip curl wget sed bash 
 
 # RUN git config --global url."https://gitclone.com/".insteadOf https://
-# RUN go env -w GOPROXY=https://goproxy.cn 
+# RUN go env -w GOPROXY=https://goproxy.cn
 
 COPY *.sh /usr/local/bin/
 

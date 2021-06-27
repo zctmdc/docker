@@ -1,37 +1,58 @@
-FROM debian as buildDeps
+FROM debian:buster-slim as buildDeps
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get install -y -qq bash curl wget
+RUN apt-get update && apt-get install --no-install-recommends --no-install-suggests -y \
+  bash curl wget 
 
 WORKDIR /tmp/
 
-COPY [ "./frp_download.sh", "./init_logger.sh", "./init_kernel_name_and_machine_name.sh", "/tmp/" ]
+COPY \
+  ./frp_download.sh \
+  ./init_logger.sh \
+  ./init_kernel_name_and_machine_name.sh \
+  /tmp/
 
 RUN chmod +x /tmp/*.sh
 
+ARG KERNEL
+
+ARG MACHINE
+
 RUN /tmp/frp_download.sh
 
-FROM debian
+
+FROM debian:buster-slim
 
 LABEL zctmdc <zctmdc@outlook.com>
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get install -y -qq apt-utils tzdata \
+RUN apt-get update \
+  && apt-get install --no-install-recommends --no-install-suggests -y \
+  apt-utils tzdata \
   && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
   && echo "Asia/Shanghai" > /etc/timezone \
   && dpkg-reconfigure -f noninteractive tzdata \
   && apt-get clean
 
-RUN apt-get update && apt-get install -y -qq bash curl procps \
+RUN apt-get update \
+  && apt-get install --no-install-recommends --no-install-suggests -y \
+  bash curl procps \
   && apt-get clean
 
 RUN mkdir -p /etc/frp
 
-COPY --from=buildDeps /tmp/frp/frps /tmp/frp/frpc /usr/sbin/
+COPY --from=buildDeps \
+  /tmp/frp/frps \
+  /tmp/frp/frpc \
+  /usr/sbin/
 
-COPY ./frpc.ini ./frps.ini /etc/frp/
+COPY \
+  ./frpc.ini \
+  ./frps.ini \
+  /etc/frp/
+
 COPY ./healthcheck/ /opt/healthcheck/
 
 RUN chmod +x /usr/sbin/frpc /usr/sbin/frps /opt/healthcheck/*.sh 
