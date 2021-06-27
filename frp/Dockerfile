@@ -1,37 +1,40 @@
-FROM golang:alpine as buildDeps
+FROM debian as buildDeps
 
-RUN set -x \
-  && apk add --update --no-cache git make
+ARG DEBIAN_FRONTEND=noninteractive
 
-RUN git clone https://github.com/fatedier/frp.git /tmp/frp/ 
+RUN apt-get update && apt-get install -y -qq bash curl wget
 
-WORKDIR /tmp/frp
+WORKDIR /tmp/
 
-RUN make \
-  && echo "frp version: `/tmp/frp/bin/frps --version`"
+COPY [ "./frp_download.sh", "./init_logger.sh", "./init_kernel_name_and_machine_name.sh", "/tmp/" ]
 
-FROM alpine
+RUN chmod +x /tmp/*.sh
+
+RUN /tmp/frp_download.sh
+
+FROM debian
 
 LABEL zctmdc <zctmdc@outlook.com>
 
-RUN apk add --update --no-cache tzdata \
+ARG DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y -qq apt-utils tzdata \
   && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
   && echo "Asia/Shanghai" > /etc/timezone \
-  && apk del tzdata
+  && dpkg-reconfigure -f noninteractive tzdata \
+  && apt-get clean
 
-RUN apk add --update --no-cache bash curl procps 
-# wget 
+RUN apt-get update && apt-get install -y -qq bash curl procps \
+  && apt-get clean
 
 RUN mkdir -p /etc/frp
 
-COPY --from=buildDeps /tmp/frp/bin/frps  /usr/sbin/frps
-COPY --from=buildDeps /tmp/frp/bin/frpc  /usr/sbin/frpc
+COPY --from=buildDeps /tmp/frp/frps /tmp/frp/frpc /usr/sbin/
 
-COPY ./frpc.ini /etc/frp/
-COPY ./frps.ini /etc/frp/
-COPY ./healthcheck /opt/healthcheck
+COPY ./frpc.ini ./frps.ini /etc/frp/
+COPY ./healthcheck/ /opt/healthcheck/
 
-RUN chmod +x /usr/sbin/frpc /usr/sbin/frps /opt/healthcheck/* 
+RUN chmod +x /usr/sbin/frpc /usr/sbin/frps /opt/healthcheck/*.sh 
 
 # string 二级域名后缀/服务器地址
 ENV SUBDOMAIN_HOST localhost

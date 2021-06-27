@@ -9,7 +9,7 @@ frp_version=$(
     head -n 1
 )
 version_file=${FRP_OPT_DIR}/frp_version.txt
-if [[ "${FORCE_UPDATE}"="FALSE" && -e "${version_file}" && "$(cat ${version_file})" == "v${frp_version}" ]]; then
+if [[ "${FORCE_UPDATE}"="FALSE" && -e "${version_file}" && "$(cat ${version_file})" == "${frp_version}" ]]; then
   echo "FRP - 已为最新版本"
   exit
 fi
@@ -76,4 +76,4 @@ curl -sS https://github.com/fatedier/frp/releases/tag/v${frp_version} |
   done &&
   echo ################################################################
 echo "frp_version : v${frp_version}" &&
-  echo v${frp_version} >${version_file}
+  echo ${frp_version} >${version_file}

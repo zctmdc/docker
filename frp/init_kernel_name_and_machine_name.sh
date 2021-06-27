@@ -1,21 +1,5 @@
 #!/bin/bash
-### 自定义日志功能
-zctmdc_logger() {
-    logger -t "【ZCTMDC】" "$*"
-    echo "$*"
-}
-
-# 输出命令到日志并运行
-zctmdc_logger_run() {
-    zctmdc_logger "$*"
-    bash -c "$*"
-}
-
-#睡眠功能
-zctmdc_sleep() {
-    zctmdc_logger_run "sleep ${*}"
-}
-
+source init_logger.sh
 ### 自动识别系统类型
 zctmdc_sel_os() {
     uos=$(uname -s | tr '[A-Z]' '[a-z]')
@@ -54,11 +38,11 @@ zctmdc_sel_os() {
         myos="android"
         ;;
     *)
-        zctmdc_logger "【错误】 系统类型识别失败 - $uos"
+        LOG_ERROR "识别失败的系统 - $uos"
         exit 1
         ;;
     esac
-    zctmdc_logger "【成功】 系统类型识别成功 - $myos"
+    LOG_INFO "识别成功的系统 - $myos"
 }
 
 ### 自动识别CPU架构
@@ -106,7 +90,7 @@ zctmdc_sel_cpu() {
             mycpu=$ucpu
             ;;
         *)
-            zctmdc_logger "【错误】 CPU架构类型识别失败: 未知的 MIPS - $ucpu"
+            LOG_ERROR "分析失败的CPU架构类型 - 未知的 MIPS : $ucpu"
             exit 1
             ;;
         esac
@@ -124,14 +108,9 @@ zctmdc_sel_cpu() {
         mycpu="riscv64"
         ;;
     *)
-        zctmdc_logger "【错误】 CPU架构类型识别失败 - $ucpu"
+        LOG_ERROR "分析失败的CPU架构类型 - $ucpu"
         exit 1
         ;;
     esac
-    zctmdc_logger "【成功】 CPU架构类型识别成功 - $mycpu"
+    LOG_INFO "分析成功的CPU架构类型 - $mycpu"
 }
-### 自动识别系统平台
-myos=""
-mycpu=""
-zctmdc_sel_os &&
-    zctmdc_sel_cpu

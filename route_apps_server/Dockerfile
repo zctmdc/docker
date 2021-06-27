@@ -10,9 +10,9 @@ LABEL zctmdc <zctmdc@outlook.com>
 #RUN sed -i 's/security.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
 #RUN sed -i 's/ports.ubuntu.com/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
 
-RUN sed -i 's/snapshot.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
-RUN sed -i 's/security.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
-RUN sed -i 's/deb.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
+# RUN sed -i 's/snapshot.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
+# RUN sed -i 's/security.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
+# RUN sed -i 's/deb.debian.org/mirrors.tuna.tsinghua.edu.cn/g' /etc/apt/sources.list
 
 RUN set -x \
   && sed -i '/charset/a\    charset utf-8;' /etc/nginx/conf.d/default.conf \
@@ -33,7 +33,7 @@ RUN export DEBIAN_FRONTEND=noninteractive \
   && apt-get install -y --no-install-recommends git unzip curl wget sed bash 
 
 # RUN git config --global url."https://gitclone.com/".insteadOf https://
-#RUN go env -w GOPROXY=https://goproxy.cn 
+# RUN go env -w GOPROXY=https://goproxy.cn 
 
 COPY *.sh /usr/local/bin/
 
@@ -41,7 +41,7 @@ RUN chmod a+x /usr/local/bin/*.sh
 
 RUN set -x \
   && . /usr/local/bin/init.sh \
-  && qshell_version=$(curl -sS https://github.com/qiniu/qshell/releases/latest | grep -Eo "[vV][0-9]+.[0-9]+.[0-9]+"| head -n 1 ) \
+  && qshell_version=$(curl -sS https://github.com/qiniu/qshell/releases/latest | grep -Eo "[vV][0-9]+.[0-9]+.[0-9]+"| head -n 1) \
   && wget -O /tmp/qshell-${qshell_version}-${myos}-${mycpu}.tar.gz http://devtools.qiniu.com/qshell-${qshell_version}-${myos}-${mycpu}.tar.gz \
   && tar -zxvf  /tmp/qshell-${qshell_version}-${myos}-${mycpu}.tar.gz -C /tmp \
   && mv /tmp/qshell /usr/local/bin/qshell

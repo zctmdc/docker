@@ -46,13 +46,15 @@ services:
 
   zctmdc-frpc:
     image: zctmdc/frp:Alpha
-    # hostname: your-name
+    # hostname: your-frp-name
     container_name: zctmdc-frpc
     # network_mode: host
     restart: always
     command: ["/usr/sbin/frpc", "-c", "/etc/frp/frpc.ini"]
     environment:
       - SUBDOMAIN_HOST=frp.zctmdc.cc
+      - ADMIN_USER=admin
+      - ADMIN_PWD=admin
     # volumes:
     #   - conf-frp:/etc/frp/
     healthcheck:
@@ -70,7 +72,8 @@ services:
           # else \
           #   echo [ FRPC adminUI check pass ]; \
           # fi",
-          "exit 11",
+          "exit",
+          "11",
         ]
       interval: 30s
       timeout: 10s
