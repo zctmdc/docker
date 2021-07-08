@@ -1,4 +1,4 @@
-#!/usr/bin/bash
+#!/bin/bash
 
 #  方法1
 # if [[ ! $(docker buildx ls | grep remotebuilder) ]]; then
