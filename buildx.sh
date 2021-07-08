@@ -52,7 +52,7 @@ for project in $(ls); do
   if [[ -d ${project} && ${skip_path} != *${project}* ]]; then
     echo "build - ${project}"
     docker buildx build \
-      --platform=linux/amd64,linux/386,linux/arm64,linux/arm/v7 \
+      --platform=linux/amd64,linux/arm64,linux/arm/v7 \
       ${build_cmd} \
       --build-arg GO111MODULE=on \
       --build-arg GOPROXY=https://goproxy.io \

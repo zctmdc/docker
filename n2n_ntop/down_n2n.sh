@@ -53,7 +53,7 @@ if [[ -z ${MACHINE} ]]; then
 fi
 
 FILE_NAME=$(
-    curl -sS -k https://github.com/lucktu/n2n/tree/master/$(echo ${KERNEL} | sed -e 's/\b\(.\)/\u\1/g') |
+    curl -k -sS https://github.com/lucktu/n2n/tree/master/$(echo ${KERNEL} | sed -e 's/\b\(.\)/\u\1/g') |
         grep -oP "(?<=\")n2n_v3_${KERNEL}_${MACHINE}.*?zip"
 )
 

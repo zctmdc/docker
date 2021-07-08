@@ -4,7 +4,7 @@
 mkdir -p ${FRP_TMP_DIR} ${FRP_OPT_DIR}
 cd ${FRP_TMP_DIR}/
 frp_version=$(
-  curl -sS https://github.com/fatedier/frp/releases/latest |
+  curl -k -sS https://github.com/fatedier/frp/releases/latest |
     grep -oP "(\d+\.){2}\d+" |
     head -n 1
 )
@@ -23,7 +23,7 @@ amd64-x64
 i386-x86
 '
 
-curl -sS https://github.com/fatedier/frp/releases/tag/v${frp_version} |
+curl -k -sS https://github.com/fatedier/frp/releases/tag/v${frp_version} |
   grep v${frp_version} |
   grep -Eo "frp_.+(gz|zip)" |
   while read line; do

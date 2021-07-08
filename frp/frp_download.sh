@@ -40,7 +40,7 @@ fi
 if [[ -z ${FRP_VERSION} ]]; then
   LOG_INFO "正在从GITHUB获取版本"
   FRP_VERSION=$(
-    curl -sS https://github.com/fatedier/frp/releases/latest |
+    curl -k -sS https://github.com/fatedier/frp/releases/latest |
       grep -oP "(\d+\.){2}\d+" |
       head -n 1
   )
@@ -49,7 +49,7 @@ fi
 
 if [[ -z ${FRP_VERSION} ]]; then
   LOG_INFO "正在从七牛云获取版本"
-  FRP_VERSION=$(curl -sS http://rt.qiniu.zctmdc.cn/bin/frp_version.txt)
+  FRP_VERSION=$(curl -k -sS http://rt.qiniu.zctmdc.cn/bin/frp_version.txt)
   LOG_INFO "FRP_VERSION : 七牛云 - ${FRP_VERSION}"
 fi
 
