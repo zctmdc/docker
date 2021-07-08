@@ -1,4 +1,4 @@
-
+#!/bin/bash
 check_server() {
     if ping -c 1 $SUPERNODE_HOST >/dev/null 2>&1; then
         SUPERNODE_IP=$(ping -c 1 $SUPERNODE_HOST | grep -Eo "([0-9]{1,3}\.){3}[0-9]{1,3}" | head -n 1)

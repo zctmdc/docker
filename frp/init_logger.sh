@@ -1,3 +1,4 @@
+#!/bin/bash
 LOG_INFO() {
   echo -e "\033[0;32m[INFO] $* \033[0m"
 }
