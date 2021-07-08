@@ -26,7 +26,7 @@ RUN apt-get update \
 RUN apt-get update \
   && apt-get install --no-install-recommends --no-install-suggests -y \
   wget openssl isc-dhcp-client isc-dhcp-server net-tools iputils-ping \
-  curl traceroute htop psmisc iptables \
+  curl  ca-certificates traceroute htop psmisc iptables \
   && rm -rf /etc/dhcp/dhcpd.conf \
   && apt-get clean 
 

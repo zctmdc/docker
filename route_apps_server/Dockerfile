@@ -28,7 +28,8 @@ RUN  apt-get update \
   && apt-get clean
 
 RUN  apt-get update \
-  && apt-get install --no-install-recommends --no-install-suggests -y git unzip curl ca-certificates wget sed bash 
+  && apt-get install --no-install-recommends --no-install-suggests -y \ 
+  git unzip curl ca-certificates wget sed bash 
 
 # RUN git config --global url."https://gitclone.com/".insteadOf https://
 # RUN go env -w GOPROXY=https://goproxy.cn
@@ -40,7 +41,9 @@ RUN chmod a+x /usr/local/bin/*.sh
 RUN set -x \
   && . /usr/local/bin/init.sh \
   && qshell_version=$(curl -k -sS https://github.com/qiniu/qshell/releases/latest | grep -Eo "[vV][0-9]+.[0-9]+.[0-9]+"| head -n 1) \
-  && wget -O /tmp/qshell-${qshell_version}-${myos}-${mycpu}.tar.gz http://devtools.qiniu.com/qshell-${qshell_version}-${myos}-${mycpu}.tar.gz \
+  && wget \
+    -O /tmp/qshell-${qshell_version}-${myos}-${mycpu}.tar.gz \
+    http://devtools.qiniu.com/qshell-${qshell_version}-${myos}-${mycpu}.tar.gz \
   && tar -zxvf  /tmp/qshell-${qshell_version}-${myos}-${mycpu}.tar.gz -C /tmp \
   && mv /tmp/qshell /usr/local/bin/qshell
 

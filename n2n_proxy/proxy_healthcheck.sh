@@ -22,7 +22,7 @@ fi
 if [[ "${EDGE_PROXY}" == "TRUE" ]]; then
     echo 启用代理
     proxy_port=$(echo $PROXY_ARGS | grep -Eo "L=[a-zA-Z0-9:@/]*?:[0-9]+" | grep -Eo "[0-9]+$")
-    curl -x localhost:$proxy_port $PROXY_HEALTHCHECK_URL || exit 1
+    curl -k -x localhost:$proxy_port $PROXY_HEALTHCHECK_URL || exit 1
 fi
 
 /usr/local/sbin/n2n_healthcheck.sh || exit 1

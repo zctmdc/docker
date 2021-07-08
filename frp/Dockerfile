@@ -38,7 +38,7 @@ RUN apt-get update \
 
 RUN apt-get update \
   && apt-get install --no-install-recommends --no-install-suggests -y \
-  bash curl procps \
+  bash curl ca-certificates procps \
   && apt-get clean
 
 RUN mkdir -p /etc/frp

@@ -37,14 +37,16 @@ PROXY_SERVER="HTTP://proxy-server:1080"
 if [[ -z ${PROXY_SERVER} ]]; then
   echo "未设置代理服务 \${PROXY_SERVER}"
 fi
-if curl -x ${PROXY_SERVER} --connect-timeout 5 https://github.com; then
+if curl -k -sS -x ${PROXY_SERVER} --connect-timeout 5 https://github.com; then
   echo "使用代理服务器 \${PROXY_SERVER}:${PROXY_SERVER}"
   build_cmd="--build-arg ALL_PROXY=${PROXY_SERVER} \
       --build-arg HTTP_PROXY=${PROXY_SERVER} \
       --build-arg USE_PROXY=on \
       --build-arg all_proxy=${PROXY_SERVER} \
       --build-arg http_proxy=${PROXY_SERVER} \
-      --build-arg use_proxy=on"
+      --build-arg use_proxy=on \
+      --build-arg GO111MODULE=on \
+      --build-arg GOPROXY=https://goproxy.io"
 else
   echo "请检查代理服务 \${PROXY_SERVER}:${PROXY_SERVER}"
 fi
@@ -57,8 +59,6 @@ for project in $(ls); do
     docker buildx build \
       --platform=linux/amd64,linux/arm64,linux/arm/v7 \
       ${build_cmd} \
-      --build-arg GO111MODULE=on \
-      --build-arg GOPROXY=https://goproxy.io \
       --tag zctmdc/${project}:Alpha \
       ./${project} \
       --push
