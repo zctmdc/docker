@@ -1,15 +1,16 @@
-FROM nginx:alpine
-LABEL zctmdc <zctmdc@outlook.com>
+FROM debian:buster-slim
 
-# RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apk add --update --no-cache tzdata \
+RUN apt-get update \
+  && apt-get install --no-install-recommends --no-install-suggests -y \
+  apt-utils tzdata \
   && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
   && echo "Asia/Shanghai" > /etc/timezone \
-  && apk del tzdata
+  && dpkg-reconfigure -f noninteractive tzdata \
+  && apt-get clean
 
-RUN set -x \
-  && apk add --update --no-cache bash sed
+
 
 RUN set -x \
   && sed -i '/charset/a\    charset utf-8;' /etc/nginx/conf.d/default.conf \
