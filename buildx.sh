@@ -1,3 +1,5 @@
+#!/usr/bin/bash
+
 #  方法1
 # if [[ ! $(docker buildx ls | grep remotebuilder) ]]; then
 
@@ -46,6 +48,7 @@ if curl -x ${PROXY_SERVER} --connect-timeout 5 https://github.com; then
 else
   echo "请检查代理服务 \${PROXY_SERVER}:${PROXY_SERVER}"
 fi
+
 cd /opt/docker
 skip_path="caddy my_settings"
 for project in $(ls); do
