@@ -20,8 +20,8 @@
 
 # 方法2
 # add 2021-7-8
+docker run --privileged --rm docker/binfmt:a7996909642ee92942dcd6cff44b9b95f08dad64
 if [[ ! $(docker buildx ls | grep all-pf-builder) ]]; then
-  docker run --privileged --rm docker/binfmt:a7996909642ee92942dcd6cff44b9b95f08dad64
   docker buildx create --name all-pf-builder
   docker buildx inspect --bootstrap
 fi
