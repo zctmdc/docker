@@ -54,7 +54,7 @@ EOF
 
 mode_supernode() {
   echo $MODE -- 超级节点模式
-  N2N_LOG_RUN "supernode -l $SUPERNODE_PORT $N2N_ARGS" &
+  N2N_LOG_RUN "supernode -p $SUPERNODE_PORT $N2N_ARGS" &
 }
 
 check_edge() {
