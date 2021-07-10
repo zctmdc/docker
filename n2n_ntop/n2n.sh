@@ -74,6 +74,7 @@ run_edge() {
   else
     N2N_LOG_RUN "edge -d $EDGE_TUN -m $edge_mac -a $EDGE_IP_AGE -c $EDGE_COMMUNITY -s $EDGE_NETMASK -i $EDGE_REG_INTERVAL -l $SUPERNODE_IP:$SUPERNODE_PORT $N2N_ARGS" &
   fi
+  ifconfig $EDGE_TUN
 }
 
 mode_dhcpd() {
