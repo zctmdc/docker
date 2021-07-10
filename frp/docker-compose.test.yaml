@@ -13,18 +13,6 @@ services:
       - SUBDOMAIN_HOST=frps-demo
     command: ["/usr/sbin/frps", "-c", "/etc/frp/frps.ini"]
 
-  frps-test:
-    image: zctmdc/frp:Alpha
-    container_name: frps-test
-    # hostname: frps-test
-    environment:
-      - SUBDOMAIN_HOST=frps-demo
-    command: ["/bin/bash", "-c", "/opt/healthcheck/healthcheck-frps.sh"]
-    depends_on:
-      - frps-demo
-    external_links:
-      - frps-demo
-
   frpc-test:
     image: zctmdc/frp:Alpha
     container_name: frpc-test
