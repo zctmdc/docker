@@ -54,9 +54,7 @@ COPY \
   ./frps.ini \
   /etc/frp/
 
-COPY ./healthcheck/ /opt/healthcheck/
-
-RUN chmod +x /usr/sbin/frpc /usr/sbin/frps /opt/healthcheck/*.sh 
+RUN chmod +x /usr/sbin/frpc /usr/sbin/frps
 
 # string 二级域名后缀/服务器地址
 ENV SUBDOMAIN_HOST localhost
@@ -89,4 +87,7 @@ CMD ["echo" ,"-e", "'RUN FRPS\n  /usr/sbin/frps -c /etc/frp/frps.ini\nRUN FRPC\n
 # CMD ["/usr/sbin/frps", "-c", "/etc/frp/frps.ini"]
 # CMD ["/usr/sbin/frpc", "-c", "/etc/frp/frpc.ini"]
 
-# HEALTHCHECK --interval=30s --timeout=10s CMD /opt/healthcheck/healthcheck.sh || exit 11
+
+COPY ./healthcheck/ /opt/healthcheck/
+RUN chmod +x  /opt/healthcheck/*.sh 
+# HEALTHCHECK --interval=30s --timeout=10s CMD /opt/healthcheck/healthcheck.sh || exit 1
