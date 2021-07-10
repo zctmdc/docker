@@ -9,5 +9,5 @@ bash $curPath/healthcheck-frpc.sh
 frpc_check_code=$?
 
 if [[ ${frps_check_code} != 0 || ${frpc_check_code} != 0 ]]; then
-    exit 11
+    exit 1
 fi
