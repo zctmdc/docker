@@ -60,7 +60,7 @@ echo ${FILE_NAME}
 if [[ -z ${FILE_NAME} ]]; then
     LOG_ERROR "错误的文件名 - ${FILE_NAME}"
     LOG_ERROR "检查相关变量 - KERNEL:${KERNEL}, MACHINE:${MACHINE}"
-    exit 11
+    exit 1
 fi
 wget -O "/tmp/n2n.zip" "https://raw.githubusercontent.com/lucktu/n2n/master/$(echo ${KERNEL} | sed -e 's/\b\(.\)/\u\1/g')/${FILE_NAME}"
 
