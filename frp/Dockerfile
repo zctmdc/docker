@@ -24,7 +24,8 @@ RUN /tmp/frp_download.sh
 
 FROM debian:buster-slim
 
-LABEL zctmdc <zctmdc@outlook.com>
+LABEL author=zctmdc
+LABEL email=<zctmdc@outlook.com>
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -88,4 +89,4 @@ CMD ["echo" ,"-e", "'RUN FRPS\n  /usr/sbin/frps -c /etc/frp/frps.ini\nRUN FRPC\n
 # CMD ["/usr/sbin/frps", "-c", "/etc/frp/frps.ini"]
 # CMD ["/usr/sbin/frpc", "-c", "/etc/frp/frpc.ini"]
 
-HEALTHCHECK --interval=30s --timeout=10s CMD /opt/healthcheck/healthcheck.sh || exit 11
+# HEALTHCHECK --interval=30s --timeout=10s CMD /opt/healthcheck/healthcheck.sh || exit 11

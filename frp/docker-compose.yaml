@@ -11,7 +11,7 @@ services:
     # network_mode: host
     restart: always
     environment:
-      - SUBDOMAIN_HOST=frp.zctmdc.cc
+      - SUBDOMAIN_HOST=localhost
       - VHOST_HTTP_PORT=3080
       - VHOST_HTTPS_PORT=3443
     ports:
@@ -24,10 +24,13 @@ services:
     # volumes:
     #   - /path/to/conf:/etc/frp/:ro
     command: ["/usr/sbin/frps", "-c", "/etc/frp/frps.ini"]
-    # healthcheck:
-    #   test:
-    #     [
-    #       "CMD",
+    healthcheck:
+      test: [
+          "CMD",
+          "bash",
+          "-f",
+          "/opt/healthcheck/healthcheck-frps.sh",
+          "||",
     #       "sh",
     #       "-c",
     #       "http_code=$$(curl -u $$ADMIN_USER:$$ADMIN_PWD -H -I -m 2 -o /dev/null -s -w %{http_code} http://$$SUBDOMAIN_HOST:$$ADMIN_PORT/api/serverinfo) && \
@@ -50,13 +53,18 @@ services:
     container_name: zctmdc-frpc
     # network_mode: host
     restart: always
-    command: ["/usr/sbin/frpc", "-c", "/etc/frp/frpc.ini"]
     environment:
-      - SUBDOMAIN_HOST=frp.zctmdc.cc
+      - SUBDOMAIN_HOST=frps
+      - BIND_PORT=7000
+      - TOKEN=zctmdc303x
       - ADMIN_USER=admin
       - ADMIN_PWD=admin
+      - ADMIN_PORT=7500
+      - VHOST_HTTP_PORT=3080
+      - SK=zctmdc303X
     # volumes:
     #   - conf-frp:/etc/frp/
+    command: ["/usr/sbin/frpc", "-c", "/etc/frp/frpc.ini"]
     healthcheck:
       test: [
           "CMD",
@@ -78,5 +86,7 @@ services:
       interval: 30s
       timeout: 10s
       retries: 3
-    # depends_on:
-    #   - zctmdc-frps
+    depends_on:
+      - zctmdc-frps
+    external_links:
+      - frps:frps

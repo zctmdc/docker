@@ -10,7 +10,6 @@ LOG_WARNING() {
   echo -e "\033[0;33m[WARNING] $* \033[0m"
 }
 
-
 if [[ -z $(ps -e -f | grep -v grep | grep -v healthcheck | grep frpc) ]]; then
     LOG_ERROR "FRPC is not running"
     exit 0

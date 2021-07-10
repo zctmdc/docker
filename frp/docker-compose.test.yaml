@@ -1,0 +1,56 @@
+version: "3"
+volumes:
+  conf-frp:
+services:
+  zctmdc-frps:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: zctmdc/frp:Alpha
+    container_name: test-frps
+    # network_mode: host
+    restart: always
+    environment:
+      - SUBDOMAIN_HOST=localhost
+      - VHOST_HTTP_PORT=3080
+      - VHOST_HTTPS_PORT=3443
+    ports:
+      - 7000:7000/tcp
+      - 7000:7000/udp
+      - 7400:7400
+      - 3080:3080
+    # volumes:
+    #   - /path/to/conf:/etc/frp/:ro
+    command:
+      [
+        "/usr/sbin/frps",
+        "-c",
+        "/etc/frp/frps.ini",
+        "&",
+        "/opt/healthcheck/healthcheck-frps.sh",
+      ]
+
+  zctmdc-frpc:
+    image: zctmdc/frp:Alpha
+    # hostname: your-frp-name
+    container_name: test-frpc
+    # network_mode: host
+    restart: always
+    environment:
+      - SUBDOMAIN_HOST=frps
+      - ADMIN_USER=admin
+      - ADMIN_PWD=admin
+    # volumes:
+    #   - conf-frp:/etc/frp/
+    command:
+      [
+        "/usr/sbin/frpc",
+        "-c",
+        "/etc/frp/frpc.ini",
+        "&",
+        "/opt/healthcheck/healthcheck-frpc.sh",
+      ]
+    depends_on:
+      - zctmdc-frps
+    external_links:
+      - frps:frps
