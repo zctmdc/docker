@@ -11,7 +11,13 @@ services:
     hostname: frps-demo
     environment:
       - SUBDOMAIN_HOST=frps-demo
-    command: ["/usr/sbin/frps", "-c", "/etc/frp/frps.ini"]
+    command: [
+        "/bin/bash",
+        "-c",
+        "/usr/sbin/frps -c /etc/frp/frps.ini & \
+        sleep 5 && \
+        /opt/healthcheck/healthcheck.sh",
+      ]
 
   frpc-test:
     image: zctmdc/frp:Alpha

@@ -12,14 +12,14 @@ LOG_WARNING() {
 
 if [[ -z $(ps -e -fx | grep -v grep | grep -v healthcheck | grep frps) ]]; then
   LOG_WARNING "FRPS is not running"
-fi
-
-http_code=$(curl -u ${ADMIN_USER}:${ADMIN_PWD} -H -I -m 2 -o /dev/null -s -w %{http_code} --connect-timeout 10 http://localhost:${ADMIN_PORT}/api/serverinfo)
-if [[ $http_code != 200 ]]; then
-  LOG_ERROR "local FRPS Dashboard check faild, please check FRPS Dashboard URI - http://localhost:${ADMIN_PORT}/api/serverinfo"
-  exit 1
 else
-  LOG_INFO "local FRPS Dashboard check pass"
+  http_code=$(curl -u ${ADMIN_USER}:${ADMIN_PWD} -H -I -m 2 -o /dev/null -s -w %{http_code} --connect-timeout 10 http://localhost:${ADMIN_PORT}/api/serverinfo)
+  if [[ $http_code != 200 ]]; then
+    LOG_ERROR "local FRPS Dashboard check faild, please check FRPS Dashboard URI - http://localhost:${ADMIN_PORT}/api/serverinfo"
+    exit 1
+  else
+    LOG_INFO "local FRPS Dashboard check pass"
+  fi
 fi
 
 http_code=$(curl -u ${ADMIN_USER}:${ADMIN_PWD} -H -I -m 2 -o /dev/null -s -w %{http_code} --connect-timeout 10 http://${SUBDOMAIN_HOST}:${ADMIN_PORT}/api/serverinfo)

@@ -13,16 +13,15 @@ LOG_WARNING() {
 if [[ -z $(ps -e -f | grep -v grep | grep -v healthcheck | grep frpc) ]]; then
   LOG_WARNING "FRPC is not running"
   exit 0
-fi
-
-http_code=$(curl -u ${ADMIN_USER}:${ADMIN_PWD} -H -I -m 2 -o /dev/null -s -w %{http_code} --connect-timeout 10 http://localhost:${ADMIN_PORT}/api/status)
-if [[ ${http_code} != 200 ]]; then
-  LOG_ERROR "local FRPC adminUI check faild, please check FRPC adminUI - http://localhost:${ADMIN_PORT}/api/status"
-  exit 1
 else
-  LOG_INFO "local FRPC adminUI check pass"
+  http_code=$(curl -u ${ADMIN_USER}:${ADMIN_PWD} -H -I -m 2 -o /dev/null -s -w %{http_code} --connect-timeout 10 http://localhost:${ADMIN_PORT}/api/status)
+  if [[ ${http_code} != 200 ]]; then
+    LOG_ERROR "local FRPC adminUI check faild, please check FRPC adminUI - http://localhost:${ADMIN_PORT}/api/status"
+    exit 1
+  else
+    LOG_INFO "local FRPC adminUI check pass"
+  fi
 fi
-
 http_code=$(curl -u ${ADMIN_USER}:${ADMIN_PWD} -H -I -m 2 -o /dev/null -s -w %{http_code} -H "Host: $(hostname -s).${SUBDOMAIN_HOST}" --connect-timeout 10 http://${SUBDOMAIN_HOST}:${VHOST_HTTP_PORT}/api/status)
 if [[ ${http_code} == 000 ]]; then
   LOG_ERROR "FRPC adminUI check faild, please check ENV value - \${SUBDOMAIN_HOST}:\${VHOST_HTTP_PORT} : ${SUBDOMAIN_HOST}:${VHOST_HTTP_PORT}"
