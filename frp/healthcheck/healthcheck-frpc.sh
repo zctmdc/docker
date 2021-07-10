@@ -11,7 +11,7 @@ LOG_WARNING() {
 }
 
 
-if [[ -z $(ps -a | grep -v grep | grep -v healthcheck | grep frpc) ]]; then
+if [[ -z $(ps -e -f | grep -v grep | grep -v healthcheck | grep frpc) ]]; then
     LOG_ERROR "FRPC is not running"
     exit 0
 fi

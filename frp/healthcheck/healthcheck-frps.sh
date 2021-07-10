@@ -11,7 +11,7 @@ LOG_WARNING() {
 }
 
 
-if [[ -z $(ps -ax | grep -v grep | grep -v healthcheck | grep frps) ]]; then
+if [[ -z $(ps -e -fx | grep -v grep | grep -v healthcheck | grep frps) ]]; then
     LOG_ERROR "FRPS is not running"
 fi
 http_code=$(curl -u ${ADMIN_USER}:${ADMIN_PWD} -H -I -m 2 -o /dev/null -s -w %{http_code} http://${SUBDOMAIN_HOST}:${ADMIN_PORT}/api/serverinfo)
