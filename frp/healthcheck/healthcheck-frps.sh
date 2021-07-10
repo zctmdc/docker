@@ -10,7 +10,7 @@ LOG_WARNING() {
   echo -e "\033[0;33m[WARNING] $* \033[0m"
 }
 
-if [[ -z $(ps -e -fx | grep -v grep | grep -v healthcheck | grep frps) ]]; then
+if [[ -z $(ps -e -f| grep -v grep | grep -v healthcheck | grep frps) ]]; then
   LOG_WARNING "FRPS is not running"
 else
   http_code=$(curl -u ${ADMIN_USER}:${ADMIN_PWD} -H -I -m 2 -o /dev/null -s -w %{http_code} --connect-timeout 10 http://localhost:${ADMIN_PORT}/api/serverinfo)
