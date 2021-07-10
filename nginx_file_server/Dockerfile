@@ -1,4 +1,4 @@
-FROM debian:buster-slim
+FROM nginx
 
 ARG DEBIAN_FRONTEND=noninteractive
 
