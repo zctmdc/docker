@@ -1,0 +1,43 @@
+version: "3"
+volumes:
+  conf-frp:
+services:
+  frps-demo:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: zctmdc/frp:Alpha
+    container_name: frps-demo
+    hostname: frps-demo
+    environment:
+      - SUBDOMAIN_HOST=frps-demo
+    command: ["/usr/sbin/frps", "-c", "/etc/frp/frps.ini"]
+
+  frps-test:
+    image: zctmdc/frp:Alpha
+    container_name: frps-test
+    # hostname: frps-test
+    environment:
+      - SUBDOMAIN_HOST=frps-demo
+    command: ["/bin/bash", "-c", "/opt/healthcheck/healthcheck-frps.sh"]
+    depends_on:
+      - frps-demo
+    external_links:
+      - frps-demo
+
+  frpc-test:
+    image: zctmdc/frp:Alpha
+    container_name: frpc-test
+    # hostname: frpc-test
+    environment:
+      - SUBDOMAIN_HOST=frps-demo
+    command: [
+        "/bin/bash",
+        "-c",
+        "/usr/sbin/frpc -c /etc/frp/frpc.ini & \
+        /opt/healthcheck/healthcheck.sh",
+      ]
+    depends_on:
+      - frps-demo
+    external_links:
+      - frps-demo

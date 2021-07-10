@@ -27,13 +27,16 @@ frp 是一个专注于内网穿透的高性能的反向代理应用，支持 TCP
 密码为 `admin`
 点击`Configure`，修改 frpc 配置后点击`upload`生效。
 
-### 远程控制其他 FRPC
+### 远程配置其他 FRPC
+具体请参考https://gofrp.org/docs/examples/stcp/
 
-1. 在公网启动 `frps`
-2. 在远端启动 `frpc`
-3. 访问 <http://公网地址:7500/static/#/proxies/stcp> ，查看 `stcp` 服务名称 eg:`XXX.stcp_admin_UI`
-4. 在本地启动 `frpc` ，修改 `frpc` 配置中 `stcp_admin_UI_visitor` 的 `{{ .Envs.HOSTNAME }}` 为当前服务名称
-5. 在浏览器输入 <http://localhost:9000/> 以登录远端 `frpc` 控制面板，进行配置
+1. 在服务端启动 `frps`，确保所有的客户端可以访问该主机。
+2. 在被访问客户端启动 `frpc`
+3. 访问 <http://服务端地址:7500/static/#/proxies/stcp> ，查看 `stcp` 服务名称 eg:`XXX.stcp_admin_UI`
+4. 在本地客户端启动 `frpc` ，修改 `frpc` 配置中 `stcp_admin_UI_visitor` 的 `{{ .Envs.HOSTNAME }}` 为被访问客户端`stcp` 服务名称，注意移除注释符号。
+5. 在浏览器输入 <http://localhost:9000/> 登录被访问客户端 `frpc` 控制面板，进行相关配置。 
+
+
 
 ### 使用自定义配置文件启动
 
