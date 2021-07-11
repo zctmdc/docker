@@ -27,6 +27,13 @@ jobs:
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
+      - name: Cache Docker layers
+        uses: actions/cache@v2
+        with:
+          path: /tmp/.buildx-cache
+          key: ${{ runner.os }}-buildx-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-buildx-
 
       # - name: Build and push zctmdc/frp:Alpha
       #   uses: docker/build-push-action@v2
@@ -49,6 +56,7 @@ jobs:
       #     #   /bin/bash -c "/usr/sbin/frpc -c /etc/frp/frpc.ini & \
       #     #   sleep 2 \
       #     #   && /opt/healthcheck/healthcheck.sh"
+
       - name: Build test and push
         run: |
           skip_path="caddy my_settings .github"
@@ -56,8 +64,8 @@ jobs:
             if [[ -d ${project} && ${skip_path} != *${project}* ]]; then
               docker buildx build \
                 --platform=linux/amd64,linux/arm64,linux/arm/v7 \
-                --cache-from type=registry,ref=zctmdc/frp:Alpha \
-                --cache-to type=inline \
+                --cache-from type=local,src=/tmp/.buildx-cache \
+                --cache-to type=local,dest=/tmp/.buildx-cache-new \
                 --tag zctmdc/${project}:Alpha \
                 ./${project}
               if [[ -f ${project}/docker-compose.test.yaml ]]; then 
@@ -66,3 +74,11 @@ jobs:
               fi
             fi
           done
+
+      - # Temp fix
+        # https://github.com/docker/build-push-action/issues/252
+        # https://github.com/moby/buildkit/issues/1896
+        name: Move cache
+        run: |
+          rm -rf /tmp/.buildx-cache
+          mv /tmp/.buildx-cache-new /tmp/.buildx-cache
