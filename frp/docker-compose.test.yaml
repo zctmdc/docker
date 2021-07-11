@@ -3,9 +3,9 @@ volumes:
   conf-frp:
 services:
   frps-test:
-    build:
-      context: .
-      dockerfile: Dockerfile
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
     image: zctmdc/frp:Alpha
     container_name: frps-test
     hostname: frps-test
@@ -23,7 +23,7 @@ services:
         "/bin/bash",
         "-c",
         "/usr/sbin/frpc -c /etc/frp/frpc.ini \
-        &curl -u $${ADMIN_USER}:$${ADMIN_PWD} -H -I -k -m 2 -o /dev/null -s -w %{http_code} --connect-timeout 10 http://localhost:$${ADMIN_PORT}/api/status \
+        & curl -u $${ADMIN_USER}:$${ADMIN_PWD} -H -I -k -m 2 -o /dev/null -s --connect-timeout 10 http://localhost:$${ADMIN_PORT}/api/status \
         && /opt/healthcheck/healthcheck.sh",
       ]
     depends_on:
