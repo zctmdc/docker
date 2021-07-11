@@ -27,15 +27,16 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build zctmdc/frp:Alpha
+      - name: Build and push zctmdc/frp:Alpha
         uses: docker/build-push-action@v2
         with:
           context: ./frp
           platforms: linux/amd64,linux/arm64,linux/arm/v7
-          push: false
+          push: true
           tags: zctmdc/frp:Alpha
           cache-from: type=registry,ref=zctmdc/frp:Alpha
           cache-to: type=inline
+        run: |
 
       - name: Test zctmdc/frp:Alpha
         run: |
@@ -49,12 +50,12 @@ jobs:
             sleep 2 \
             && /opt/healthcheck/healthcheck.sh"
 
-      - name: Push zctmdc/frp:Alpha
-        uses: docker/build-push-action@v2
-        with:
-          # context: ./frp
-          # platforms: linux/amd64,linux/arm64,linux/arm/v7
-          push: true
-          tags: zctmdc/frp:Alpha
-          # cache-from: type=registry,ref=zctmdc/frp:Alpha
-          # cache-to: type=inline
+      # - name: Push zctmdc/frp:Alpha
+      #   uses: docker/build-push-action@v2
+      #   with:
+      #     # context: ./frp
+      #     # platforms: linux/amd64,linux/arm64,linux/arm/v7
+      #     push: true
+      #     tags: zctmdc/frp:Alpha
+      #     # cache-from: type=registry,ref=zctmdc/frp:Alpha
+      #     # cache-to: type=inline
