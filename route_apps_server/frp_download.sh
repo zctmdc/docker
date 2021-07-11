@@ -34,7 +34,7 @@ curl -k -sS https://github.com/fatedier/frp/releases/tag/v${frp_version} |
     kernel_name_and_machine=${kernel_name_and_machine_and_suffix%%.*}
     kernel_name=${kernel_name_and_machine%_*}
     machine=${kernel_name_and_machine#*_}
-    wget -O ${FRP_TMP_DIR}/${file_name} \
+    wget -qO ${FRP_TMP_DIR}/${file_name} \
       https://github.com/fatedier/frp/releases/download/v${frp_version}/${file_name}
 
     case $file_suffix in

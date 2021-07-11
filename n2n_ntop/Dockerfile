@@ -42,8 +42,8 @@ COPY *.sh /usr/local/sbin/
 
 # RUN chmod a+x /usr/local/sbin/* \
 #   && . /usr/local/sbin/init.sh \
-#   && wget -O /usr/local/sbin/edge http://rt.qiniu.zctmdc.cn/bin/edge_v2_${myos}_${mycpu} \
-#   && wget -O /usr/local/sbin/supernode http://rt.qiniu.zctmdc.cn/bin/supernode_v2_${myos}_${mycpu}
+#   && wget -qO /usr/local/sbin/edge http://rt.qiniu.zctmdc.cn/bin/edge_v2_${myos}_${mycpu} \
+#   && wget -qO /usr/local/sbin/supernode http://rt.qiniu.zctmdc.cn/bin/supernode_v2_${myos}_${mycpu}
 
 
 RUN set -x \

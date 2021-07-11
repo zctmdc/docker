@@ -54,7 +54,7 @@ if [[ -z ${FRP_VERSION} ]]; then
 fi
 
 FILE_NAME="frp_${FRP_VERSION}_${KERNEL}_${MACHINE}.tar.gz"
-wget -O ${FILE_NAME} https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}
+wget -qO ${FILE_NAME} https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}
 
 tar -zxvf ${FILE_NAME}
 
