@@ -49,16 +49,18 @@ jobs:
       #     #   /bin/bash -c "/usr/sbin/frpc -c /etc/frp/frpc.ini & \
       #     #   sleep 2 \
       #     #   && /opt/healthcheck/healthcheck.sh"
-      - name: Available platforms
-        run: echo ${{ steps.buildx.outputs.platforms }}
-      # - name: Build test and push
-      #   run: |
-      #     for project in $(ls); do
-      #       echo "buildx - ${project}"
-      #       docker buildx build \
-      #         --platform=linux/amd64,linux/arm64,linux/arm/v7 \
-      #         ${build_cmd} \
-      #         --tag zctmdc/${project}:Alpha \
-      #         ./${project} \
-      #         --push
-      #     done
+      - name: Build test and push
+        run: |
+          for project in $(ls); do
+            echo "buildx - ${project}"
+            docker buildx build \
+              --platform=${{ steps.buildx.outputs.platforms }} \
+              --cache-from type=registry,ref=zctmdc/frp:Alpha \
+              --cache-to type=inline \
+              --tag zctmdc/${project}:Alpha \
+              ./${project} \
+            if [[ -f ${project}/docker-compose.test.yaml ]]; then 
+               docker-compose -f ./${project}/docker-compose.test.yaml up --exit-code-from  ${project}-test || continue
+               docker push ./${project}
+            fi
+          done
