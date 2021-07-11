@@ -51,16 +51,18 @@ jobs:
       #     #   && /opt/healthcheck/healthcheck.sh"
       - name: Build test and push
         run: |
-          for project in $$(ls); do
-            echo "buildx - $${project}"
-            # docker buildx build \
-            #   --platform=${{ steps.buildx.outputs.platforms }} \
-            #   --cache-from type=registry,ref=zctmdc/frp:Alpha \
-            #   --cache-to type=inline \
-            #   --tag zctmdc/$${project}:Alpha \
-            #   ./$${project}
-            # if [[ -f $${project}/docker-compose.test.yaml ]]; then 
-            #    docker-compose -f ./$${project}/docker-compose.test.yaml up --exit-code-from  $${project}-test || continue
-            #    docker push ./$${project}
-            # fi
+          skip_path="caddy my_settings .github"
+          for project in $(ls); do
+            if [[ -d ${project} && ${skip_path} != *${project}* ]]; then
+              docker buildx build \
+                --platform=${{ steps.buildx.outputs.platforms }} \
+                --cache-from type=registry,ref=zctmdc/frp:Alpha \
+                --cache-to type=inline \
+                --tag zctmdc/${project}:Alpha \
+                ./${project}
+              if [[ -f ${project}/docker-compose.test.yaml ]]; then 
+                docker-compose -f ./${project}/docker-compose.test.yaml up --exit-code-from  ${project}-test || continue
+                docker push ./${project}
+              fi
+            fi
           done
