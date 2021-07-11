@@ -55,7 +55,7 @@ jobs:
           for project in $(ls); do
             if [[ -d ${project} && ${skip_path} != *${project}* ]]; then
               docker buildx build \
-                --platform=${{ steps.buildx.outputs.platforms }} \
+                --platform=linux/amd64,linux/arm64,linux/arm/v7 \
                 --cache-from type=registry,ref=zctmdc/frp:Alpha \
                 --cache-to type=inline \
                 --tag zctmdc/${project}:Alpha \
