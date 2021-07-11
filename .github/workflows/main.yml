@@ -36,6 +36,7 @@ jobs:
           tags: zctmdc/frp:Alpha
           cache-from: type=registry,ref=zctmdc/frp:Alpha
           cache-to: type=inline
+        run: |
 
       - name: Test zctmdc/frp:Alpha
         run: |
