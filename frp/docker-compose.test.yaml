@@ -23,7 +23,7 @@ services:
         "/bin/bash",
         "-c",
         "/usr/sbin/frpc -c /etc/frp/frpc.ini \
-        & curl -k -s --connect-timeout 2 http://localhost:$${ADMIN_PORT}/api/status \
+        & sleep 2\
         && /opt/healthcheck/healthcheck.sh",
       ]
     depends_on:
