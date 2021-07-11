@@ -58,7 +58,7 @@ jobs:
               --cache-from type=registry,ref=zctmdc/frp:Alpha \
               --cache-to type=inline \
               --tag zctmdc/${project}:Alpha \
-              ./${project} \
+              ./${project}
             if [[ -f ${project}/docker-compose.test.yaml ]]; then 
                docker-compose -f ./${project}/docker-compose.test.yaml up --exit-code-from  ${project}-test || continue
                docker push ./${project}
