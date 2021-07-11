@@ -39,7 +39,15 @@ jobs:
 
       - name: Test zctmdc/frp:Alpha
         run: |
-          docker-compose -f ./frp/docker-compose.test.yaml up --exit-code-from  frpc-test
+          # docker-compose -f ./frp/docker-compose.test.yaml up --exit-code-from  frpc-test
+          docker run --name frps-test -d --rm -e SUBDOMAIN_HOST=frps-test zctmdc/frp:Alpha \
+           /bin/bash -c "/usr/sbin/frps -c /etc/frp/frps.ini & \
+            sleep 10 \
+            && exit 0"
+          docker run -t --rm --link frps-test:frps-test -e SUBDOMAIN_HOST=frps-test zctmdc/frp:Alpha \
+            /bin/bash -c "/usr/sbin/frpc -c /etc/frp/frpc.ini & \
+            sleep 2 \
+            && /opt/healthcheck/healthcheck.sh"
 
       - name: Push zctmdc/frp:Alpha
         uses: docker/build-push-action@v2
