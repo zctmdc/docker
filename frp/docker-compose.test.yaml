@@ -23,7 +23,7 @@ services:
         "/bin/bash",
         "-c",
         "/usr/sbin/frpc -c /etc/frp/frpc.ini & \
-        /opt/healthcheck/healthcheck.sh",
+        sleep 3 && /opt/healthcheck/healthcheck.sh",
       ]
     depends_on:
       - frps-test
