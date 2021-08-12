@@ -62,7 +62,7 @@ if [[ -z ${FILE_NAME} ]]; then
     LOG_ERROR "检查相关变量 - KERNEL:${KERNEL}, MACHINE:${MACHINE}"
     exit 1
 fi
-wget -qO "/tmp/n2n.zip" "https://raw.githubusercontent.com/lucktu/n2n/master/$(echo ${KERNEL} | sed -e 's/\b\(.\)/\u\1/g')/${FILE_NAME}"
+wget --no-check-certificate -qO "/tmp/n2n.zip" "https://raw.githubusercontent.com/lucktu/n2n/master/$(echo ${KERNEL} | sed -e 's/\b\(.\)/\u\1/g')/${FILE_NAME}"
 
 unzip -o -d /tmp/n2n/ "/tmp/n2n.zip"
 if [[ -d "/tmp/n2n/static" ]]; then

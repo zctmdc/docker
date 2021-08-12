@@ -1,14 +1,21 @@
 FROM debian:buster-slim as builder
 
 ARG DEBIAN_FRONTEND=noninteractive
+
 RUN apt-get update && apt-get install -y \
-  bash curl ca-certificates wget unzip
+  bash curl wget unzip
 
 WORKDIR /tmp/
 
+ARG KERNEL
+ARG MACHINE
+ARG VERSION=v2
+
 COPY *.sh /tmp/
 
-RUN chmod +x /tmp/*.sh && /tmp/down_n2n.sh
+RUN chmod +x /tmp/*.sh
+
+RUN /tmp/down_n2n.sh
 
 FROM debian:buster-slim
 
@@ -24,7 +31,7 @@ RUN apt-get -y install \
 RUN apt-get install -y \
   wget openssl isc-dhcp-client isc-dhcp-server net-tools iputils-ping \
   curl  ca-certificates traceroute htop psmisc iptables \
-  && rm -rf /etc/dhcp/dhcpd.conf
+  && rm -rf /etc/dhcp/dhcpd.conf 
 
 ##################-----##################
 RUN apt-get clean 

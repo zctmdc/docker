@@ -2,15 +2,17 @@ FROM nginx
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update \
-  && apt-get install --no-install-recommends --no-install-suggests -y \
+RUN apt-get update && apt-get -y upgrade
+RUN apt-get -y install \
   apt-utils tzdata \
   && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
   && echo "Asia/Shanghai" > /etc/timezone \
-  && dpkg-reconfigure -f noninteractive tzdata \
-  && apt-get clean
+  && dpkg-reconfigure -f noninteractive tzdata
+##################-----##################
 
 
+##################-----##################
+RUN apt-get clean 
 
 RUN set -x \
   && sed -i '/charset/a\    charset utf-8;' /etc/nginx/conf.d/default.conf \

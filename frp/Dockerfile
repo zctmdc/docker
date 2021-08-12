@@ -1,8 +1,7 @@
 FROM debian:buster-slim as builder
 
 ARG DEBIAN_FRONTEND=noninteractive
-
-RUN apt-get update && apt-get install --no-install-recommends --no-install-suggests -y \
+RUN apt-get update && apt-get install -y \
   bash curl ca-certificates wget
 
 WORKDIR /tmp/
@@ -28,19 +27,19 @@ LABEL author=zctmdc
 LABEL email=<zctmdc@outlook.com>
 
 ARG DEBIAN_FRONTEND=noninteractive
-
-RUN apt-get update \
-  && apt-get install --no-install-recommends --no-install-suggests -y \
+RUN apt-get update && apt-get -y upgrade 
+RUN apt-get -y install \
   apt-utils tzdata \
   && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
   && echo "Asia/Shanghai" > /etc/timezone \
-  && dpkg-reconfigure -f noninteractive tzdata \
-  && apt-get clean
+  && dpkg-reconfigure -f noninteractive tzdata
+##################-----##################
 
-RUN apt-get update \
-  && apt-get install --no-install-recommends --no-install-suggests -y \
-  bash curl ca-certificates procps \
-  && apt-get clean
+RUN apt-get install -y \
+  bash curl ca-certificates procps
+
+##################-----##################
+RUN apt-get clean
 
 RUN mkdir -p /etc/frp
 
@@ -82,7 +81,7 @@ ENV ADMIN_PWD admin
 # stcp、xtcp 验证码
 ENV SK abcdefg
 
-CMD ["echo" ,"-e", "'RUN FRPS\n  /usr/sbin/frps -c /etc/frp/frps.ini\nRUN FRPC\n  /usr/sbin/frpc -c /etc/frp/frpc.ini\nDEFAULT RUN FRPC" , "&&" ,"/usr/sbin/frpc", "-c", "/etc/frp/frpc.ini"]
+CMD ["echo" ,"-e", "'RUN FRPS\n  /usr/sbin/frps -c /etc/frp/frps.ini\nRUN FRPC\n  /usr/sbin/frpc -c /etc/frp/frpc.ini\nDEFAULT RUN FRPC'" , "&&" ,"/usr/sbin/frpc", "-c", "/etc/frp/frpc.ini"]
 
 # CMD ["/usr/sbin/frps", "-c", "/etc/frp/frps.ini"]
 # CMD ["/usr/sbin/frpc", "-c", "/etc/frp/frpc.ini"]
