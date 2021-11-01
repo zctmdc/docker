@@ -82,8 +82,8 @@ ENV ADMIN_PWD admin
 ENV SK abcdefg
 
 CMD [
-  "bash",
-  "-c",
+  "/bin/bash", 
+  "-c", 
   "echo -e 'RUN FRPS\n  /usr/sbin/frps -c /etc/frp/frps.ini\nRUN FRPC\n  /usr/sbin/frps -c /etc/frp/frps.ini\nDEFAULT RUN FRPC\n' && /usr/sbin/frps -c /etc/frp/frps.ini"
 ]
 
