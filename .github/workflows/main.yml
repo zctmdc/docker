@@ -60,7 +60,7 @@ jobs:
 
       - name: Build test and push
         run: |
-          skip_path="caddy my_settings .github"
+          skip_path="caddy-alidns my_settings .github"
           for project in $(ls); do
             if [[ -d ${project} && ${skip_path} != *${project}* ]]; then
               docker buildx build \
