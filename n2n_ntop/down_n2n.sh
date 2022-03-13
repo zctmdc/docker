@@ -96,7 +96,7 @@ fi
 
 if [[ `ls /tmp/n2n/ | grep 'tar.gz'` ]] ; then
     LOG_INFO "发现多版本，即将解压"
-    tar -zxvf $(ls /tmp/n2n/ | grep 'tar.gz' | grep '_zstd_' | grep '_static_') -C /tmp/n2n/ 
+    tar -zxvf "/tmp/n2n/$(ls /tmp/n2n/ | grep 'tar.gz' | grep '_zstd_' | grep '_static_')" -C /tmp/n2n/ 
 fi
 
 chmod +x /tmp/n2n/*
