@@ -1,8 +1,12 @@
 # 基于docker的网络目录浏览器
+- 你可以试试这个：
+  -   https://github.com/svenstaro/miniserve 
+  -   https://hub.docker.com/r/svenstaro/miniserve
 
 基于nginx的静态文件服务器，列出目录
 
 默认内部挂载点为 `/workpath`
+
 
 ## 运行方法
 
