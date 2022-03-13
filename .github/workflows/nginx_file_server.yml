@@ -18,7 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       APPNAME: file-server
-      CONTEXTPATH: route_apps_server
+      CONTEXTPATH: nginx_file_server
     steps:
       -
         name: Checkout

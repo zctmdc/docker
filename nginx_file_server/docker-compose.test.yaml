@@ -11,3 +11,9 @@ services:
       # - C:\Users\ZCTMDC\Downloads\share:/workpath:ro
     # ports:
     #   - 16680:80
+    command: [
+        "/bin/bash",
+        "-c",
+        "/usr/local/sbin/run.sh & \
+        sleep 3 && curl 'localhost:80' || exit 1 "
+      ]

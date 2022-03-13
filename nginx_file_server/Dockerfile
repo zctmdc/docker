@@ -33,4 +33,4 @@ EXPOSE 80
 
 CMD ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
 
-HEALTHCHECK --interval=20s --timeout=3s CMDcurl "localhost:80"
+HEALTHCHECK --interval=20s --timeout=3s CMD curl "localhost:80" || exit 1
