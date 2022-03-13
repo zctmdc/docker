@@ -2,8 +2,8 @@ FROM nginx
 
 ARG DEBIAN_FRONTEND=noninteractive
 
-RUN apt-get update && apt-get -y upgrade
-RUN apt-get -y install \
+RUN apt-get update && apt-get -yqq upgrade
+RUN apt-get -yqq install \
   apt-utils tzdata \
   && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
   && echo "Asia/Shanghai" > /etc/timezone \
@@ -32,3 +32,5 @@ ENV TZ Asia/Shanghai
 EXPOSE 80
 
 CMD ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
+
+HEALTHCHECK --interval=20s --timeout=3s CMDcurl "localhost:80"

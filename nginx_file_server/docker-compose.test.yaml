@@ -1,0 +1,13 @@
+version: "3"
+services:
+  nginx_file_server-test:
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    image: zctmdc/file-server:Alpha
+    # restart: always
+    # volumes:
+      # - C:\Users\ZCTMDC\OneDrive\cloud\apps\route:/workpath:ro
+      # - C:\Users\ZCTMDC\Downloads\share:/workpath:ro
+    # ports:
+    #   - 16680:80
