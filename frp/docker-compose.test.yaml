@@ -24,6 +24,7 @@ services:
       - frps-test
     links:
       - frps-test
+      - frps-test:frpc-test.frps-test
       
   frp-test:
     image: zctmdc/frp:Alpha
