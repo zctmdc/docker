@@ -99,6 +99,11 @@ if [[ `ls /tmp/n2n/ | grep 'tar.gz'` ]] ; then
     tar -zxvf "$(find /tmp/n2n -type f -print0 | xargs -0 du -h | sort -rh | head -n 1  | awk '{print$2}')" -C /tmp/n2n/ 
 fi
 
+if [[ ! -f /tmp/n2n/supernode  ]]; then
+    LOG_INFO "发现多文件，即将解压最大 static"
+    tar -zxvf "$(find /tmp/n2n/*static* -type f -print0 | xargs -0 du -h | sort -rh | head -n 1  | awk '{print$2}')" -C /tmp/n2n/ 
+fi
+
 chmod +x /tmp/n2n/*
 
 ls -l /tmp/n2n
