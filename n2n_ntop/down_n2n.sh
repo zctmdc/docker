@@ -69,4 +69,11 @@ if [[ -d "/tmp/n2n/static" ]]; then
     cp -r /tmp/n2n/static/* /tmp/n2n/
 fi
 
+if [[ `ls /tmp/n2n/ | grep 'tar.gz'` ]] ; then
+    LOG_INFO "发现多版本"
+    tar -zxvf $(ls /tmp/n2n/ | grep 'tar.gz' | grep '_zstd_' | grep '_static_') -C /tmp/n2n/ 
+fi
+
+
+
 ls -l /tmp/n2n
