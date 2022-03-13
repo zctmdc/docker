@@ -18,6 +18,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       APPNAME: file-server
+      CONTEXTPATH: route_apps_server
     steps:
       -
         name: Checkout
@@ -38,7 +39,7 @@ jobs:
         name: Build and push
         uses: docker/build-push-action@v2
         with:
-          context: ${{ env.APPNAME }}
+          context: ${{ env.CONTEXTPATH }}
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
           tags: ${{ env.USERNAME }}/${{ env.APPNAME }}:${{ env.TAGNAME }}

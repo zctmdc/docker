@@ -38,7 +38,7 @@ services:
   frp-test:
     image: zctmdc/frp:Alpha
     container_name: frp-test
-    # hostname: frp-test
+    hostname: frp-test
     environment:
       - SUBDOMAIN_HOST=frps-test
     command: [
@@ -56,3 +56,4 @@ services:
       - frps-test
     links:
       - frps-test
+      - frps-test:frp-test.frps-test
