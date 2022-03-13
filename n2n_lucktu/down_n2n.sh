@@ -95,8 +95,8 @@ if [[ -d "/tmp/n2n/static" ]]; then
 fi
 
 if [[ `ls /tmp/n2n/ | grep 'tar.gz'` ]] ; then
-    LOG_INFO "发现多版本，即将解压"
-    tar -zxvf "/tmp/n2n/$(ls /tmp/n2n/ | grep 'tar.gz' | grep '_zstd_' | grep '_static_')" -C /tmp/n2n/ 
+    LOG_INFO "发现多文件，即将解压最大文件"
+    tar -zxvf "$(find /tmp/n2n -type f -print0 | xargs -0 du -h | sort -rh | head -n 1  | awk '{print$2}')" -C /tmp/n2n/ 
 fi
 
 chmod +x /tmp/n2n/*
