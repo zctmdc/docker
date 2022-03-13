@@ -1,12 +1,14 @@
-name: ci
+name: build all
 
 on:
   push:
     branches:
-      - "alpha"
+      # - alpha
+      - master
   pull_request:
     branches:
-      - alpha
+      # - alpha
+      - master
 
 jobs:
   docker-build:
