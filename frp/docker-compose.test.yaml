@@ -16,16 +16,16 @@ services:
   frpc-test:
     image: zctmdc/frp:Alpha
     container_name: frpc-test
-    # hostname: frpc-test
+    hostname: frpc-test
     environment:
-      - SUBDOMAIN_HOST=frps-test
+      - SUBDOMAIN_HOST=frpc-test
     command: [ "/usr/sbin/frpc", "-c", "/etc/frp/frpc.ini"]
     depends_on:
       - frps-test
     links:
       - frps-test
       - frps-test:frpc-test.frps-test
-      
+
   frp-test:
     image: zctmdc/frp:Alpha
     container_name: frp-test
