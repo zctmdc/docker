@@ -11,7 +11,7 @@ services:
     hostname: frps-test
     environment:
       - SUBDOMAIN_HOST=frps-test
-    command: ["/bin/bash", "-c", "/usr/sbin/frps -c /etc/frp/frps.ini"]
+    command: [ "/usr/sbin/frps", "-c", "/etc/frp/frps.ini"]
 
   frpc-test:
     image: zctmdc/frp:Alpha
@@ -19,17 +19,7 @@ services:
     # hostname: frpc-test
     environment:
       - SUBDOMAIN_HOST=frps-test
-    command: [
-        "/bin/bash",
-        "-c",
-        "/usr/sbin/frpc -c /etc/frp/frpc.ini \
-        & sleep 2 \
-        && /opt/healthcheck/healthcheck.sh",
-        # # not working
-        # "& url -k -m 1 --retry-connrefused --retry 5--retry-delay 1 \
-        # http://localhost:${ADMIN_PORT}/api/status \
-        # && /opt/healthcheck/healthcheck.sh",
-      ]
+    command: [ "/usr/sbin/frpc", "-c", "/etc/frp/frpc.ini"]
     depends_on:
       - frps-test
     links:
