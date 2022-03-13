@@ -85,7 +85,7 @@ wget --no-check-certificate -qO "/tmp/n2n.zip" "https://raw.githubusercontent.co
 
 unzip -o -d /tmp/n2n/ /tmp/n2n.zip 
 
-if [[ ls /tmp/n2n/n2n* ]]; then
+if ls /tmp/n2n/n2n*; then
     mv /tmp/n2n/n2n*/* /tmp/n2n/
     rm -r /tmp/n2n/n2n*/
 fi
