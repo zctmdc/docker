@@ -1,4 +1,4 @@
-name: ci
+name: build zctmdc/n2n_proxy:Alpha
 
 on:
   push:
