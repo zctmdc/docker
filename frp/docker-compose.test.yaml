@@ -37,10 +37,6 @@ services:
         "/usr/sbin/frpc -c /etc/frp/frpc.ini \
         & sleep 2 \
         && /opt/healthcheck/healthcheck.sh",
-        # # not working
-        # "& url -k -m 1 --retry-connrefused --retry 5--retry-delay 1 \
-        # http://localhost:${ADMIN_PORT}/api/status \
-        # && /opt/healthcheck/healthcheck.sh",
       ]
     depends_on:
       - frps-test

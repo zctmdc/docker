@@ -1,6 +1,6 @@
 version: "3"
 services:
-  nginx_file_server-test:
+  file-server-test:
     # build:
     #   context: .
     #   dockerfile: Dockerfile
