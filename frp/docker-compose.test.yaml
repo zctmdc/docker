@@ -11,8 +11,14 @@ services:
     hostname: frps-test
     environment:
       - SUBDOMAIN_HOST=frps-test
-    command: [ "/usr/sbin/frps", "-c", "/etc/frp/frps.ini"]
-
+    # command: [ "/usr/sbin/frps", "-c", "/etc/frp/frps.ini"]
+    command: [
+        "/bin/bash",
+        "-c",
+        "/usr/sbin/frps -c /etc/frp/frps.ini \
+        & sleep 5 \
+        && /opt/healthcheck/healthcheck.sh",
+      ]
   frpc-test:
     image: zctmdc/frp:Alpha
     container_name: frpc-test
@@ -32,13 +38,14 @@ services:
     hostname: frp-test
     environment:
       - SUBDOMAIN_HOST=frps-test
-    command: [
-        "/bin/bash",
-        "-c",
-        "/usr/sbin/frpc -c /etc/frp/frpc.ini \
-        & sleep 2 \
-        && /opt/healthcheck/healthcheck.sh",
-      ]
+    # command: [
+    #     "/bin/bash",
+    #     "-c",
+    #     "/usr/sbin/frpc -c /etc/frp/frpc.ini \
+    #     & sleep 5 \
+    #     && /opt/healthcheck/healthcheck.sh",
+    #   ]
+    command: [ "/usr/sbin/frpc", "-c", "/etc/frp/frpc.ini"]
     depends_on:
       - frps-test
     links:
