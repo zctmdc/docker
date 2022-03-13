@@ -56,4 +56,5 @@ STATIC)
     ;;
 esac
 
+cat /sys/class/net/$EDGE_TUN/address || exit 1
 /bin/ping -c 1 -w 5 -q $check_ip || exit 1
