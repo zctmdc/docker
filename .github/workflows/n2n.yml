@@ -46,7 +46,9 @@ jobs:
           cache-to: type=registry,ref=${{ env.USERNAME }}/${{ env.APPNAME }}:buildcache-${{ env.TAGNAME }},mode=max
       - name: Test Docker
         run: |
-              if [[ -f ${{ env.APPNAME }}/docker-compose.test.yaml ]]; then 
+              if [[ -f ${{ env.APPNAME }}/docker-compose.test.yaml ]]; then
+                docker-compose -f ./${{ env.APPNAME }}/docker-compose.test.yaml up &
+                sleep 20
                 docker-compose -f ./${{ env.APPNAME }}/docker-compose.test.yaml up --exit-code-from  ${{ env.APPNAME }}-test || exit 1
               fi
   n2n_proxy:
