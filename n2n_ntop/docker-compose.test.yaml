@@ -1,0 +1,105 @@
+version: "3"
+services:
+  n2n_supernode-test:
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    image: zctmdc/n2n_ntop:Alpha
+    restart: always
+    privileged: true
+    ports:
+      - 10086:10086/udp
+    environment:
+      - MODE=SUPERNODE
+      - SUPERNODE_PORT=10086
+      - N2N_ARGS=-f
+
+  n2n_edge_dhcpd-test:
+    depends_on:
+      - n2n_supernode-test
+    image: zctmdc/n2n_ntop:Alpha
+    restart: always
+    privileged: true
+    # network_mode: host
+    environment:
+      - MODE=DHCPD
+      - SUPERNODE_HOST=n2n_supernode-test
+      - SUPERNODE_PORT=10086
+      - EDGE_TUN=edge_dhcpd
+      - EDGE_IP=10.10.10.1
+      - EDGE_COMMUNITY=n2n
+      - EDGE_KEY=test
+      - EDGE_ENCRYPTION=A3
+      - N2N_ARGS=-f
+    # volumes:
+    #   - ./dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
+    links:
+      - n2n_supernode-test
+
+  n2n_edge_dhcp-test:
+    depends_on:
+      - n2n_edge_dhcpd-test
+      - n2n_supernode-test
+    image: zctmdc/n2n_ntop:Alpha
+    restart: always
+    privileged: true
+    # network_mode: host
+    environment:
+      - MODE=DHCP
+      - SUPERNODE_HOST=n2n_supernode-test
+      - SUPERNODE_PORT=10086
+      - EDGE_TUN=edge_dhcp
+      - EDGE_COMMUNITY=n2n
+      - EDGE_KEY=test
+      - EDGE_ENCRYPTION=A3
+      - N2N_ARGS=-f
+    links:
+      - n2n_supernode-test
+
+  n2n_edge_static-test:
+    depends_on:
+      - n2n_supernode-test
+    image: zctmdc/n2n_ntop:Alpha
+    restart: always
+    privileged: true
+    # network_mode: host
+    environment:
+      - MODE=STATIC
+      - SUPERNODE_HOST=n2n_supernode-test
+      - SUPERNODE_PORT=10086
+      - EDGE_TUN=edge_static
+      - EDGE_IP=10.10.10.10
+      - EDGE_COMMUNITY=n2n
+      - EDGE_KEY=test
+      - EDGE_ENCRYPTION=A3
+      - N2N_ARGS=-f
+    links:
+      - n2n_supernode-test
+
+  n2n_ntop-test:
+    depends_on:
+      - n2n_edge_dhcpd-test
+      - n2n_supernode-test
+    image: zctmdc/n2n_ntop:Alpha
+    restart: always
+    privileged: true
+    # network_mode: host
+    environment:
+      - MODE=DHCP
+      - SUPERNODE_HOST=n2n_supernode-test
+      - SUPERNODE_PORT=10086
+      - EDGE_TUN=edge_dhcp
+      - EDGE_COMMUNITY=n2n
+      - EDGE_KEY=test
+      - EDGE_ENCRYPTION=A3
+      - N2N_ARGS=-f
+    links:
+      - n2n_supernode-test
+    command: 
+      [ 
+        "/bin/bash" ,
+        "-c" ,
+        "/usr/local/sbin/run.sh &\
+        sleep 2 \
+        && /usr/local/sbin/n2n_healthcheck.sh"
+      ]

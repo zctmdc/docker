@@ -42,9 +42,13 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
           tags: ${{ env.USERNAME }}/${{ env.APPNAME }}:${{ env.TAGNAME }}
-          cache-from: type=registry,ref=${{ env.USERNAME }}/${{ env.APPNAME }}:${{ env.TAGNAME }}buildcache
-          cache-to: type=registry,ref=${{ env.USERNAME }}/${{ env.APPNAME }}:${{ env.TAGNAME }}buildcache,mode=max
-
+          cache-from: type=registry,ref=${{ env.USERNAME }}/${{ env.APPNAME }}:buildcache-${{ env.TAGNAME }}
+          cache-to: type=registry,ref=${{ env.USERNAME }}/${{ env.APPNAME }}:buildcache-${{ env.TAGNAME }},mode=max
+      - name: Test Docker
+        run: |
+              if [[ -f ${{ env.APPNAME }}/docker-compose.test.yaml ]]; then 
+                docker-compose -f ./${{ env.APPNAME }}/docker-compose.test.yaml up --exit-code-from  ${{ env.APPNAME }}-test || continue
+              fi
   n2n_proxy:
     needs: n2n_ntop
     runs-on: ubuntu-latest
@@ -74,8 +78,8 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
           tags: ${{ env.USERNAME }}/${{ env.APPNAME }}:${{ env.TAGNAME }}
-          cache-from: type=registry,ref=${{ env.USERNAME }}/${{ env.APPNAME }}:${{ env.TAGNAME }}buildcache
-          cache-to: type=registry,ref=${{ env.USERNAME }}/${{ env.APPNAME }}:${{ env.TAGNAME }}buildcache,mode=max
+          cache-from: type=registry,ref=${{ env.USERNAME }}/${{ env.APPNAME }}:buildcache-${{ env.TAGNAME }}
+          cache-to: type=registry,ref=${{ env.USERNAME }}/${{ env.APPNAME }}:buildcache-${{ env.TAGNAME }},mode=max
 
   n2n_lucktu:
     runs-on: ubuntu-latest
@@ -105,5 +109,5 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
           tags: ${{ env.USERNAME }}/${{ env.APPNAME }}:${{ env.TAGNAME }}
-          cache-from: type=registry,ref=${{ env.USERNAME }}/${{ env.APPNAME }}:${{ env.TAGNAME }}buildcache
-          cache-to: type=registry,ref=${{ env.USERNAME }}/${{ env.APPNAME }}:${{ env.TAGNAME }}buildcache,mode=max
+          cache-from: type=registry,ref=${{ env.USERNAME }}/${{ env.APPNAME }}:buildcache-${{ env.TAGNAME }}
+          cache-to: type=registry,ref=${{ env.USERNAME }}/${{ env.APPNAME }}:buildcache-${{ env.TAGNAME }},mode=max
