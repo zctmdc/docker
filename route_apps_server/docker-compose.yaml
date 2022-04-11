@@ -7,7 +7,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: zctmdc/route_apps_server:Alpha
+    image: zctmdc/route_apps_server:Beta
     restart: always
     environment:
       - WORK_PATH=/tmp

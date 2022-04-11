@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: zctmdc/n2n_proxy:Alpha
+    image: zctmdc/n2n_proxy:Beta
     restart: always
     privileged: true
     ports:
@@ -15,7 +15,7 @@ services:
       - N2N_ARGS=-v -f
 
   n2n_proxy_dhcpd:
-    image: zctmdc/n2n_proxy:Alpha
+    image: zctmdc/n2n_proxy:Beta
     restart: always
     privileged: true
     environment:
@@ -40,7 +40,7 @@ services:
 
   n2n_proxy_dhcp:
 
-    image: zctmdc/n2n_proxy:Alpha
+    image: zctmdc/n2n_proxy:Beta
     restart: always
     privileged: true
     environment:
@@ -63,7 +63,7 @@ services:
       - n2n_proxy_dhcpd
 
   n2n_proxy_static:
-    image: zctmdc/n2n_proxy:Alpha
+    image: zctmdc/n2n_proxy:Beta
     restart: always
     privileged: true
     environment:

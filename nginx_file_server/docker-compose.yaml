@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: zctmdc/file-server:Alpha
+    image: zctmdc/file-server:Beta
     # restart: always
     # volumes:
       # - path/to/dir:/workpath:ro
