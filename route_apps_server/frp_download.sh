@@ -1,21 +1,12 @@
 #!/bin/bash
 # set -x
 
-if [[ -z ${FORCE_UPDATE} ]]; then
-  FORCE_UPDATE=FALSE
-fi
-if [[ -z ${FRP_TMP_DIR} ]]; then
-  FRP_TMP_DIR=/tmp/frp
-fi
-if [[ -z ${FRP_OPT_DIR} ]]; then
-  FRP_OPT_DIR=/tmp/bin
-fi
-
 mkdir -p ${FRP_TMP_DIR} ${FRP_OPT_DIR}
 cd ${FRP_TMP_DIR}/
 frp_version=$(
-  curl -s https://github.com/fatedier/frp/releases/latest |
-    grep -Eo "[0-9]+\.[0-9]+\.[0-9]+"
+  curl -k -sS https://github.com/fatedier/frp/releases/latest |
+    grep -oP "(\d+\.){2}\d+" |
+    head -n 1
 )
 version_file=${FRP_OPT_DIR}/frp_version.txt
 if [[ "${FORCE_UPDATE}"="FALSE" && -e "${version_file}" && "$(cat ${version_file})" == "${frp_version}" ]]; then
@@ -29,9 +20,10 @@ replaseKV='
 el-le
 amd64-x64
 386-x86
+i386-x86
 '
 
-curl -s https://github.com/fatedier/frp/releases/tag/v${frp_version} |
+curl -k -sS https://github.com/fatedier/frp/releases/tag/v${frp_version} |
   grep v${frp_version} |
   grep -Eo "frp_.+(gz|zip)" |
   while read line; do
@@ -42,7 +34,7 @@ curl -s https://github.com/fatedier/frp/releases/tag/v${frp_version} |
     kernel_name_and_machine=${kernel_name_and_machine_and_suffix%%.*}
     kernel_name=${kernel_name_and_machine%_*}
     machine=${kernel_name_and_machine#*_}
-    wget -O ${FRP_TMP_DIR}/${file_name} \
+    wget --no-check-certificate -qO ${FRP_TMP_DIR}/${file_name} \
       https://github.com/fatedier/frp/releases/download/v${frp_version}/${file_name}
 
     case $file_suffix in
@@ -82,5 +74,6 @@ curl -s https://github.com/fatedier/frp/releases/tag/v${frp_version} |
     # rm -rf frp_${frp_version}_${kernel_name}_${machine}*
     echo ----------------------------------------------------------------
   done &&
-  echo ${frp_version} >${version_file} &&
-  /usr/local/bin/qshell qupload ~/.qshell/qupload.conf
+  echo ################################################################
+echo "frp_version : v${frp_version}" &&
+  echo ${frp_version} >${version_file}

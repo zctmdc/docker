@@ -1,10 +1,18 @@
-FROM nginx:alpine
-LABEL zctmdc <zctmdc@outlook.com>
+FROM nginx
 
-RUN sed -i 's/dl-cdn.alpinelinux.org/mirrors.aliyun.com/g' /etc/apk/repositories
+ARG DEBIAN_FRONTEND=noninteractive
 
-RUN set -x \
-  && apk add --update --no-cache bash sed
+RUN apt-get update && apt-get -yqq upgrade
+RUN apt-get -yqq install \
+  apt-utils tzdata \
+  && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+  && echo "Asia/Shanghai" > /etc/timezone \
+  && dpkg-reconfigure -f noninteractive tzdata
+##################-----##################
+
+
+##################-----##################
+RUN apt-get clean 
 
 RUN set -x \
   && sed -i '/charset/a\    charset utf-8;' /etc/nginx/conf.d/default.conf \
@@ -24,3 +32,5 @@ ENV TZ Asia/Shanghai
 EXPOSE 80
 
 CMD ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
+
+HEALTHCHECK --interval=20s --timeout=3s CMD curl "localhost:80" || exit 1

@@ -1,79 +1,99 @@
 version: "3"
+volumes:
+  conf-frp:
 services:
-  frp:
+  frps-demo:
     build:
       context: .
       dockerfile: Dockerfile
     image: zctmdc/frp:Alpha
+    container_name: frps-demo
+    hostname: frps-demo
+    # network_mode: host
     restart: always
     environment:
-      - TZ=Asia/Shanghai
-      # 启用FRPC
-      - FRPC_ENABLE=true
-      # 启用FRPS
-      - FRPS_ENABLE=true
-      # 下载最新版本
-      - DOWN_LATEST=false
-      # 检查状态
-      - WATCH_STATUS=true
-      # string 鉴权使用的 token 值 客户端需要设置一样的值才能鉴权通过
-      - token=abcd1234
-      # TCP流多路复用
-      - tcp_mux=true
-      # string 日志文件地址 ./frps.log 如果设置为 console，会将日志打印在标准输出中
-      - log_file=console
-      # string 日志等级 trace, debug, info, warn, error
-      - log_level=info
-      # int 日志文件保留天数
-      - log_max_days=3
-      ### FRPS ###
-      # 基础配置 #
-      # string 服务端监听地址
-      - bind_addr=0.0.0.0
-      # int 服务端监听端口 接收 frpc 的连接
-      - bind_port=7000
-      # int 服务端监听KCP协议端口 用于接收采用 KCP 连接的 frpc
-      - kcp_bind_port=7000
-      # int 服务端监听UDP端口 用于辅助创建 P2P 连接
-      - bind_udp_port=7001
-      # string 启用 Dashboard 监听的本地地址
-      - dashboard_addr=0.0.0.0
-      # int 启用 Dashboard 监听的本地端口
-      - dashboard_port=7088
-      # string HTTP BasicAuth 用户名
-      - dashboard_user=admin
-      # string HTTP BasicAuth 密码
-      - dashboard_pwd=admin
-      # HTTP & HTTPS #
-      # int 为 HTTP 类型代理监听的端口 启用后才支持 HTTP 类型的代理，默认不启用
-      - vhost_http_port=7080
-      # int 为 HTTPS 类型代理监听的端口 启用后才支持 HTTPS 类型的代理，默认不启用
-      - vhost_https_port=7443
-      # string 二级域名后缀
-      - subdomain_host=frps.com
-      ### FRPC ###
-      # string 连接服务端的地址
-      - server_addr=localhost
-      # int 连接服务端的端口
-      - server_port=7000
-      # string 用户名 设置此参数后，代理名称会被修改为 {user}.{proxyName}，避免代理名称和其他用户冲突
-      - user=""
-      # string 连接服务端的通信协议 tcp, kcp, websocket
-      - protocol=tcp
-      # string 启用 AdminUI 监听的本地地址
-      - admin_addr=0.0.0.0
-      # int 启用 AdminUI 监听的本地端口
-      - admin_port=7089
-      # string HTTP BasicAuth 用户名
-      - admin_user=admin
-      # string HTTP BasicAuth 密码
-      - admin_pwd=admin
-
+      - SUBDOMAIN_HOST=frps-demo
+      - BIND_PORT=7000
+      - BIND_UDP_PORT=7001
+      - VHOST_HTTP_PORT=3080
+      - VHOST_HTTPS_PORT=3443
+      - ADMIN_USER=admin
+      - ADMIN_PWD=admin
+      - ADMIN_PORT=7400
     ports:
-      - 7000:7000
-      - 7001:7001
-      - 7088:7088
-      - 7089:7089
-      - 7080:7080
-      - 7443:7443
-    command: ["/bin/bash", "-c", "/usr/local/bin/run.sh"]
+      - 7000:7000/tcp
+      - 7000:7000/udp
+      - 7001:7001/udp
+      - 7400:7400
+      - 3080:3080
+      - 3443:3443
+    # volumes:
+    #   - /path/to/conf:/etc/frp/:ro
+    command: ["/usr/sbin/frps", "-c", "/etc/frp/frps.ini"]
+    healthcheck:
+      test: [
+          "CMD",
+          "/bin/bash",
+          "-f",
+          "/opt/healthcheck/healthcheck-frps.sh",
+          "||",
+    #       "/bin/bash",
+    #       "-c",
+    #       "http_code=$$(curl -u $$ADMIN_USER:$$ADMIN_PWD -H -I -m 2 -o /dev/null -s -w %{http_code} --connect-timeout 10 http://$$SUBDOMAIN_HOST:$$ADMIN_PORT/api/serverinfo) && \
+    #       if [[ $$http_code != 200 ]]; then \
+    #         echo [ FRPS Dashboard check faild ]; \
+    #         exit 1; \
+    #       else \
+    #         echo [ FRPS Dashboard check pass ]; \
+    #       fi",
+    #       "||",
+          "exit 1",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  frpc-demo:
+    image: zctmdc/frp:Alpha
+    # hostname: frpc-demo
+    container_name: frpc-demo
+    # network_mode: host
+    restart: always
+    environment:
+      - SUBDOMAIN_HOST=frps-demo
+      - BIND_PORT=7000
+      - BIND_UDP_PORT=7001
+      - TOKEN=12345678
+      - VHOST_HTTP_PORT=3080
+      - ADMIN_USER=admin
+      - ADMIN_PWD=admin
+      - ADMIN_PORT=7400
+      - SK=12345678
+    # volumes:
+    #   - conf-frp:/etc/frp/
+    command: ["/usr/sbin/frpc", "-c", "/etc/frp/frpc.ini"]
+    healthcheck:
+      test: [
+          "CMD",
+          "/bin/bash",
+          "-f",
+          "/opt/healthcheck/healthcheck-frpc.sh",
+          "||",
+          # "/bin/bash", "-c",
+          # "http_code=$$(curl -u $$ADMIN_USER:$$ADMIN_PWD -H -I -m 2 -o /dev/null -s -w %{http_code} --connect-timeout 10 http://$$(hostname -s).$$SUBDOMAIN_HOST:$$VHOST_HTTP_PORT/api/status) && \
+          # if [[ $$http_code != 200 ]]; then \
+          #   echo [ FRPC adminUI check faild ]; \
+          #   exit 1; \
+          # else \
+          #   echo [ FRPC adminUI check pass ]; \
+          # fi",
+          "exit",
+          "11",
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    depends_on:
+      - frps-demo
+    external_links:
+      - frps-demo

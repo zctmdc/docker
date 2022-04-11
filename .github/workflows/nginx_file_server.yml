@@ -1,0 +1,52 @@
+name: nginx_file_server
+
+on:
+  push:
+    branches:
+      - alpha
+  pull_request:
+    branches:
+      - alpha
+
+env:
+  USERNAME: zctmdc
+  TAGNAME: Alpha
+
+jobs:
+
+  nginx_file_server:
+    runs-on: ubuntu-latest
+    env:
+      APPNAME: file-server
+      CONTEXTPATH: nginx_file_server
+    steps:
+      -
+        name: Checkout
+        uses: actions/checkout@v2
+      -
+        name: Set up QEMU
+        uses: docker/setup-qemu-action@v1
+      -
+        name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v1
+      -
+        name: Login to DockerHub
+        uses: docker/login-action@v1 
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+      -
+        name: Build and push
+        uses: docker/build-push-action@v2
+        with:
+          context: ${{ env.CONTEXTPATH }}
+          platforms: linux/amd64,linux/arm64,linux/arm/v7
+          push: true
+          tags: ${{ env.USERNAME }}/${{ env.APPNAME }}:${{ env.TAGNAME }}
+          cache-from: type=registry,ref=${{ env.USERNAME }}/${{ env.APPNAME }}:buildcache-${{ env.TAGNAME }}
+          cache-to: type=registry,ref=${{ env.USERNAME }}/${{ env.APPNAME }}:buildcache-${{ env.TAGNAME }},mode=max
+      - name: Test Docker
+        run: |
+              if [[ -f ${{ env.CONTEXTPATH }}/docker-compose.test.yaml ]]; then
+                docker-compose -f ./${{ env.CONTEXTPATH }}/docker-compose.test.yaml up --exit-code-from  ${{ env.APPNAME }}-test || exit 1
+              fi

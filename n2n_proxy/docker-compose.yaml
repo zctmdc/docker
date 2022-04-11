@@ -1,70 +1,86 @@
 version: "3"
 services:
-  n2n_proxy_nat:
+  n2n_supernode:
     build:
       context: .
       dockerfile: Dockerfile
+    image: zctmdc/n2n_proxy:Beta
+    restart: always
+    privileged: true
+    ports:
+      - 10086:10086/udp
+    environment:
+      - MODE=SUPERNODE
+      - SUPERNODE_PORT=10086
+      - N2N_ARGS=-v -f
+
+  n2n_proxy_dhcpd:
     image: zctmdc/n2n_proxy:Beta
     restart: always
     privileged: true
     environment:
       - MODE=DHCPD
-      - N2N_IP=10.10.10.1
-      - N2N_COMMUNITY=n2n
-      - N2N_KEY=test
-      - N2N_SERVER=n2n.lucktu.com:10086
-      - N2N_ARGS=-A -v -r
-      - N2N_NAT=TRUE
-      - N2N_PROXY=TRUE
+      - SUPERNODE_HOST=n2n_supernode
+      - SUPERNODE_PORT=10086
+      - EDGE_TUN=edge_dhcpd
+      - EDGE_IP=10.10.10.1
+      - EDGE_COMMUNITY=n2n
+      - EDGE_KEY=test
+      - EDGE_ENCRYPTION=A3
+      - N2N_ARGS=-f
+      - EDGE_NAT=TRUE
+      - EDGE_PROXY=TRUE
       - PROXY_ARGS=-L=:14080
     # volumes:
     #   - ./dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
-    command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
+    external_links:
+      - n2n_supernode:n2n_supernode
+    depends_on:
+      - n2n_supernode
 
   n2n_proxy_dhcp:
-    build:
-      context: .
-      dockerfile: Dockerfile
-    depends_on:
-      - n2n_proxy_nat
+
     image: zctmdc/n2n_proxy:Beta
     restart: always
     privileged: true
     environment:
       - MODE=DHCP
-      - N2N_COMMUNITY=n2n
-      - N2N_KEY=test
-      - N2N_SERVER=n2n.lucktu.com:10086
-      - N2N_ROUTE=TURE
-      - N2N_DESTINATION=192.168.0.0/16
-      - N2N_GATEWAY=10.10.10.1
-      - N2N_ARGS=-A -v -r
-      - N2N_PROXY=TRUE
-      - PROXY_ARGS=-L=:14080
-    ports:
-      - 14080:14080
-    command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
+      - SUPERNODE_HOST=n2n_supernode
+      - SUPERNODE_PORT=10086
+      - EDGE_TUN=edge_dhcp
+      - EDGE_COMMUNITY=n2n
+      - EDGE_KEY=test
+      - EDGE_ENCRYPTION=A3
+      - N2N_ARGS=-f
+      - EDGE_ROUTE=TRUE
+      - EDGE_PROXY=FALSE
+      - EDGE_DESTINATION=192.168.0.0/16
+      - EDGE_GATEWAY=10.10.10.10
+    external_links:
+      - n2n_supernode:n2n_supernode
+    depends_on:
+      - n2n_supernode
+      - n2n_proxy_dhcpd
 
   n2n_proxy_static:
-    build:
-      context: .
-      dockerfile: Dockerfile
     image: zctmdc/n2n_proxy:Beta
     restart: always
     privileged: true
     environment:
       - MODE=STATIC
-      - N2N_IP=10.10.10.100
-      - N2N_COMMUNITY=n2n
-      - N2N_KEY=test
-      - N2N_SERVER=n2n.lucktu.com:10086
-      - N2N_ROUTE=FALSE
-      # - N2N_DESTINATION=192.168.0.0/16
-      # - N2N_GATEWAY=10.0.10.1
-      - N2N_ARGS=-A -v
-      - N2N_PROXY=FALSE
-    # volumes:
-    #   - n2n_proxy_nat/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
-    # ports:
-    #   - 10080:1080
-    command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]
+      - SUPERNODE_HOST=n2n_supernode
+      - SUPERNODE_PORT=10086
+      - EDGE_TUN=edge_static
+      - EDGE_IP=10.10.10.10
+      - EDGE_COMMUNITY=n2n
+      - EDGE_KEY=test
+      - EDGE_ENCRYPTION=A3
+      - N2N_ARGS=-f
+      - EDGE_PROXY=TRUE
+      - PROXY_ARGS=-L=:14080 -F=10.10.10.1:14080
+    ports:
+      - 14080:14080
+    external_links:
+      - n2n_supernode:n2n_supernode
+    depends_on:
+      - n2n_supernode

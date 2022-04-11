@@ -7,8 +7,6 @@ services:
     image: zctmdc/file-server:Beta
     # restart: always
     # volumes:
-      # - C:\Users\ZCTMDC\OneDrive\cloud\apps\route:/workpath:ro
-      # - C:\Users\ZCTMDC\Downloads\share:/workpath:ro
+      # - path/to/dir:/workpath:ro
     ports:
       - 16680:80
-    command: ["/bin/bash", "-c", "/usr/local/sbin/run.sh"]

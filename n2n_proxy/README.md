@@ -20,13 +20,16 @@ docker run \
   --name n2n_proxy_nat \
   --privileged \
   -e MODE="DHCPD" \
-  -e N2N_IP="10.10.10.1" \
-  -v path/to/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
-  -e N2N_COMMUNITY="n2n" \
-  -e N2N_KEY="test" \
-  -e N2N_SERVER="n2n.lucktu.com:10086" \
-  -e N2N_NAT=TRUE \
-  -e N2N_PROXY=FALSE \
+  -e EDGE_IP="10.10.10.1" \
+  -e EDGE_COMMUNITY="n2n" \
+  -e EDGE_KEY="test" \
+  -e SUPERNODE_HOST=n2n.lucktu.com \
+  -e SUPERNODE_PORT=10086 \
+  -e EDGE_ENCRYPTION=A3 \
+  -e N2N_ARGS="-f" \
+  # -v path/to/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro \
+  -e EDGE_NAT=TRUE \
+  -e EDGE_PROXY=FALSE \
   zctmdc/n2n_proxy:Alpha
 ```
 
@@ -38,13 +41,14 @@ docker run \
   --name n2n_proxy_gw \
   --privileged \
   -e MODE="DHCP" \
-  -e N2N_COMMUNITY="n2n" \
-  -e N2N_KEY="test" \
-  -e N2N_SERVER="n2n.lucktu.com:10086" \
-  -e N2N_ROUTE="TURE" \
-  -e N2N_DESTINATION="192.168.0.0/16" \
-  -e N2N_GATEWAY="10.10.10.1"\
-  -e N2N_PROXY=TRUE \
+  -e EDGE_COMMUNITY="n2n" \
+  -e EDGE_KEY="test" \
+  -e SUPERNODE_HOST=n2n.lucktu.com \
+  -e SUPERNODE_PORT=10086 \
+  -e EDGE_ENCRYPTION=A3 \
+  -e N2N_ARGS="-f" \
+  -e EDGE_GATEWAY="10.10.10.1"\
+  -e EDGE_PROXY=TRUE \
   -e PROXY_ARGS="-L=:14080" \
   -p 14080:14080 \
   zctmdc/n2n_proxy:Alpha
@@ -56,16 +60,16 @@ docker run \
 
 ```shell
 docker exec -t n2n_proxy_gw \
-  route add [-net|-host] $N2N_DESTINATION gw $N2N_GATEWAY
+  route add [-net|-host] $EDGE_DESTINATION gw $EDGE_GATEWAY
 
 ```
 
-> 请修改 *$N2N_DESTINATION* 和 *$N2N_GATEWAY*
+> 请修改 *$EDGE_DESTINATION* 和 *$EDGE_GATEWAY*
 
 ```shell
 #  比如增加192.168.77.1-255网域的下一跳为10.0.10.77
 docker exec -t n2n_proxy_gw \
-  route add -net  192.168.77.0/24 gw 10.0.10.77
+  route add -net 192.168.77.0/24 gw 10.0.10.77
 
 
 # 或者增加192.168.78.5地址的下一跳为10.0.10.78
@@ -93,22 +97,24 @@ route [add|del] [-net|-host] [网域或主机] netmask [mask] [gw|dev]
 
 ## 环境变量介绍
 
+
 |变量名|变量说明|备注|对应参数|
 |---:|:---|:---|:---|
-|MODE|模式|对应启动的模式| *`SUPERNODE`* *`DHCP`* *`STATIC`* *`DHCPD`* |
-|N2N_PORT|超级节点端口|在SUPERNODE中使用|-l|
-|N2N_SERVER|要连接的N2N超级节点|IP:port|-l|
-|N2N_IP|静态IP|在静态模式和DHCPD使用|-a|
-|N2N_COMMUNITY|组网名称|在EDGE中使用|-c|
-|N2N_KEY|组网密码|在EDGE中使用|-k|
-|N2N_TUN|网卡名|edge生成的网卡名字|-d|
-|N2N_ARGS|更多参数|运行时附加的更多参数|-Av|
+|MODE|模式|对应启动的模式| *`SUPERNODE`* *`DHCPD`*  *`DHCP`* *`STATIC`* |
+|SUPERNODE_PORT|超级节点端口|在SUPERNODE/EDGE中使用|-l $SUPERNODE_PORT|
+|SUPERNODE_HOST|要连接的N2N超级节点|IP/HOST|-l $SUPERNODE_HOST:$SUPERNODE_PORT|
+|EDGE_IP|静态IP|在静态模式和DHCPD使用|-a $EDGE_IP|
+|EDGE_COMMUNITY|组网名称|在EDGE中使用|-c $EDGE_COMMUNITY|
+|EDGE_KEY|组网密码|在EDGE中使用|-k $EDGE_KEY|
+|EDGE_ENCRYPTION|加密方式|edge间连接加密方式|-A2 = Twofish (default), -A3 or -A (deprecated) = AES-CBC, -A4 = ChaCha20, -A5 = Speck-CTR.|
+|EDGE_TUN|网卡名|edge生成的网卡名字|-d $EDGE_TUN|
+|N2N_ARGS|更多参数|运行时附加的更多参数|-v -f|
 |---|---|---|---|
-|N2N_DESTINATION|目标网络|想要访问的远程地址| `192.168.0.0/16` `192.168.1.10`|
-|N2N_GATEWAY|网关地址|远程共享docker的网卡地址,用于网络出口|10.10.10.1|
-|N2N_ROUTE|是否添加路由|将访问目标网络路由表添加到近端docker|FALSE|
-|N2N_NAT|是否开启NAT转发|允许其他docker访问本机网络内容|FALSE|
-|N2N_PROXY|是否开启代理|是否开启HTTP/SOCKS5代理|TRUE|
+|EDGE_DESTINATION|目标网络|想要访问的远程地址| `192.168.0.0/16` `192.168.1.10`|
+|EDGE_GATEWAY|网关地址|远程共享docker的网卡地址,用于网络出口|10.10.10.1|
+|EDGE_ROUTE|是否添加路由|将访问目标网络路由表添加到近端docker|FALSE|
+|EDGE_NAT|是否开启NAT转发|允许其他docker访问本机网络内容|FALSE|
+|EDGE_PROXY|是否开启代理|是否开启HTTP/SOCKS5代理|TRUE|
 |PROXY_ARGS|代理参数|具体参数访问 *[pginuerzh/gost][gost]* 查看|-L=:14080|
 
 更多介绍参看 *[zctmdc/n2n_ntop][n2n_ntop]* 和 *[pginuerzh/gost][gost]*

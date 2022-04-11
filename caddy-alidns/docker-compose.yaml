@@ -1,0 +1,7 @@
+version: "3"
+services:
+  caddy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: zctmdc/caddy-alidns:Alpha

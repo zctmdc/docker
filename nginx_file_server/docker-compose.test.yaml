@@ -1,0 +1,18 @@
+version: "3"
+services:
+  file-server-test:
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile
+    image: zctmdc/file-server:Alpha
+    # restart: always
+    volumes:
+      - /tmp:/workpath:ro
+    # ports:
+    #   - 16680:80
+    command: [
+        "/bin/bash",
+        "-c",
+        "/usr/local/sbin/run.sh & \
+        sleep 3 && curl 'localhost:80' || exit 1 "
+      ]
