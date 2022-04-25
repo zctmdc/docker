@@ -22,7 +22,22 @@ if [[ "${N2N_ARGS:0:1}" != "-" ]]; then
 fi
 echo N2N_ARGS=$N2N_ARGS
 
-init_edge_mac() {
+init_edge_mac_address() {
+
+  if [[ -n "$EDGE_MAC" ]]; then
+    # 判断 $EDGE_MAC 是否为有效MAC地址
+    if [[ $EDGE_MAC =~ ^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$ ]]; then
+      EDGE_MAC=$(echo $EDGE_MAC | tr '[a-z]' '[A-Z]')
+    else
+      EDGE_MAC=""
+      return
+    fi
+    return
+  fi
+
+  if [[ -n "$GET_MAC_FROM_WAN" ]]; then
+    return
+  fi
   ignore_Iface="ztbpaislgc|docker"
   lan_eth=$(route -ne | grep 0.0.0.0 | grep -Ev "$ignore_Iface" | tail -n 1 | awk '{print $8}')
   lan_mac=$(cat /sys/class/net/$lan_eth/address)
@@ -32,7 +47,7 @@ init_edge_mac() {
   else
     lan_mac_suffix=$(echo $(expr $(echo 0x${lan_mac##*:} | awk '{printf "%d\n",$0}') - 1) | awk '{printf "%02x\n",$0}')
   fi
-  edge_mac="${lan_mac_prefix}:${lan_mac_suffix}"
+  EDGE_MAC="${lan_mac_prefix}:${lan_mac_suffix}"
 }
 
 init_dhcpd_conf() {
@@ -69,11 +84,7 @@ check_edge() {
 
 run_edge() {
   init_edge_mac
-  if [[ $EDGE_KEY ]]; then
-    N2N_LOG_RUN "edge -d $EDGE_TUN -m $edge_mac -a $EDGE_IP_AGE -c $EDGE_COMMUNITY -k $EDGE_KEY -i $EDGE_REG_INTERVAL -l $SUPERNODE_IP:$SUPERNODE_PORT $EDGE_ENCRYPTION $N2N_ARGS" &
-  else
-    N2N_LOG_RUN "edge -d $EDGE_TUN -m $edge_mac -a $EDGE_IP_AGE -c $EDGE_COMMUNITY -i $EDGE_REG_INTERVAL -l $SUPERNODE_IP:$SUPERNODE_PORT $N2N_ARGS" &
-  fi
+  N2N_LOG_RUN "edge -d $EDGE_TUN ${EDGE_MAC:+ -m ${EDGE_MAC}} -a $EDGE_IP_AGE -c $EDGE_COMMUNITY -i $EDGE_REG_INTERVAL -l $SUPERNODE_IP:$SUPERNODE_PORT ${EDGE_KEY:+ -k ${EDGE_KEY} $EDGE_ENCRYPTION} $N2N_ARGS" &
   ifconfig $EDGE_TUN
 }
 

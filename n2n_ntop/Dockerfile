@@ -64,6 +64,8 @@ ENV EDGE_ENCRYPTION A3
 ENV EDGE_REG_INTERVAL 5
 ENV EDGE_MTU 1290
 ENV EDGE_UDP_PORT ""
+ENV EDGE_MAC ""
+ENV GET_MAC_FROM_WAN "false"
 
 CMD [ "/bin/bash" , "-c" , "/usr/local/sbin/run.sh" ]
 
