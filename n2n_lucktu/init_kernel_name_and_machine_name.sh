@@ -1,7 +1,7 @@
 #!/bin/bash
 . init_logger.sh
 ### 自动识别系统类型
-zctmdc_sel_os() {
+sel_os() {
     uos=$(uname -s | tr '[A-Z]' '[a-z]')
     case $uos in
     *linux*)
@@ -46,7 +46,7 @@ zctmdc_sel_os() {
 }
 
 ### 自动识别CPU架构
-zctmdc_sel_cpu() {
+sel_cpu() {
     ucpu=$(uname -m | tr '[A-Z]' '[a-z]')
     case $ucpu in
     *i386* | *i486* | *i586* | *i686* | *bepc* | *i86pc*)
@@ -101,6 +101,9 @@ zctmdc_sel_cpu() {
     *arm* | *armv6l* | *armv71*)
         mycpu="arm"
         ;;
+    *aarch64eb*)
+        mycpu="arm64eb"
+        ;;
     *aarch64*)
         mycpu="arm64"
         ;;
@@ -116,5 +119,53 @@ zctmdc_sel_cpu() {
 }
 myos=""
 mycpu=""
-zctmdc_sel_os
-zctmdc_sel_cpu
+sel_os
+sel_cpu
+
+if [[ -z ${KERNEL} ]]; then
+    case ${myos} in
+    linux)
+        KERNEL="linux"
+        ;;
+    macosx)
+        KERNEL="darwin"
+        ;;
+    windows)
+        KERNEL="windows"
+        ;;
+    *)
+        LOG_ERROR "不支持的系统 - ${myos}"
+        exit 1
+        ;;
+    esac
+    LOG_INFO "受支持的系统 - ${myos} -> ${KERNEL}"
+fi
+
+if [[ -z ${MACHINE} ]]; then
+    case ${mycpu} in
+    i386)
+        MACHINE="x86"
+        ;;
+    amd64)
+        MACHINE="x64"
+        ;;
+    arm)
+        MACHINE="arm"
+        ;;
+    arm64eb)
+        MACHINE="arm64eb(aarch64eb)"
+        ;;
+    arm64)
+        MACHINE="arm64(aarch64)"
+        ;;
+    mips | mips64 | mips64el | mipsel | amd64)
+
+        MACHINE=$mycpu
+        ;;
+    *)
+        LOG_ERROR "不支持的CPU架构类型 - ${mycpu}"
+        exit 1
+        ;;
+    esac
+    LOG_INFO "受支持的CPU架构类型 - ${mycpu} -> ${MACHINE}"
+fi

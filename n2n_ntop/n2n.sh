@@ -83,7 +83,7 @@ check_edge() {
 }
 
 run_edge() {
-  init_edge_mac
+  # init_edge_mac_address
   N2N_LOG_RUN "edge -d $EDGE_TUN ${EDGE_MAC:+ -m ${EDGE_MAC}} -a $EDGE_IP_AGE -c $EDGE_COMMUNITY -i $EDGE_REG_INTERVAL -l $SUPERNODE_IP:$SUPERNODE_PORT ${EDGE_KEY:+ -k ${EDGE_KEY} $EDGE_ENCRYPTION} $N2N_ARGS" &
   ifconfig $EDGE_TUN
 }

@@ -1,59 +1,54 @@
-FROM debian:buster-slim as builder
+FROM debian:buster-slim as downloader
 
 ARG DEBIAN_FRONTEND=noninteractive
-
+RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list
+RUN sed -i 's|security.debian.org/debian-security|mirrors.ustc.edu.cn/debian-security|g' /etc/apt/sources.list
 RUN apt-get update && apt-get install -yq \
-  bash curl wget unzip
+  bash curl wget unzip jq
+ADD https://www.rarlab.com/rar/unrar_5.2.5-0.1_amd64.deb /tmp/rar/
+RUN dpkg -i /tmp/rar/unrar_5.2.5-0.1_amd64.deb
 
-WORKDIR /tmp/
+ARG KERNEL=linux
+ARG MACHINE=x64
+ARG BIG_VERSION=v2
+ARG SMALL_VERSION=3.1.1-16
+ARG COMMITS=r1200
 
-ARG KERNEL
-ARG MACHINE
-ARG VERSION=v2
-
-COPY *.sh /tmp/
-
-RUN chmod +x /tmp/*.sh
-
-RUN /tmp/down_n2n.sh
+WORKDIR /tmp/cmd/
+COPY *.sh /tmp/cmd/
+RUN chmod +x /tmp/cmd/*.sh
+RUN bash -c /tmp/cmd/down_n2n.sh
 
 FROM debian:buster-slim
 
-ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get -yq upgrade 
-RUN apt-get -yq install \
-  apt-utils tzdata \
-  && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
-  && echo "Asia/Shanghai" > /etc/timezone \
-  && dpkg-reconfigure -f noninteractive tzdata
-##################-----##################
+# ARG DEBIAN_FRONTEND=noninteractive
+# RUN apt-get update && apt-get -yq upgrade
+# RUN apt-get -yq install \
+#   apt-utils tzdata \
+#   && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+#   && echo "Asia/Shanghai" > /etc/timezone \
+#   && dpkg-reconfigure -f tzdata
+# ##################-----##################
 
-RUN apt-get install -yq \
-  wget openssl isc-dhcp-client isc-dhcp-server net-tools iputils-ping \
-  curl  ca-certificates traceroute htop psmisc iptables \
-  && rm -rf /etc/dhcp/dhcpd.conf 
+# RUN apt-get install -yq \
+#   wget openssl isc-dhcp-client isc-dhcp-server net-tools iputils-ping \
+#   curl  ca-certificates traceroute htop psmisc iptables \
+#   && rm -rf /etc/dhcp/dhcpd.conf
 
-##################-----##################
-RUN apt-get clean 
+# ##################-----##################
+# RUN apt-get clean
 
-RUN mkdir -p /usr/local/sbin/
+# RUN mkdir -p /usr/local/sbin/
 
-COPY --from=builder \
+COPY --from=downloader \
   /tmp/n2n/supernode \
   /tmp/n2n/edge \
   /usr/local/sbin/
 
+# COPY *.sh /usr/local/sbin/
 
-COPY *.sh /usr/local/sbin/
-
-# RUN chmod a+x /usr/local/sbin/* \
-#   && . /usr/local/sbin/init.sh \
-#   && wget --no-check-certificate -qO /usr/local/sbin/edge http://rt.qiniu.zctmdc.cn/bin/edge_v2_${myos}_${mycpu} \
-#   && wget --no-check-certificate -qO /usr/local/sbin/supernode http://rt.qiniu.zctmdc.cn/bin/supernode_v2_${myos}_${mycpu}
-
-
-RUN set -x \
-  && chmod a+x /usr/local/sbin/*
+# RUN set -x \
+#   && chmod a+x /usr/local/sbin/*
 
 ENV MODE SUPERNODE
 
