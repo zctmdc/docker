@@ -55,5 +55,7 @@ STATIC)
     exit 1
     ;;
 esac
-cat /sys/class/net/$EDGE_TUN/address || exit 1
+if [[ "$MODE" != "SUPERNODE" ]];then
+    cat /sys/class/net/$EDGE_TUN/address || exit 1
+fi
 /bin/ping -c 1 -w 5 -q $check_ip || exit 1

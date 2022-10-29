@@ -133,7 +133,6 @@ docker run \
   zctmdc/n2n_ntop:Beta
 ```
 
-
 如果你需要自定义DHCPD服务配置文件
 
  ```bash
@@ -158,7 +157,6 @@ docker run \
   zctmdc/n2n_ntop:Beta
 ```
 
-
 ### STATIC - 静态IP模式
 
 ```bash
@@ -178,6 +176,17 @@ docker run \
   zctmdc/n2n_ntop:Beta
 ```
 
+## 使用 *docker-compose* 配置运行
+
+see: <docker-compose.yaml>
+
+```bash
+# docker-compose build #编译
+
+#启动 n2n_edge_dhcp
+# docker-compose up n2n_edge_dhcp #前台运行 n2n_edge_dhcp
+# docker-compose up -d n2n_edge_dhcp #后台运行
+```
 
 ## 环境变量介绍
 
@@ -197,36 +206,22 @@ docker run \
 
 更多节点请访问 [N2N中心节点][N2N中心节点]
 
-## 使用 *docker-compose* 配置运行
-
-```bash
-git clone -b Beta https://github.com/zctmdc/docker.git
-# docker-compose build #编译
-
-#启动 n2n_edge_dhcp
-cd n2n_ntop
-# docker-compose up n2n_edge_dhcp #前台运行 n2n_edge_dhcp
-# docker-compose up -d n2n_edge_dhcp #后台运行
-```
-
 更多介绍请访问 [docker-compose CLI概述][Overview of docker-compose CLI]
 
 ## 告诉我你在用
 
 如果你使用正常了请点个赞
-[我的docker主页][zctmdc—docker] ，[n2n_ntop的docker项目页][n2n_ntop] 和 [我github的docker项目页][zctmdc—github]
+[我的 docker 主页][zctmdc—docker] ，[n2n_ntop 的 docker 项目页][n2n_ntop] 和 [我 github 的 docker 项目页][zctmdc—github]
 我将引起注意，不再随意的去更改和重命名空间/变量名
 
-[n2n]: https://web.archive.org/web/20110924083045/http://www.ntop.org:80/products/n2n/ "n2n官网"
+[n2n]: https://www.ntop.org/products/n2n/ "n2n官网"
 [ntop]: https://github.com/ntop "ntop团队"
-[组网示意]: https://web.archive.org/web/20110924083045im_/http://www.ntop.org/wp-content/uploads/2011/08/n2n_network.png "组网示意"
-[连接原理]: https://web.archive.org/web/20110924083045im_/http://www.ntop.org/wp-content/uploads/2011/08/n2n_com.png "连接原理"
 [好运博客]: http://www.lucktu.com "好运博客"
-[N2N 新手向导及最新信息]: http://www.lucktu.com/archives/783.html "N2N 新手向导及最新信息（2019-12-05 更新）"
-[N2N中心节点]: http://supernode.ml/ "N2N中心节点"
-
+[n2n 新手向导及最新信息]: http://www.lucktu.com/archives/783.html "N2N 新手向导及最新信息（2019-12-05 更新）"
+[n2n中心节点]: http://supernode.ml/ "N2N中心节点"
+[组网示意]: ./img/n2n_network.png "组网示意"
+[连接原理]: ./img/n2n_com.png "连接原理"
 [zctmdc—docker]: https://hub.docker.com/u/zctmdc "我的docker主页"
-[zctmdc—github]: https://github.com/zctmdc/docker.git "我github的docker项目页"
 [n2n_ntop]: https://hub.docker.com/r/zctmdc/n2n_ntop "n2n_ntop的docker项目页"
-[n2n_proxy]: https://hub.docker.com/r/zctmdc/n2n_proxy "n2n_proxy的docker项目页"
-[Overview of docker-compose CLI]: https://docs.docker.com/compose/reference/overview/ "docker-compose CLI概述"
+[zctmdc—github]: https://github.com/zctmdc/docker.git "我github的docker项目页"
+[overview of docker-compose cli]: https://docs.docker.com/compose/reference/overview/ "docker-compose CLI概述"

@@ -6,7 +6,7 @@ RUN apt-get update && apt-get install -yq \
 
 WORKDIR /tmp/
 
-COPY *.sh /tmp/
+COPY ./scripts/*.sh /tmp/
 
 RUN chmod +x /tmp/*.sh && /tmp/down_n2n.sh
 
@@ -37,7 +37,7 @@ COPY --from=builder \
   /usr/local/sbin/
 
 
-COPY *.sh /usr/local/sbin/
+COPY ./scripts/*.sh /usr/local/sbin/
 
 # RUN chmod a+x /usr/local/sbin/* \
 #   && . /usr/local/sbin/init.sh \

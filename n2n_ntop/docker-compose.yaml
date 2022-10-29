@@ -32,7 +32,7 @@ services:
       - EDGE_ENCRYPTION=A3
       - N2N_ARGS=-f
     # volumes:
-    #   - ./dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
+    #   - ./config/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
     external_links:
       - n2n_supernode:n2n_supernode
 
