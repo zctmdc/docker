@@ -31,7 +31,7 @@ down_filename="${down_dir}/${down_path##*/}"
 
 LOG_INFO "Try: 下载 - ${down_url}"
 mkdir "${down_dir}"
-wget ${down_url} -O "${down_filename}"
+wget -q ${down_url} -O "${down_filename}"
 
 LOG_INFO "Try: 解压 - ${down_filename}"
 EXTRACT_ALL "${down_filename}"
