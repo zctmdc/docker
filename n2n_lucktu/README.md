@@ -202,20 +202,9 @@ docker run \
           privileged: true
           command:
             [
-              'edge',
-              '-d',
-              'T3',
-              '-a',
-              '10.3.0.77',
+              'sh',
               '-c',
-              'n2n',
-              '-k',
-              'test',
-              '-l',
-              '172.77.5.10:10090',
-              '-e',
-              'auto',
-              '-Efrv'
+              'edge -d T3 -a 10.3.0.77 -c n2n -k test -l 172.77.5.10:10090 -e auto -Efrv'
             ]
           # network_mode: host
           networks:

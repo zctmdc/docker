@@ -33,8 +33,8 @@ services:
       - N2N_ARGS=-f
     # volumes:
     #   - ./config/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
-    external_links:
-      - n2n_supernode:n2n_supernode
+    links:
+      - n2n_supernode
 
   n2n_edge_dhcp:
     depends_on:
@@ -53,8 +53,8 @@ services:
       - EDGE_KEY=test
       - EDGE_ENCRYPTION=A3
       - N2N_ARGS=-f
-    external_links:
-      - n2n_supernode:n2n_supernode
+    links:
+      - n2n_supernode
 
   n2n_edge_static:
     depends_on:
@@ -73,5 +73,5 @@ services:
       - EDGE_KEY=test
       - EDGE_ENCRYPTION=A3
       - N2N_ARGS=-f
-    external_links:
-      - n2n_supernode:n2n_supernode
+    links:
+      - n2n_supernode
