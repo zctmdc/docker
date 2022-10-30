@@ -45,5 +45,5 @@ if [[ "${mycpu}"=="i386" || "${mycpu}"=="amd64" ]]; then
         LOG_ERROR "下载失败: ${down_url}"
         exit 1
     fi
-    RUN dpkg -i "${down_filename}"
+    dpkg -i "${down_filename}"
 fi
