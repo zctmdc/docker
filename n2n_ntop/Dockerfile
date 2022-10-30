@@ -6,11 +6,13 @@ RUN apt-get -qq update
 RUN apt-get -qq -y install \
   bash curl ca-certificates wget unzip
 
-WORKDIR /tmp/
+WORKDIR /tmp/scripts/
 
-COPY ./scripts/*.sh /tmp/
+COPY ./scripts/*.sh /tmp/scripts/
 
-RUN chmod +x /tmp/*.sh && /tmp/down_n2n.sh
+RUN chmod +x /tmp/scripts/*.sh
+
+RUN /tmp/scripts/down_n2n.sh
 
 FROM debian:buster-slim
 
