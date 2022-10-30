@@ -168,12 +168,12 @@ jobs:
                   images: ${{ env.REGISTRY }}/${{ github.actor }}/${{ env.APP_NAME }}
                   tags: |
                       type=raw,value=Alpha,enable=${{ github.ref == format('refs/heads/{0}', 'alpha') }}
-                      type=raw,value=${{ needs.latest_info.outputs.latest_big_version }}, enable=${{ needs.latest_info.outputs.latest_big_version != "" }}
-                      type=raw,value=${{ needs.latest_info.outputs.latest_small_version }}, enable=${{ needs.latest_info.outputs.latest_small_version != "" }}
-                      type=raw,value=${{ needs.latest_info.outputs.latest_commits }}, enable=${{ needs.latest_info.outputs.latest_commits != "" }}
-                      type=raw,value=${{ needs.latest_info.outputs.latest_version }}, enable=${{ needs.latest_info.outputs.latest_version != "" }}
-                      type=raw,value=${{ format( ${0}_r${1}, needs.latest_info.outputs.latest_big_version, needs.latest_info.outputs.latest_small_version ) }}, enable=${{ needs.latest_info.outputs.latest_big_version != "" && needs.latest_info.outputs.latest_small_version != "" }}
-                      type=raw,value=${{ format( r${1}_${2}, needs.latest_info.outputs.latest_small_version, needs.latest_info.outputs.latest_commits) }}, enable=${{ needs.latest_info.outputs.latest_small_version != "" && needs.latest_info.outputs.latest_commits != "" }}
+                      type=raw,value=${{ needs.latest_info.outputs.latest_big_version }}, enable=${{ needs.latest_info.outputs.latest_big_version != '' }}
+                      type=raw,value=${{ needs.latest_info.outputs.latest_small_version }}, enable=${{ needs.latest_info.outputs.latest_small_version != '' }}
+                      type=raw,value=${{ needs.latest_info.outputs.latest_commits }}, enable=${{ needs.latest_info.outputs.latest_commits != '' }}
+                      type=raw,value=${{ needs.latest_info.outputs.latest_version }}, enable=${{ needs.latest_info.outputs.latest_version != '' }}
+                      type=raw,value=${{ format( ${0}_r${1}, needs.latest_info.outputs.latest_big_version, needs.latest_info.outputs.latest_small_version ) }}, enable=${{ needs.latest_info.outputs.latest_big_version != '' && needs.latest_info.outputs.latest_small_version != '' }}
+                      type=raw,value=${{ format( r${1}_${2}, needs.latest_info.outputs.latest_small_version, needs.latest_info.outputs.latest_commits) }}, enable=${{ needs.latest_info.outputs.latest_small_version != '' && needs.latest_info.outputs.latest_commits != '' }}
 
             # latest_big_version: ${{ needs.latest_info.outputs.latest_big_version }}
             # latest_small_version: ${{ needs.latest_info.outputs.latest_small_version }}
