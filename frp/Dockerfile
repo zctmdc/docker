@@ -2,7 +2,7 @@ FROM debian:buster-slim as builder
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get update && apt-get install -y \
-  bash curl ca-certificates wget
+  bash curl ca-certificates wget jq
 
 WORKDIR /tmp/
 
