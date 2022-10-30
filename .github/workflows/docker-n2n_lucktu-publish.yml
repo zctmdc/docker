@@ -116,7 +116,7 @@ jobs:
                   last_pulled_date=${{ steps.get_tag_last_pulled.outputs.value }}
                   echo "last_pulled_date=${last_pulled_date}" >> $GITHUB_OUTPUT
                   LOG_INFO "last_pulled_date - ${last_pulled_date}"
-                  if [[ ${{ env.FORCE_PUSH }} ]];then
+                  if [[ "${{ env.FORCE_PUSH }}" ]]; then
                       LOG_WARNING "强制编译/推送"
                   elif [[ "${last_pulled_date,,}" != "null" ]]; then
                       LOG_INFO "跳过编译/推送"
