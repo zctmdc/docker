@@ -13,9 +13,10 @@ RUN chmod +x /tmp/scripts/*.sh
 
 ARG KERNEL=linux
 ARG MACHINE
-ARG BIG_VERSION=v2
+ARG BIG_VERSION=v3
 ARG SMALL_VERSION=3.1.1-16
 ARG COMMITS=r1200
+ARG OLD
 
 RUN /tmp/scripts/install_rar.sh
 RUN /tmp/scripts/get_n2n.sh

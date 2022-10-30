@@ -19,10 +19,109 @@ env:
     # REGISTRY: ghcr.io
     REGISTRY: docker.io
     # github.repository as <account>/<repo>
-    APP_NAME: n2n_lucktu
+
+    KERNEL: linux
+
+    BIG_VERSION: v3
+    SMALL_VERSION: 3.1.1-16
+    COMMITS: r1200
 
 jobs:
-    build:
+    check_version:
+        runs-on: ubuntu-latest
+        outputs:
+            latest_big_version: ${{ steps.latest_info.outputs.latest_big_version }}
+            latest_small_version: ${{ steps.latest_info.outputs.latest_small_version }}
+            latest_commits: ${{ steps.latest_info.outputs.latest_commits }}
+            latest_version: ${{ steps.latest_info.outputs.latest_version }}
+
+        permissions:
+            contents: read
+            packages: write
+
+        steps:
+            - name: get latest_path
+              id: get_latest_path
+              uses: sergeysova/jq-action@v2
+              with:
+                  cmd: curl -k -sS https://api.github.com/repos/lucktu/n2n/contents/Linux?ref=master | jq '.[]|{path}|..|.path?' | grep linux_x64 | sed 's/\"//g'
+
+            - name: Check latest Version
+              id: latest_info
+              run: |
+                  LOG_INFO() {
+                  echo -e "\033[0;32m[INFO] $* \033[0m"
+                  }
+
+                  # e.g. n2n_v3_linux_x64_v3.1.1-16_r1200_all_by_heiye.rar
+                  latest_file=${{ steps.get_latest_path.outputs.value }}
+                  # e.g. v3
+                  latest_big_version=${latest_file#*n2n_}
+                  latest_big_version=${latest_big_version%_linux*}
+                  # e.g. 3.1.1-16
+                  latest_small_version=${latest_file##*_v}
+                  latest_small_version=${latest_small_version%%_r*}
+                  # e.g. 1200
+                  latest_commits=${latest_file##*${latest_small_version}}
+                  latest_commits=${latest_commits##*_r}
+                  latest_commits=${latest_commits%%.*}
+                  latest_commits=${latest_commits%%_*}
+                  latest_version=format( ${0}_r${1}_${2}, ${latest_big_version}, ${latest_small_version}, ${latest_commits} )
+                  LOG_INFO latest_path=${latest_path}
+                  LOG_INFO latest_file=${latest_file}
+                  LOG_INFO latest_big_version=${latest_big_version}
+                  LOG_INFO latest_small_version=${latest_small_version}
+                  LOG_INFO latest_commits=${latest_commits}
+
+                  # Setting environment variable
+                  echo "latest_big_version=${latest_big_version}" >> $GITHUB_OUTPUT
+                  echo "latest_small_version=${latest_small_version}" >> $GITHUB_OUTPUT
+                  echo "latest_commits=${latest_commits}" >> $GITHUB_OUTPUT
+                  echo "latest_version=${latest_version}" >> $GITHUB_OUTPUT
+
+    check_push:
+        runs-on: ubuntu-latest
+        outputs:
+            last_pulled_date: ${{ steps.tag_last_pulled.outputs.last_pulled_date }}
+
+        permissions:
+            contents: read
+            packages: write
+
+        steps:
+            - name: get tag_last_pulled
+              id: get_tag_last_pulled
+              uses: sergeysova/jq-action@v2
+              with:
+                  cmd: curl https://hub.docker.com/v2/repositories/zctmdc/n2n_lucktu/tags/${{ needs.get_latest_path.outputs.latest_version }} | jq .tag_last_pulled
+            - name: Check tag_last_pulled
+              id: tag_last_pulled
+              run: |
+                  LOG_INFO() {
+                  echo -e "\033[0;32m[INFO] $* \033[0m"
+                  }
+
+                  LOG_WARNING() {
+                  echo -e "\033[0;33m[WARNING] $* \033[0m"
+                  }
+
+                  # e.g. "2022-10-30T19:29:49.877019Z"
+                  last_pulled_date=${{ steps.get_tag_last_pulled.outputs.value }}
+                  echo "last_pulled_date=${last_pulled_date}" >> $GITHUB_OUTPUT
+                  LOG_INFO "last_pulled_date - ${last_pulled_date}"
+                  if [[ ${{ env.FORCE_PUSH }} ]];then
+                      LOG_WARNING "强制编译/推送"
+                  elif [[ "${last_pulled_date,,}" != "null" ]]; then
+                      LOG_INFO "跳过编译/推送"
+                      exit 0
+                  else
+                      LOG_INFO "准备编译/推送"
+                  fi
+
+    build_n2n_lucktu:
+        needs: check_version
+        env:
+            APPNAME: n2n_lucktu
         runs-on: ubuntu-latest
         permissions:
             contents: read
@@ -44,7 +143,7 @@ jobs:
               if: github.event_name != 'pull_request'
               uses: sigstore/cosign-installer@main
               with:
-                cosign-release: "v1.13.1"
+                  cosign-release: "v1.13.1"
 
             # Workaround: https://github.com/docker/build-push-action/issues/461
             - name: Setup Docker buildx
@@ -69,6 +168,17 @@ jobs:
                   images: ${{ env.REGISTRY }}/${{ github.actor }}/${{ env.APP_NAME }}
                   tags: |
                       type=raw,value=Alpha,enable=${{ github.ref == format('refs/heads/{0}', 'alpha') }}
+                      type=raw,value=${{ needs.latest_info.outputs.latest_big_version }}, enable=${{ needs.latest_info.outputs.latest_big_version != "" }}
+                      type=raw,value=${{ needs.latest_info.outputs.latest_small_version }}, enable=${{ needs.latest_info.outputs.latest_small_version != "" }}
+                      type=raw,value=${{ needs.latest_info.outputs.latest_commits }}, enable=${{ needs.latest_info.outputs.latest_commits != "" }}
+                      type=raw,value=${{ needs.latest_info.outputs.latest_version }}, enable=${{ needs.latest_info.outputs.latest_version != "" }}
+                      type=raw,value=${{ format( ${0}_r${1}, needs.latest_info.outputs.latest_big_version, needs.latest_info.outputs.latest_small_version ) }}, enable=${{ needs.latest_info.outputs.latest_big_version != "" && needs.latest_info.outputs.latest_small_version != "" }}
+                      type=raw,value=${{ format( r${1}_${2}, needs.latest_info.outputs.latest_small_version, needs.latest_info.outputs.latest_commits) }}, enable=${{ needs.latest_info.outputs.latest_small_version != "" && needs.latest_info.outputs.latest_commits != "" }}
+
+            # latest_big_version: ${{ needs.latest_info.outputs.latest_big_version }}
+            # latest_small_version: ${{ needs.latest_info.outputs.latest_small_version }}
+            # latest_commits: ${{ needs.latest_info.outputs.latest_commits }}
+            # latest_version: ${{ needs.latest_info.outputs.latest_version }}
 
             # Build and push Docker image with Buildx (don't push on PR)
             # https://github.com/docker/build-push-action

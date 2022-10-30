@@ -11,15 +11,19 @@ LOG_INFO BIG_VERSION=${BIG_VERSION}
 LOG_INFO SMALL_VERSION=${SMALL_VERSION}
 LOG_INFO COMMITS=${COMMITS}
 
-INIT_LATEST_INFO
-
+if [[ -z "$OLD" ]]; then
+    INIT_LATEST_INFO
+    if [[ "${SMALL_VERSION}" != "${latest_small_version}" ]]; then
+        OLD=true
+    fi
+fi
 down_dir=''
-if [[ "${SMALL_VERSION}" != "${latest_small_version}" ]]; then
+if [[ "${OLD,,}" == "true" ]]; then
     down_dir="/Old/linux_${MACHINE}"
 fi
 LOG_INFO "down_dir:${down_dir}"
 
-down_path=$(curl -k -sS https://api.github.com/repos/lucktu/n2n/contents/Linux${down_dir}?ref=master | jq '.[]|{path}|..|.path?' | grep linux_${MACHINE:+${MACHINE}_} | grep v${SMALL_VERSION} | sed 's/\"//g')
+down_path=$(curl -k -sS https://api.github.com/repos/lucktu/n2n/contents/Linux${down_dir}?ref=master | jq '.[]|{path}|..|.path?' | grep linux_${MACHINE:+${MACHINE}_} | grep v${BIG_VERSION} | grep v${SMALL_VERSION} | grep v${COMMITS} | sed 's/\"//g')
 if [[ -z "${down_path}" ]]; then
     LOG_ERROR "down_path 获取失败"
     exit 1
