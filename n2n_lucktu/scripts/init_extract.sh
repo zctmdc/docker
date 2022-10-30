@@ -61,7 +61,7 @@ EXTRACT_ALL() {
     fi
     if [[ -f "${extract_file}" ]]; then
         EXTRACT "${extract_file}"
-        rm "${extract_file}"
+        # rm "${extract_file}"
         EXTRACT_ALL "${extract_path}"
     elif [[ -d "${extract_file}" ]]; then
         for extract_file in $(find ${extract_file} -type f | grep -E '(tar)|(rar)|(zip)'); do
