@@ -177,10 +177,12 @@ jobs:
                       type=raw,value=Alpha,enable=${{ github.ref == format('refs/heads/{0}', 'alpha') }}
                       type=raw,value=${{ needs.check_version.outputs.latest_big_version }}, enable=${{ needs.check_version.outputs.latest_big_version != '' }}
                       type=raw,value=${{ needs.check_version.outputs.latest_small_version }}, enable=${{ needs.check_version.outputs.latest_small_version != '' }}
+                      type=raw,value=${{ format( 'v.{0}', needs.check_version.outputs.latest_small_version ) }}, enable=${{ needs.check_version.outputs.latest_small_version != '' }}
                       type=raw,value=${{ format( 'r{0}', needs.check_version.outputs.latest_commits ) }}, enable=${{ needs.check_version.outputs.latest_commits != '' }}
                       type=raw,value=${{ needs.check_version.outputs.latest_version }}, enable=${{ needs.check_version.outputs.latest_version != '' }}
                       type=raw,value=${{ format( '{0}_{1}', needs.check_version.outputs.latest_big_version, needs.check_version.outputs.latest_small_version ) }}, enable=${{ needs.check_version.outputs.latest_big_version != '' && needs.check_version.outputs.latest_small_version != '' }}
                       type=raw,value=${{ format( '{0}_r{1}', needs.check_version.outputs.latest_small_version, needs.check_version.outputs.latest_commits) }}, enable=${{ needs.check_version.outputs.latest_small_version != '' && needs.check_version.outputs.latest_commits != '' }}
+                      type=raw,value=${{ format( 'v.{0}_r{1}', needs.check_version.outputs.latest_small_version, needs.check_version.outputs.latest_commits) }}, enable=${{ needs.check_version.outputs.latest_small_version != '' && needs.check_version.outputs.latest_commits != '' }}
 
             # latest_big_version: ${{ needs.check_version.outputs.latest_big_version }}
             # latest_small_version: ${{ needs.check_version.outputs.latest_small_version }}
