@@ -6,15 +6,11 @@ RUN apt-get -qq update
 RUN apt-get -qq -y install \
   bash curl ca-certificates wget jq
 
-WORKDIR /tmp/
+WORKDIR /tmp/scripts/
 
-COPY \
-  ./frp_download.sh \
-  ./init_logger.sh \
-  ./init_kernel_name_and_machine_name.sh \
-  /tmp/
+COPY ./scripts/*.sh /tmp/scripts/
 
-RUN chmod +x /tmp/*.sh
+RUN chmod +x /tmp/scripts/*.sh
 
 ARG KERNEL
 
@@ -22,7 +18,7 @@ ARG MACHINE
 
 ARG FRP_VERSION
 
-RUN /tmp/frp_download.sh
+RUN /tmp/scripts/frp_download.sh
 
 
 FROM debian:buster-slim
@@ -53,10 +49,7 @@ COPY --from=builder \
   /tmp/frp/frpc \
   /usr/sbin/
 
-COPY \
-  ./frpc.ini \
-  ./frps.ini \
-  /etc/frp/
+COPY ./config/*  /etc/frp/
 
 RUN chmod +x /usr/sbin/frpc /usr/sbin/frps
 

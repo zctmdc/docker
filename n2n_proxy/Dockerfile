@@ -2,11 +2,9 @@ FROM zctmdc/n2n_ntop:Alpha
 
 LABEL zctmdc <zctmdc@outlook.com>
 
-COPY *.sh  /usr/local/sbin/
+COPY ./scripts/*.sh /usr/local/sbin/
 
-RUN set -x \
-  # && apk add --update --no-cache psmisc curl \
-  && chmod a+x /usr/local/sbin/*
+RUN chmod a+x /usr/local/sbin/*
 
 ENV EDGE_DESTINATION 192.168.0.0/16
 ENV EDGE_GATEWAY ""

@@ -36,8 +36,7 @@ COPY ./scripts/*.sh /usr/local/sbin/
 #   && wget --no-check-certificate -qO /usr/local/sbin/supernode http://rt.qiniu.zctmdc.cn/bin/supernode_v2_${myos}_${mycpu}
 
 
-RUN set -x \
-  && chmod a+x /usr/local/sbin/*
+RUN chmod a+x /usr/local/sbin/*
 
 ENV MODE SUPERNODE
 
