@@ -66,7 +66,7 @@ jobs:
                   latest_commits=${latest_commits##*_r}
                   latest_commits=${latest_commits%%.*}
                   latest_commits=${latest_commits%%_*}
-                  latest_version=format( ${0}_r${1}_${2}, ${latest_big_version}, ${latest_small_version}, ${latest_commits} )
+                  latest_version=format( '${0}_r${1}_${2}', ${latest_big_version}, ${latest_small_version}, ${latest_commits} )
                   LOG_INFO latest_path=${latest_path}
                   LOG_INFO latest_file=${latest_file}
                   LOG_INFO latest_big_version=${latest_big_version}
@@ -172,8 +172,8 @@ jobs:
                       type=raw,value=${{ needs.latest_info.outputs.latest_small_version }}, enable=${{ needs.latest_info.outputs.latest_small_version != '' }}
                       type=raw,value=${{ needs.latest_info.outputs.latest_commits }}, enable=${{ needs.latest_info.outputs.latest_commits != '' }}
                       type=raw,value=${{ needs.latest_info.outputs.latest_version }}, enable=${{ needs.latest_info.outputs.latest_version != '' }}
-                      type=raw,value=${{ format( ${0}_r${1}, needs.latest_info.outputs.latest_big_version, needs.latest_info.outputs.latest_small_version ) }}, enable=${{ needs.latest_info.outputs.latest_big_version != '' && needs.latest_info.outputs.latest_small_version != '' }}
-                      type=raw,value=${{ format( r${1}_${2}, needs.latest_info.outputs.latest_small_version, needs.latest_info.outputs.latest_commits) }}, enable=${{ needs.latest_info.outputs.latest_small_version != '' && needs.latest_info.outputs.latest_commits != '' }}
+                      type=raw,value=${{ format( '${0}_r${1}', needs.latest_info.outputs.latest_big_version, needs.latest_info.outputs.latest_small_version ) }}, enable=${{ needs.latest_info.outputs.latest_big_version != '' && needs.latest_info.outputs.latest_small_version != '' }}
+                      type=raw,value=${{ format( 'r${1}_${2}', needs.latest_info.outputs.latest_small_version, needs.latest_info.outputs.latest_commits) }}, enable=${{ needs.latest_info.outputs.latest_small_version != '' && needs.latest_info.outputs.latest_commits != '' }}
 
             # latest_big_version: ${{ needs.latest_info.outputs.latest_big_version }}
             # latest_small_version: ${{ needs.latest_info.outputs.latest_small_version }}
