@@ -35,7 +35,7 @@ fi
 
 if [[ -z ${FRP_VERSION} ]]; then
   LOG_INFO "正在从GITHUB获取版本"
-  FRP_VERSION=$(curl https://api.github.com/repos/fatedier/frp/releases/latest | jq .tag_name | sed 's/\"//g')
+  FRP_VERSION=$(curl https://api.github.com/repos/fatedier/frp/releases/latest | jq .tag_name | sed 's/\"//g' | sed 's/^v//')
   LOG_INFO "FRP_VERSION : GITHUB - ${FRP_VERSION}"
 fi
 
