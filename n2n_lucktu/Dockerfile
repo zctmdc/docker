@@ -1,9 +1,9 @@
 FROM debian:buster-slim as downloader
 
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get update
+RUN apt-get -qq update
 
-RUN apt-get -y install \
+RUN apt-get -qq -y install \
   bash curl wget unzip jq
 
 
