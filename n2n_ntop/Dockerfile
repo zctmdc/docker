@@ -1,7 +1,8 @@
 FROM debian:buster-slim as builder
 
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get -qq update 
+RUN apt-get -qq update
+RUN apt-get -qq -y install apt-utils
 RUN apt-get -qq -y install \
   bash curl ca-certificates wget unzip
 
@@ -14,7 +15,8 @@ RUN chmod +x /tmp/*.sh && /tmp/down_n2n.sh
 FROM debian:buster-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get -qq update 
+RUN apt-get -qq update  
+RUN apt-get -qq -y install apt-utils
 RUN apt-get -qq -y install \
   apt-utils tzdata \
   && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \

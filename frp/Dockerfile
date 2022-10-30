@@ -1,7 +1,8 @@
 FROM debian:buster-slim as builder
 
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get -qq update 
+RUN apt-get -qq update
+RUN apt-get -qq -y install apt-utils
 RUN apt-get -qq -y install \
   bash curl ca-certificates wget jq
 
@@ -19,6 +20,8 @@ ARG KERNEL
 
 ARG MACHINE
 
+ARG FRP_VERSION
+
 RUN /tmp/frp_download.sh
 
 
@@ -28,7 +31,8 @@ LABEL author=zctmdc
 LABEL email=<zctmdc@outlook.com>
 
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get -qq update 
+RUN apt-get -qq update
+RUN apt-get -qq -y install apt-utils
 RUN apt-get -qq -y install \
   apt-utils tzdata \
   && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \

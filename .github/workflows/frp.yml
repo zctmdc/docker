@@ -44,6 +44,7 @@ jobs:
           tags: ${{ env.USERNAME }}/${{ env.APPNAME }}:${{ env.TAGNAME }}
           cache-from: type=registry,ref=${{ env.USERNAME }}/${{ env.APPNAME }}:buildcache-${{ env.TAGNAME }}
           cache-to: type=registry,ref=${{ env.USERNAME }}/${{ env.APPNAME }}:buildcache-${{ env.TAGNAME }},mode=max
+      
       - name: Test Docker
         run: |
               if [[ -f ${{ env.APPNAME }}/docker-compose.test.yaml ]]; then
