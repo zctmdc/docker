@@ -128,7 +128,7 @@ jobs:
     build_n2n_lucktu:
         needs: [check_push]
         env:
-            APPNAME: n2n_lucktu
+            APP_NAME: n2n_lucktu
         runs-on: ubuntu-latest
         permissions:
             contents: read
