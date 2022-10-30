@@ -1,9 +1,9 @@
 FROM debian:buster-slim as builder
 
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get -qq -o=Dpkg::Use-Pty=0 update
+RUN apt-get -qq update
 
-RUN apt-get -qq -o=Dpkg::Use-Pty=0 -y install \
+RUN apt-get -qq -y install \
   bash curl ca-certificates wget unzip
 
 WORKDIR /tmp/
@@ -15,16 +15,16 @@ RUN chmod +x /tmp/*.sh && /tmp/down_n2n.sh
 FROM debian:buster-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get -qq -o=Dpkg::Use-Pty=0 update  
+RUN apt-get -qq update  
 
-RUN apt-get -qq -o=Dpkg::Use-Pty=0 -y install \
+RUN apt-get -qq -y install \
   apt-utils tzdata \
   && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
   && echo "Asia/Shanghai" > /etc/timezone \
   && dpkg-reconfigure -f noninteractive tzdata
 ##################-----##################
 
-RUN apt-get -qq -o=Dpkg::Use-Pty=0 -y install \
+RUN apt-get -qq -y install \
   wget openssl isc-dhcp-client isc-dhcp-server net-tools iputils-ping \
   curl  ca-certificates traceroute htop psmisc iptables \
   && rm -rf /etc/dhcp/dhcpd.conf
