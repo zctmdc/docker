@@ -1,7 +1,7 @@
 FROM debian:buster-slim as builder
 
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && apt-get install -y -qq \
   bash curl ca-certificates wget jq
 
 WORKDIR /tmp/
@@ -27,15 +27,14 @@ LABEL author=zctmdc
 LABEL email=<zctmdc@outlook.com>
 
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get -y upgrade 
-RUN apt-get -y install \
+RUN apt-get update && apt-get -y -qq install \
   apt-utils tzdata \
   && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
   && echo "Asia/Shanghai" > /etc/timezone \
   && dpkg-reconfigure -f noninteractive tzdata
 ##################-----##################
 
-RUN apt-get install -y \
+RUN apt-get install -y -qq \
   bash curl ca-certificates procps
 
 ##################-----##################

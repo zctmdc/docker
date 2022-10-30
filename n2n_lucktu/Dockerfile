@@ -1,7 +1,7 @@
 FROM debian:buster-slim as downloader
 
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -yq \
+RUN apt-get update && apt-get install -y -qq \
   bash curl wget unzip jq
 
 
@@ -16,11 +16,11 @@ ARG SMALL_VERSION=3.1.1-16
 ARG COMMITS=r1200
 
 RUN /tmp/scripts/install_rar.sh
-RUN /tmp/scripts/down_n2n.sh
+RUN /tmp/scripts/get_n2n.sh
 
 FROM debian:buster-slim
 
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -yq \
+RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -qq \
   net-tools iputils-ping traceroute iptables
 
 COPY --from=downloader \

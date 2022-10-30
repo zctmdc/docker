@@ -1,4 +1,5 @@
 #!/bin/bash
+
 . init_logger.sh
 . init_kernel_name_and_machine_name.sh
 
