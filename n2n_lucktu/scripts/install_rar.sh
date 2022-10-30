@@ -23,7 +23,8 @@ case "${ucpu}" in
     esac
     ;;
 esac
-if [[ "${mycpu}"=="i386" || "${mycpu}"=="amd64" ]]; then
+LOG_INFO "ucpu: ${ucpu}, mycpu: ${mycpu}"
+if [[ "${mycpu}" == "i386" || "${mycpu}" == "amd64" ]]; then
     case ${mycpu} in
     i386)
         down_url="${down_url_path}/${filename_unrar_i386}"
