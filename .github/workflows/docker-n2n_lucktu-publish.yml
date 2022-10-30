@@ -83,7 +83,7 @@ jobs:
         runs-on: ubuntu-latest
         outputs:
             last_pulled_date: ${{ steps.tag_last_pulled.outputs.last_pulled_date }}
-
+        needs: [check_version]
         permissions:
             contents: read
             packages: write
@@ -119,7 +119,7 @@ jobs:
                   fi
 
     build_n2n_lucktu:
-        needs: check_version
+        needs: [check_push]
         env:
             APPNAME: n2n_lucktu
         runs-on: ubuntu-latest
