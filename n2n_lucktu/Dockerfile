@@ -1,7 +1,8 @@
 FROM debian:buster-slim as downloader
 
 ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get update && apt-get install -y -qq \
+RUN apt-get -qq update 
+RUN apt-get -qq -y install \
   bash curl wget unzip jq
 
 
@@ -18,10 +19,7 @@ ARG COMMITS=r1200
 RUN /tmp/scripts/install_rar.sh
 RUN /tmp/scripts/get_n2n.sh
 
-FROM debian:buster-slim
-
-RUN DEBIAN_FRONTEND=noninteractive apt-get update && apt-get install -y -qq \
-  net-tools iputils-ping traceroute iptables
+FROM busybox
 
 COPY --from=downloader \
   /tmp/n2n/supernode \

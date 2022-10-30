@@ -40,7 +40,7 @@ if [[ "${mycpu}"=="i386" || "${mycpu}"=="amd64" ]]; then
     down_filename="${down_dir}/${down_url##*/}"
     LOG_INFO "Try: 下载 - ${down_url}"
     mkdir "${down_dir}"
-    wget -q ${down_url} -O "${down_filename}"
+    wget --no-check-certificate -q ${down_url} -O "${down_filename}"
     if [[ $? != 0 ]]; then
         LOG_ERROR "下载失败: ${down_url}"
         exit 1

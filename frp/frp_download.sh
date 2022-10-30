@@ -35,7 +35,11 @@ fi
 
 if [[ -z ${FRP_VERSION} ]]; then
   LOG_INFO "正在从GITHUB获取版本"
-  FRP_VERSION=$(curl https://api.github.com/repos/fatedier/frp/releases/latest | jq .tag_name | sed 's/\"//g' | sed 's/^v//')
+  FRP_VERSION=$(curl -k -sS https://api.github.com/repos/fatedier/frp/releases/latest | jq .tag_name | sed 's/\"//g' | sed 's/^v//')
+  if [[ -z "${FRP_VERSION}" ]]; then
+    LOG_ERROR "FRP_VERSION 获取失败"
+    exit 1
+  fi
   LOG_INFO "FRP_VERSION : GITHUB - ${FRP_VERSION}"
 fi
 
@@ -47,7 +51,12 @@ fi
 # fi
 
 FILE_NAME="frp_${FRP_VERSION}_${KERNEL}_${MACHINE}.tar.gz"
-wget --no-check-certificate -qO ${FILE_NAME} https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}
+down_url=https://github.com/fatedier/frp/releases/download/v${FRP_VERSION}/${FILE_NAME}
+wget --no-check-certificate -q ${down_url} -O ${FILE_NAME}
+if [[ $? != 0 ]]; then
+    LOG_ERROR "下载失败: ${down_url}"
+    exit 1
+fi
 
 tar -zxvf ${FILE_NAME}
 

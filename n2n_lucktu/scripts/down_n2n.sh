@@ -19,7 +19,7 @@ if [[ "${SMALL_VERSION}" != "${latest_small_version}" ]]; then
 fi
 LOG_INFO "down_dir:${down_dir}"
 
-down_path=$(curl https://api.github.com/repos/lucktu/n2n/contents/Linux${down_dir}?ref=master | jq '.[]|{path}|..|.path?' | grep linux_${MACHINE:+${MACHINE}_} | grep v${SMALL_VERSION} | sed 's/\"//g')
+down_path=$(curl -k -sS https://api.github.com/repos/lucktu/n2n/contents/Linux${down_dir}?ref=master | jq '.[]|{path}|..|.path?' | grep linux_${MACHINE:+${MACHINE}_} | grep v${SMALL_VERSION} | sed 's/\"//g')
 if [[ -z "${down_path}" ]]; then
     LOG_ERROR "down_path 获取失败"
     exit 1
@@ -33,7 +33,7 @@ down_filename="${down_dir}/${down_url##*/}"
 
 LOG_INFO "Try: 下载 - ${down_url}"
 mkdir "${down_dir}"
-wget -q ${down_url} -O "${down_filename}"
+wget --no-check-certificate -q ${down_url} -O "${down_filename}"
 
 if [[ $? != 0 ]]; then
     LOG_ERROR "下载失败: ${down_url}"
