@@ -180,7 +180,7 @@ jobs:
                       type=raw,value=${{ needs.latest_info.outputs.latest_commits }}, enable=${{ needs.latest_info.outputs.latest_commits != '' }}
                       type=raw,value=${{ needs.latest_info.outputs.latest_version }}, enable=${{ needs.latest_info.outputs.latest_version != '' }}
                       type=raw,value=${{ format( '{0}_{1}', needs.latest_info.outputs.latest_big_version, needs.latest_info.outputs.latest_small_version ) }}, enable=${{ needs.latest_info.outputs.latest_big_version != '' && needs.latest_info.outputs.latest_small_version != '' }}
-                      type=raw,value=${{ format( '{1}_r{2}', needs.latest_info.outputs.latest_small_version, needs.latest_info.outputs.latest_commits) }}, enable=${{ needs.latest_info.outputs.latest_small_version != '' && needs.latest_info.outputs.latest_commits != '' }}
+                      type=raw,value=${{ format( '{0}_r{1}', needs.latest_info.outputs.latest_small_version, needs.latest_info.outputs.latest_commits) }}, enable=${{ needs.latest_info.outputs.latest_small_version != '' && needs.latest_info.outputs.latest_commits != '' }}
 
             # latest_big_version: ${{ needs.latest_info.outputs.latest_big_version }}
             # latest_small_version: ${{ needs.latest_info.outputs.latest_small_version }}
