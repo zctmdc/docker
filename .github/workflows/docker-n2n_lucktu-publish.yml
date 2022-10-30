@@ -52,26 +52,32 @@ jobs:
                   LOG_INFO() {
                   echo -e "\033[0;32m[INFO] $* \033[0m"
                   }
+                  latest_path=${{ steps.get_latest_path.outputs.value }}
+                  LOG_INFO latest_path=${latest_path}
 
                   # e.g. n2n_v3_linux_x64_v3.1.1-16_r1200_all_by_heiye.rar
-                  latest_file=${{ steps.get_latest_path.outputs.value }}
+                  latest_file=${latest_path##*/}
+                  LOG_INFO latest_file=${latest_file}
+
                   # e.g. v3
                   latest_big_version=${latest_file#*n2n_}
                   latest_big_version=${latest_big_version%_linux*}
+                  LOG_INFO latest_big_version=${latest_big_version}
+
                   # e.g. 3.1.1-16
                   latest_small_version=${latest_file##*_v}
                   latest_small_version=${latest_small_version%%_r*}
+
                   # e.g. 1200
                   latest_commits=${latest_file##*${latest_small_version}}
+                  LOG_INFO latest_small_version=${latest_small_version}
                   latest_commits=${latest_commits##*_r}
                   latest_commits=${latest_commits%%.*}
                   latest_commits=${latest_commits%%_*}
-                  latest_version=format( '${0}_r${1}_${2}', ${latest_big_version}, ${latest_small_version}, ${latest_commits} )
-                  LOG_INFO latest_path=${latest_path}
-                  LOG_INFO latest_file=${latest_file}
-                  LOG_INFO latest_big_version=${latest_big_version}
-                  LOG_INFO latest_small_version=${latest_small_version}
                   LOG_INFO latest_commits=${latest_commits}
+
+                  latest_version=format( '${0}_r${1}_${2}', ${latest_big_version}, ${latest_small_version}, ${latest_commits} )
+                  LOG_INFO latest_version=${latest_version}
 
                   # Setting environment variable
                   echo "latest_big_version=${latest_big_version}" >> $GITHUB_OUTPUT
