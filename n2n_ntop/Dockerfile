@@ -1,18 +1,4 @@
-FROM debian:buster-slim as builder
-
-ARG DEBIAN_FRONTEND=noninteractive
-RUN apt-get -qq update
-
-RUN apt-get -qq -y install \
-  bash curl ca-certificates wget unzip
-
-WORKDIR /tmp/scripts/
-
-COPY ./scripts/*.sh /tmp/scripts/
-
-RUN chmod +x /tmp/scripts/*.sh
-
-RUN /tmp/scripts/down_n2n.sh
+FROM zctmdc/n2n_lucktu:Alpha as edgeSrc
 
 FROM debian:buster-slim
 
@@ -36,9 +22,9 @@ RUN apt-get clean
 
 RUN mkdir -p /usr/local/sbin/
 
-COPY --from=builder \
-  /tmp/n2n/supernode \
-  /tmp/n2n/edge \
+COPY --from=edgeSrc \
+  /usr/local/sbin//supernode \
+  /usr/local/sbin//edge \
   /usr/local/sbin/
 
 
