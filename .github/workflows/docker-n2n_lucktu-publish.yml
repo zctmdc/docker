@@ -126,7 +126,7 @@ jobs:
                   fi
 
     build_n2n_lucktu:
-        needs: [check_push]
+        needs: [check_version, check_push]
         env:
             APP_NAME: n2n_lucktu
         runs-on: ubuntu-latest
