@@ -15,8 +15,8 @@ ARG BIG_VERSION=v2
 ARG SMALL_VERSION=3.1.1-16
 ARG COMMITS=r1200
 
-RUN bash -c install_rar.sh
-RUN bash -c /tmp/scripts/down_n2n.sh
+RUN /tmp/scripts/install_rar.sh
+RUN /tmp/scripts/down_n2n.sh
 
 FROM debian:buster-slim
 
