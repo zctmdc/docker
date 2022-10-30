@@ -4,7 +4,7 @@
 INIT_LATEST_INFO() {
 
     # eg. Linux/n2n_v3_linux_x64_v3.1.1-16_r1200_all_by_heiye.rar
-    latest_path=$(curl https://api.github.com/repos/lucktu/n2n/contents/Linux?ref=master | jq '.[]|{path}|..|.path?' | grep linux_x64 | sed 's/\"//g')
+    latest_path=$(curl -k -sS https://api.github.com/repos/lucktu/n2n/contents/Linux?ref=master | jq '.[]|{path}|..|.path?' | grep linux_x64 | sed 's/\"//g')
     # eg. n2n_v3_linux_x64_v3.1.1-16_r1200_all_by_heiye.rar
     latest_file=${latest_path##*/}
     # eg. v3
