@@ -64,6 +64,8 @@ jobs:
               uses: docker/metadata-action@98669ae865ea3cffbcbaa878cf57c20bbf1c6c38
               with:
                   images: ${{ env.REGISTRY }}/${{ github.actor }}/${{ env.APP_NAME }}
+                  tags: |
+                      type=raw,value=Alpha,enable=${{ github.ref == format('refs/heads/{0}', 'alpha') }}
 
             # Build and push Docker image with Buildx (don't push on PR)
             # https://github.com/docker/build-push-action
@@ -71,7 +73,7 @@ jobs:
               id: build-and-push
               uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
               with:
-                  context: ${{ env.APPNAME }}
+                  context: ${{ env.APP_NAME }}
                   platforms: linux/amd64,linux/arm64,linux/arm/v7
                   push: ${{ github.event_name != 'pull_request' }}
                   tags: ${{ steps.meta.outputs.tags }}
