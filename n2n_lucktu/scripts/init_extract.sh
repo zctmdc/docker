@@ -30,10 +30,10 @@ EXTRACT() {
 
     case "${extract_filename_suffix}" in
     tar)
-        LOG_RUN tar xvf $extract_file -C ${extract_path}
+        LOG_RUN tar -xvf $extract_file -C ${extract_path}
         ;;
     tar.gz)
-        LOG_RUN tar zxvf $extract_file -C ${extract_path}
+        LOG_RUN tar -zxvf $extract_file -C ${extract_path}
         ;;
     zip)
         LOG_RUN tar unzip -o $extract_file -d ${extract_path}
