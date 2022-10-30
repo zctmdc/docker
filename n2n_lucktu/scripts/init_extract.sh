@@ -30,16 +30,16 @@ EXTRACT() {
 
     case "${extract_filename_suffix}" in
     tar)
-        LOG_RUN tar -xvf $extract_file -C ${extract_path}
+        tar -xvf $extract_file -C ${extract_path}
         ;;
     tar.gz)
-        LOG_RUN tar -zxvf $extract_file -C ${extract_path}
+        tar -zxvf $extract_file -C ${extract_path}
         ;;
     zip)
-        LOG_RUN tar unzip -o $extract_file -d ${extract_path}
+        tar unzip -o $extract_file -d ${extract_path}
         ;;
     rar)
-        LOG_RUN unrar x $extract_file ${extract_path}
+        unrar x $extract_file ${extract_path}
         ;;
     *)
         LOG_ERROR "不支持文件类型 - ${extract_filename_suffix}"
