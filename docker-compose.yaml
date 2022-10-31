@@ -12,18 +12,23 @@ services:
       context: n2n_proxy
       dockerfile: Dockerfile
     image: zctmdc/n2n_proxy:Alpha
-
-  file-server:
+  n2n_lucktu:
     build:
-      context: nginx_file_server
+      context: n2n_lucktu
       dockerfile: Dockerfile
-    image: zctmdc/file-server:Alpha
+    image: zctmdc/n2n_lucktu:Alpha
 
-  route_apps_server:
-    build:
-      context: route_apps_server
-      dockerfile: Dockerfile
-    image: zctmdc/route_apps_server:Alpha
+  # file-server:
+  #   build:
+  #     context: nginx_file_server
+  #     dockerfile: Dockerfile
+  #   image: zctmdc/file-server:Alpha
+
+  # route_apps_server:
+  #   build:
+  #     context: route_apps_server
+  #     dockerfile: Dockerfile
+  #   image: zctmdc/route_apps_server:Alpha
 
   frp:
     build:
@@ -31,8 +36,8 @@ services:
       dockerfile: Dockerfile
     image: zctmdc/frp:Alpha
 
-  caddy-alidns:
-    build:
-      context: caddy-alidns
-      dockerfile: Dockerfile
-    image: zctmdc/caddy-alidns:Alpha
+  # caddy-alidns:
+  #   build:
+  #     context: caddy-alidns
+  #     dockerfile: Dockerfile
+  #   image: zctmdc/caddy-alidns:Alpha
