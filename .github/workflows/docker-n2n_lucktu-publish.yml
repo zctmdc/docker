@@ -149,8 +149,8 @@ jobs:
                   build_small_version=${{ steps.build_version.outputs.build_small_version }}
                   build_commit=${{ steps.build_version.outputs.build_commit }}
                   platforms=''
-                  for fn_platform in "x64" "x86" "arm64(aarch64)" "arm"; do
-                      case ${fn_platform} in
+                  for fnx_platform in "x64" "x86" "arm64" "arm"; do
+                      case ${fnx_platform} in
                       x64)
                           dn_machine="x64"
                           fn_machine="x64"
@@ -173,8 +173,8 @@ jobs:
                           ;;
                       *)
                           LOG_ERROR "不支持的CPU架构类型 - ${fn_platform}"
-                          dn_machine=${fn_platform}
-                          fn_machine=${fn_platform}
+                          dn_machine=${fnx_platform}
+                          fn_machine=${fnx_platform}
                           ;;
                       esac
                       LOG_INFO "dn_machine: ${dn_machine}, fn_machine: ${fn_machine}"
