@@ -266,7 +266,7 @@ jobs:
                       # latest
                       type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
                       # releases-v3
-                      type=raw,value=v3,enable=${{ needs.check_version.outputs.build_big_version == v3 }}
+                      type=raw,value=v3,enable=${{ needs.check_version.outputs.build_big_version == 'v3' }}
                       type=raw,value=releases-v3,enable=${{ needs.check_version.outputs.build_big_version == v3 }}
                       # releases-v2s
                       type=raw,value=v2s,enable=${{ needs.check_version.outputs.build_big_version == 'v2s' && needs.check_version.outputs.build_small_version == '2.1.0' && needs.check_version.outputs.build_commit == '124' }}
