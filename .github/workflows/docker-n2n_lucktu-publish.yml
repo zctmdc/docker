@@ -100,7 +100,7 @@ jobs:
               id: get_tag_last_pulled
               uses: sergeysova/jq-action@v2
               with:
-                  cmd: curl https://hub.docker.com/v2/repositories/zctmdc/n2n_lucktu/tags/${{ needs.check_version.outputs.latest_version }} | jq .tag_last_pulled
+                  cmd: curl https://hub.docker.com/v2/repositories/zctmdc/n2n_lucktu/tags/${{ needs.check_version.outputs.latest_version }} | jq '.tag_last_pulled'
             - name: Check tag_last_pulled
               id: tag_last_pulled
               run: |
