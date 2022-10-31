@@ -118,18 +118,18 @@ jobs:
                   echo "last_pulled_date=${last_pulled_date}" >> $GITHUB_OUTPUT
                   LOG_INFO "last_pulled_date - ${last_pulled_date}"
                   if [[ "${{ env.FORCE_PUSH }}" ]]; then
-                      LOG_WARNING "强制编译/推送"
+                      LOG_WARNING "强制 编译/推送"
                   elif [[ "${last_pulled_date,,}" != "null" ]]; then
                       echo "skip_build_push=true" >> $GITHUB_OUTPUT
-                      LOG_INFO "跳过编译/推送"
+                      LOG_INFO "跳过 编译/推送"
                       exit 0
                   else
-                      LOG_INFO "准备编译/推送"
+                      LOG_INFO "准备 编译/推送"
                   fi
 
     build_n2n_lucktu:
         needs: [check_version, check_push]
-        if: ${{ needs.check_push.outputs.skip_build_push }} != 'true'
+        if: ${{ needs.check_push.outputs.skip_build_push }} != true
         runs-on: ubuntu-latest
         env:
             APP_NAME: n2n_lucktu
