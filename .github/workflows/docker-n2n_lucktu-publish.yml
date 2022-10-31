@@ -141,6 +141,16 @@ jobs:
             id-token: write
 
         steps:
+            - 
+                name: t1
+                run: |
+                    echo "skip_build_push: ${{ needs.check_push.outputs.skip_build_push }}"
+                    if [[ ${{ needs.check_push.outputs.skip_build_push }} != 'yes' ]]; then
+                        echo 'skip_build_push != yes'
+                    else 
+                        echo 'skip_build_push == yes'
+                    fi
+
             - name: Checkout repository
               uses: actions/checkout@v3
 
