@@ -11,9 +11,30 @@ LOG_INFO "BIG_VERSION: ${BIG_VERSION}"
 LOG_INFO "SMALL_VERSION: ${SMALL_VERSION}"
 LOG_INFO "COMMIT: ${COMMIT}"
 for fn_platform in "x64" "x86" "arm64(aarch64)" "arm"; do
+    case ${fn_platform} in
+    x64)
+        dn_machine="x64"
+        ;;
+    x86)
+        dn_machine="x86"
+        ;;
+    "arm64(aarch64)")
+        dn_machine="arm64"
+        ;;
+    arm)
+        dn_machine="arm"
+        ;;
+    *)
+        LOG_ERROR "不支持的CPU架构类型 - ${fn_platform}"
+        exit 1
+        ;;
+    esac
     # 遍历可能存在的文件夹进行匹配
-    for down_dir in "" "/Old/linux_${MACHINE}" "n2n_${BIG_VERSION}"; do
-        api_url=https://api.github.com/repos/lucktu/n2n/contents/${MACHINE^}${down_dir}?ref=master
+    for down_dir in "" "/Old/linux_${dn_machine}" "/n2n_${BIG_VERSION}"; do
+        if [[ "${down_dir}" == "/n2n_v3" ]]; then
+            continue
+        fi
+        api_url=https://api.github.com/repos/lucktu/n2n/contents/${KERNEL^}${down_dir}?ref=master
         down_path=$(curl -k -sS ${api_url} | jq '.[]|{path}|..|.path?' | grep linux_${MACHINE:+${MACHINE}_} | grep ${BIG_VERSION} | grep ${SMALL_VERSION} | grep ${COMMIT} | sed 's/\"//g')
         if [[ -z "${down_path}" ]]; then
             LOG_WARNING "down_path 获取失败 - ${down_dir} - ${api_url}"

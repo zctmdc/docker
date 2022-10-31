@@ -121,15 +121,37 @@ jobs:
                   LOG_WARNING() {
                   echo -e "\033[0;33m[WARNING] $* \033[0m"
                   }
-                  build_big_version=${step.build_version.outputs.build_big_version}
-                  build_small_version=${step.build_version.outputs.build_small_version}
-                  build_commit=${step.build_version.outputs.build_commit}
+                  build_kernel=${{ env.KERNEL }}
+                  build_big_version=${{ step.build_version.outputs.build_big_version }}
+                  build_small_version=${{ step.build_version.outputs.build_small_version }}
+                  build_commit=${{ step.build_version.outputs.build_commit }}
                   platforms=''
                   for fn_platform in "x64" "x86" "arm64(aarch64)" "arm"; do
+                      case ${fn_platform} in
+                      x64)
+                          dn_machine="x64"
+                          ;;
+                      x86)
+                          dn_machine="x86"
+                          ;;
+                      "arm64(aarch64)")
+                          dn_machine="arm64"
+                          ;;
+                      arm)
+                          dn_machine="arm"
+                          ;;
+                      *)
+                          LOG_ERROR "不支持的CPU架构类型 - ${fn_platform}"
+                          exit 1
+                          ;;
+                      esac
                       # 遍历可能存在的文件夹进行匹配
-                      for down_dir in "" "/Old/linux_${MACHINE}" "n2n_${BIG_VERSION}"; do
-                          api_url=https://api.github.com/repos/lucktu/n2n/contents/${MACHINE^}${down_dir}?ref=master
-                          down_path=$(curl -k -sS ${api_url} | jq '.[]|{path}|..|.path?' | grep linux_${MACHINE:+${MACHINE}_} | grep ${BIG_VERSION} | grep ${SMALL_VERSION} | grep ${COMMIT} | sed 's/\"//g')
+                      for down_dir in "" "/Old/linux_${dn_machine}" "/n2n_${build_big_version}"; do
+                          if [[ "${down_dir}" == "/n2n_v3" ]]; then
+                              continue
+                          fi
+                          api_url=https://api.github.com/repos/lucktu/n2n/contents/${build_kernel^}${down_dir}?ref=master
+                          down_path=$(curl -k -sS ${api_url} | jq '.[]|{path}|..|.path?' | grep linux_${dn_machine:+${dn_machine}_} | grep ${build_big_version} | grep ${build_small_version} | grep ${build_commit} | sed 's/\"//g')
                           if [[ -z "${down_path}" ]]; then
                               LOG_WARNING "down_path 获取失败 - ${down_dir} - ${api_url}"
                               continue
