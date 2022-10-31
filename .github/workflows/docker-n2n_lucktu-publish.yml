@@ -289,29 +289,19 @@ jobs:
               with:
                   images: ${{ env.REGISTRY }}/${{ github.actor }}/${{ env.APP_NAME }}
                   tags: |
-                      # alpha
                       type=raw,value=alpha,enable=${{ github.ref == format('refs/heads/{0}', 'alpha') }}
-                      # beta
                       type=raw,value=beta,enable=${{ github.ref == format('refs/heads/{0}', 'beta') }}
-                      # latest
                       type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
-                      # releases-v3
                       type=raw,value=v3,enable=${{ needs.check_version.outputs.build_big_version == 'v3' }}
                       type=raw,value=releases-v3,enable=${{ needs.check_version.outputs.build_big_version == 'v3' }}
-                      # releases-v2s
                       type=raw,value=v2s,enable=${{ needs.check_version.outputs.build_big_version == 'v2s' && needs.check_version.outputs.build_small_version == '2.1.0' && needs.check_version.outputs.build_commit == '124' }}
                       type=raw,value=releases-v2s,enable=${{ needs.check_version.outputs.build_big_version == 'v2s' && needs.check_version.outputs.build_small_version == '2.1.0' && needs.check_version.outputs.build_commit == '124' }}
-                      # releases-v2
                       type=raw,value=v2,enable=${{ needs.check_version.outputs.build_big_version == 'v2' && needs.check_version.outputs.build_small_version == '2.7.0' && needs.check_version.outputs.build_commit == '525' }}
                       type=raw,value=releases-v2,enable=${{ needs.check_version.outputs.build_big_version == 'v2' && needs.check_version.outputs.build_small_version == '2.7.0' && needs.check_version.outputs.build_commit == '525' }}
-                      # releases-v1
                       type=raw,value=v1,enable=${{ needs.check_version.outputs.build_big_version == 'v1' && needs.check_version.outputs.build_small_version == '1.3.2' && needs.check_version.outputs.build_commit == '124' }}
                       type=raw,value=releases-v1,enable=${{ needs.check_version.outputs.build_big_version == 'v1' && needs.check_version.outputs.build_small_version == '1.3.2' && needs.check_version.outputs.build_commit == '124' }}
-                      # ${BIG_VERSION}_${SMALL_VERSION}_${COMMIT}
                       type=raw,value=${{ format( '{0}_{1}_r{2}', needs.check_version.outputs.build_big_version, needs.check_version.outputs.build_small_version, needs.check_version.outputs.build_commit ) }}, enable=${{ needs.check_version.outputs.build_big_version != '' && needs.check_version.outputs.build_small_version != '' && needs.check_version.outputs.build_commit != '' }}
-                      # v.${SMALL_VERSION}_r${COMMIT}
                       type=raw,value=${{ format( 'v.{1}_r{2}',  needs.check_version.outputs.build_big_version, needs.check_version.outputs.build_small_version, needs.check_version.outputs.build_commit ) }}, enable=${{ needs.check_version.outputs.build_small_version != '' && needs.check_version.outputs.build_commit != '' }}
-                      # v.${SMALL_VERSION}
                       type=raw,value=${{ format( 'v.{1}',  needs.check_version.outputs.build_big_version, needs.check_version.outputs.build_small_version, needs.check_version.outputs.build_commit ) }}, enable=${{ needs.check_version.outputs.build_small_version != '' }}
                   labels: |
                       org.opencontainers.image.version=${{ format( '{0}_{1}_r{2}', needs.check_version.outputs.build_big_version, needs.check_version.outputs.build_small_version, needs.check_version.outputs.build_commit ) }}
