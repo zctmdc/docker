@@ -76,7 +76,6 @@ jobs:
                   latest_commits=${latest_commits%%_*}
                   LOG_INFO latest_commits=${latest_commits}
 
-                  # latest_version=${{ format( '${0}_${1}_r${2}', ${latest_big_version}, ${latest_small_version}, ${latest_commits} ) }}
                   latest_version="${latest_big_version}_${latest_small_version}_r${latest_commits}"
                   LOG_INFO latest_version=${latest_version}
 
