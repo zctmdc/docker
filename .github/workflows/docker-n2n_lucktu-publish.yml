@@ -120,7 +120,7 @@ jobs:
                   if [[ "${{ env.FORCE_PUSH }}" ]]; then
                       LOG_WARNING "强制 编译/推送"
                   elif [[ "${last_pulled_date,,}" != "null" ]]; then
-                      echo "skip_build_push=true" >> $GITHUB_OUTPUT
+                      echo "skip_build_push=yes" >> $GITHUB_OUTPUT
                       LOG_INFO "跳过 编译/推送"
                       exit 0
                   else
@@ -129,7 +129,7 @@ jobs:
 
     build_n2n_lucktu:
         needs: [check_version, check_push]
-        if: ${{ needs.check_push.outputs.skip_build_push }} != true
+        if: ${{ needs.check_push.outputs.skip_build_push }} != 'yes'
         runs-on: ubuntu-latest
         env:
             APP_NAME: n2n_lucktu
