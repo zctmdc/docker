@@ -36,7 +36,7 @@ EXTRACT() {
         tar -zxvf $extract_file -C ${extract_path}
         ;;
     zip)
-        tar unzip -o $extract_file -d ${extract_path}
+        unzip -o $extract_file -d ${extract_path}
         ;;
     rar)
         unrar x $extract_file ${extract_path}
@@ -110,7 +110,7 @@ EXTRACT_EVERY() {
             tar -xvf $extract_file -C ${extract_path}
             ;;
         zip)
-            tar unzip -o $extract_file -d ${extract_path}
+            unzip -o $extract_file -d ${extract_path}
             ;;
         rar)
             unrar x $extract_file ${extract_path}

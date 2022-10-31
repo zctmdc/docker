@@ -21,7 +21,7 @@ for down_dir in "" "/Old/linux_${dn_machine}" "/n2n_${BIG_VERSION}"; do
     LOG_INFO "api_url: ${api_url}"
     resp="$(ls ${api_url})"
     LOG_INFO "resp: ${resp}"
-    down_path=$(echo "${resp}" | grep ${KERNEL}_${fn_machine}_ | grep ${BIG_VERSION} | grep ${SMALL_VERSION} | grep ${COMMIT} | sed 's/\"//g')
+    down_path=$(echo "${resp}" | grep ${KERNEL}_${fn_machine}_ | grep ${BIG_VERSION} | grep ${SMALL_VERSION} | grep ${COMMIT} | head -n 1 | sed 's/\"//g')
     if [[ -z "${down_path}" ]]; then
         LOG_WARNING "down_path 获取失败 - ${down_dir} - ${src_dir} - ${result}"
         continue
@@ -44,7 +44,7 @@ down_dir_desc="/tmp/down"
 # e.g. n2n_v3_linux_x64_v3.1.1-16_r1200_all_by_heiye.rar
 down_filename="${down_dir_desc}/${down_url##*/}"
 
-LOG_INFO "Try: 复制 - ${down_url}"
+LOG_INFO "Try: 复制 - ${down_url} - ${down_filename}"
 mkdir "${down_dir_desc}"
 cp ${down_url} "${down_filename}"
 if [[ $? != 0 ]]; then
