@@ -38,7 +38,7 @@ if [[ -z "${down_path}" ]]; then
 fi
 LOG_INFO "down_path: ${down_path}"
 # e.g. /tmp/n2n/Linux/n2n_v3_linux_x64_v3.1.1-16_r1200_all_by_heiye.rar
-down_url="${src_dir}${down_path}"
+down_url="${src_dir}/${down_path}"
 
 down_dir="/tmp/down"
 # e.g. n2n_v3_linux_x64_v3.1.1-16_r1200_all_by_heiye.rar
