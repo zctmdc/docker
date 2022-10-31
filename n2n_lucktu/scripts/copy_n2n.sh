@@ -38,14 +38,14 @@ if [[ -z "${down_path}" ]]; then
 fi
 LOG_INFO "down_path: ${down_path}"
 # e.g. /tmp/n2n/Linux/n2n_v3_linux_x64_v3.1.1-16_r1200_all_by_heiye.rar
-down_url="${src_dir}/${down_path}"
+down_url="${api_url}/${down_path}"
 
-down_dir="/tmp/down"
+down_dir_desc="/tmp/down"
 # e.g. n2n_v3_linux_x64_v3.1.1-16_r1200_all_by_heiye.rar
-down_filename="${down_dir}/${down_url##*/}"
+down_filename="${down_dir_desc}/${down_url##*/}"
 
 LOG_INFO "Try: 复制 - ${down_url}"
-mkdir "${down_dir}"
+mkdir "${down_dir_desc}"
 cp ${down_url} "${down_filename}"
 if [[ $? != 0 ]]; then
     LOG_ERROR "复制失败: ${down_url}"

@@ -49,12 +49,12 @@ LOG_INFO "down_path: ${down_path}"
 # e.g. https://github.com/lucktu/n2n/raw/master/Linux/n2n_v3_linux_x64_v3.1.1-16_r1200_all_by_heiye.rar
 down_url="https://github.com/lucktu/n2n/raw/master/${down_path}"
 
-down_dir="/tmp/down"
+down_dir_desc="/tmp/down"
 # e.g. n2n_v3_linux_x64_v3.1.1-16_r1200_all_by_heiye.rar
-down_filename="${down_dir}/${down_url##*/}"
+down_filename="${down_dir_desc}/${down_url##*/}"
 
 LOG_INFO "Try: 下载 - ${down_url}"
-mkdir "${down_dir}"
+mkdir "${down_dir_desc}"
 wget --no-check-certificate -q ${down_url} -O "${down_filename}"
 
 if [[ $? != 0 ]]; then
