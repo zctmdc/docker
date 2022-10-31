@@ -76,8 +76,8 @@ jobs:
                   latest_commits=${latest_commits%%_*}
                   LOG_INFO latest_commits=${latest_commits}
 
-                  # latest_version=format( '${0}_${1}_r${2}', ${latest_big_version}, ${latest_small_version}, ${latest_commits} )
-                  latest_version="${latest_big_version}_${latest_small_version}_r${latest_commits}"
+                  latest_version=${{ format( '${0}_${1}_r${2}', ${latest_big_version}, ${latest_small_version}, ${latest_commits} ) }}
+                  #   latest_version="${latest_big_version}_${latest_small_version}_r${latest_commits}"
                   LOG_INFO latest_version=${latest_version}
 
                   # Setting environment variable
@@ -141,16 +141,21 @@ jobs:
             id-token: write
 
         steps:
-            - 
-                name: t1
-                run: |
-                    echo "skip_build_push: ${{ needs.check_push.outputs.skip_build_push }}"
-                    if [[ ${{ needs.check_push.outputs.skip_build_push }} != 'yes' ]]; then
-                        echo 'skip_build_push != yes'
-                    else 
-                        echo 'skip_build_push == yes'
-                    fi
-
+            - name: t1
+              run: |
+                  echo "skip_build_push: ${{ needs.check_push.outputs.skip_build_push }}"
+                  if [[ ${{ needs.check_push.outputs.skip_build_push }} != 'yes' ]]; then
+                      echo 'skip_build_push != yes'
+                  else 
+                      echo 'skip_build_push == yes'
+                  fi
+            - name: Dump GitHub context
+              id: github_context_step
+              run: echo '${{ toJSON(github) }}'
+            - name: Dump job context
+              run: echo '${{ toJSON(job) }}'
+            - name: Dump steps context
+              run: echo '${{ toJSON(steps) }}'
             - name: Checkout repository
               uses: actions/checkout@v3
 
