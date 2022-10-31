@@ -21,7 +21,7 @@ env:
     # github.repository as <account>/<repo>
     KERNEL: linux
     MACHINE: ""
-    BIG_VERSION: v2
+    BIG_VERSION: v3
     SMALL_VERSION: 3.1.1-16
     COMMIT: 1200
 
