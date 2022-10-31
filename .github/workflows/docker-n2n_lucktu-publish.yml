@@ -20,8 +20,8 @@ env:
     REGISTRY: docker.io
     # github.repository as <account>/<repo>
     KERNEL: linux
-    BIG_VERSION: v3
     MACHINE: ""
+    BIG_VERSION: v3
     SMALL_VERSION: 3.1.1-16
     COMMIT: r1200
 
@@ -92,14 +92,21 @@ jobs:
                   }
                   # build-version
                   if [[ -z "${{ env.BIG_VERSION }}" || -z "${{ env.SMALL_VERSION }}" ]];then
-                      build_big_version=${steps.latest_version.outputs.latest_big_version}
+                      build_big_version=${{ steps.latest_version.outputs.latest_big_version }}
                       LOG_INFO "build_big_version: ${build_big_version}"
-                      build_small_version=${steps.latest_version.outputs.latest_small_version}
+                      build_small_version=${{ steps.latest_version.outputs.latest_small_version }}
                       LOG_INFO "build_small_version: ${build_small_version}"
-                      build_commit=${steps.latest_version.outputs.latest_commit}
+                      build_commit=${{ steps.latest_version.outputs.latest_commit }}
+                      LOG_INFO "build_commit: ${build_commit}"
+
+                  else
+                      build_big_version=${{ env.BIG_VERSION }}
+                      LOG_INFO "build_big_version: ${build_big_version}"
+                      build_small_version=${{ env.SMALL_VERSION }}
+                      LOG_INFO "build_small_version: ${build_small_version}"
+                      build_commit=${{ env.COMMIT }}
                       LOG_INFO "build_commit: ${build_commit}"
                   fi
-                  LOG_INFO "latest: ${latest}"
                   # build_version
                   build_version="${build_big_version}_${build_small_version}_r${build_commit}"
                   LOG_INFO "build_version: ${build_version}"
