@@ -90,6 +90,7 @@ jobs:
         runs-on: ubuntu-latest
         outputs:
             last_pulled_date: ${{ steps.tag_last_pulled.outputs.last_pulled_date }}
+            skip_build_push: ${{ steps.tag_last_pulled.outputs.skip_build_push }}
         needs: [check_version]
         permissions:
             contents: read
@@ -119,6 +120,7 @@ jobs:
                   if [[ "${{ env.FORCE_PUSH }}" ]]; then
                       LOG_WARNING "强制编译/推送"
                   elif [[ "${last_pulled_date,,}" != "null" ]]; then
+                      echo "skip_build_push=true" >> $GITHUB_OUTPUT
                       LOG_INFO "跳过编译/推送"
                       exit 0
                   else
@@ -127,9 +129,10 @@ jobs:
 
     build_n2n_lucktu:
         needs: [check_version, check_push]
+        if: ${{ needs.check_push.outputs.skip_build_push }} != 'true'
+        runs-on: ubuntu-latest
         env:
             APP_NAME: n2n_lucktu
-        runs-on: ubuntu-latest
         permissions:
             contents: read
             packages: write
