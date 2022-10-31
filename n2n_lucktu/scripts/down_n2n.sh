@@ -29,10 +29,10 @@ for down_dir in "" "/Old/linux_${dn_machine}" "/n2n_${BIG_VERSION}"; do
         LOG_WARNING "down_path 获取失败 - ${down_dir} - ${api_url}"
         LOG_WARNING "${KERNEL}_${fn_machine}_ ${BIG_VERSION} v.${SMALL_VERSION} ${COMMIT}"
         LOG_ERROR "resp: $resp"
-        LOG_ERROR "result : $result"
         LOG_ERROR "path[] : $(echo ${resp} | jq '.[]|{path}')"
         LOG_ERROR "path|..: $(echo ${resp} | jq '.[]|{path}|..')"
         LOG_ERROR ".path  : $(echo ${resp} | jq '.[]|{path}|..|.path?')"
+        LOG_ERROR "result : $result"
         continue
     fi
     LOG_INFO "use down_dir: ${down_dir}"

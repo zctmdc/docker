@@ -197,10 +197,10 @@ jobs:
                               LOG_WARNING "down_path 获取失败 - ${down_dir} - ${api_url}"
                               LOG_WARNING "${KERNEL}_${fn_machine}_${build_big_version}_${build_small_version}_${build_commit}"
                               LOG_ERROR "resp: $resp"
-                              LOG_ERROR "result : $result"
                               LOG_ERROR "path[] : $(echo ${resp} | jq '.[]|{path}')"
                               LOG_ERROR "path|..: $(echo ${resp} | jq '.[]|{path}|..')"
                               LOG_ERROR ".path  : $(echo ${resp} | jq '.[]|{path}|..|..path?')"
+                              LOG_ERROR "result : $result"
                               continue
                           fi
                           LOG_INFO "use down_dir: ${down_dir}"
