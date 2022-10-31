@@ -213,7 +213,7 @@ jobs:
                       x86)
                           add_platform="linux/386"
                           ;;
-                      "arm64(aarch64)")
+                      arm64 | aarch64)
                           add_platform="linux/arm64"
                           ;;
                       arm)
