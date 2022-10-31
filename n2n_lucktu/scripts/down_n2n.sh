@@ -19,7 +19,7 @@ for down_dir in "" "/Old/linux_${dn_machine}" "/n2n_${BIG_VERSION}"; do
     api_url=https://api.github.com/repos/lucktu/n2n/contents/${KERNEL^}${down_dir}?ref=master
     LOG_INFO "api_url: ${api_url}"
     resp="$(curl -k -sS ${api_url})"
-    if [[ ! -z "$(echo $resp || jq .message)" ]]; then
+    if [[ ! -z $(echo "$resp" || jq '.message') && -z $(echo "${resp}" | jq '.[]|{path}') ]]; then
         LOG_ERROR "resp: $resp"
         exit 1
     fi
