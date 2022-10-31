@@ -140,24 +140,6 @@ jobs:
             id-token: write
 
         steps:
-            - name: t1
-              run: |
-                  echo "skip_build_push: ${{ needs.check_push.outputs.skip_build_push }}"
-                  if [[ "${{ needs.check_push.outputs.skip_build_push }}" != yes ]]; then
-                      echo 'skip_build_push != yes'
-                  else 
-                      echo 'skip_build_push == yes'
-                  fi
-            - name: Dump GitHub context
-              id: github_context_step
-              run: echo '${{ toJSON(github) }}'
-            - name: Dump job context
-              run: echo '${{ toJSON(job) }}'
-            - name: Dump steps context
-              run: echo '${{ toJSON(steps) }}'
-            - name: Checkout repository
-              uses: actions/checkout@v3
-
             - name: Set up QEMU
               uses: docker/setup-qemu-action@v2
 
