@@ -129,9 +129,10 @@ jobs:
                   for fn_platform in "x64" "x86" "arm64(aarch64)" "arm"; do
                       # 遍历可能存在的文件夹进行匹配
                       for down_dir in "" "/Old/linux_${MACHINE}" "n2n_${BIG_VERSION}"; do
-                          down_path=$(curl -k -sS https://api.github.com/repos/lucktu/n2n/contents/${MACHINE^}${down_dir}?ref=master | jq '.[]|{path}|..|.path?' | grep linux_${MACHINE:+${MACHINE}_} | grep ${BIG_VERSION} | grep ${SMALL_VERSION} | grep ${COMMIT} | sed 's/\"//g')
+                          api_url=https://api.github.com/repos/lucktu/n2n/contents/${MACHINE^}${down_dir}?ref=master
+                          down_path=$(curl -k -sS ${api_url} | jq '.[]|{path}|..|.path?' | grep linux_${MACHINE:+${MACHINE}_} | grep ${BIG_VERSION} | grep ${SMALL_VERSION} | grep ${COMMIT} | sed 's/\"//g')
                           if [[ -z "${down_path}" ]]; then
-                              LOG_WARNING "down_path 获取失败 - ${down_dir}"
+                              LOG_WARNING "down_path 获取失败 - ${down_dir} - ${api_url}"
                               continue
                           fi
                           LOG_INFO "use down_dir: ${down_dir}"
