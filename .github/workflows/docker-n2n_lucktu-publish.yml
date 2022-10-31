@@ -109,7 +109,7 @@ jobs:
                   echo "build_commit=${build_commit}" >> $GITHUB_OUTPUT
                   echo "build_version=${build_version}" >> $GITHUB_OUTPUT
 
-            - name: Check platforms
+            - name: Check build_platforms
               id: build_platforms
               run: |
                   LOG_INFO() {
@@ -118,13 +118,12 @@ jobs:
                   LOG_ERROR() {
                   echo -e "\033[0;31m[ERROR] $* \033[0m"
                   }
-
                   LOG_WARNING() {
                   echo -e "\033[0;33m[WARNING] $* \033[0m"
                   }
-                  build_big_version=${step.build_version.outputs.latest_big_version}
-                  build_small_version=${step.build_version.outputs.latest_small_version}
-                  build_commit=${step.build_version.outputs.latest_commit}
+                  build_big_version=${step.build_version.outputs.build_big_version}
+                  build_small_version=${step.build_version.outputs.build_small_version}
+                  build_commit=${step.build_version.outputs.build_commit}
                   platforms=''
                   for fn_platform in "x64" "x86" "arm64(aarch64)" "arm"; do
                       # 遍历可能存在的文件夹进行匹配
