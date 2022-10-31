@@ -17,7 +17,7 @@ for down_dir in "" "/Old/linux_${dn_machine}" "/n2n_${BIG_VERSION}"; do
     if [[ "${down_dir}" == "/n2n_v3" ]]; then
         continue
     fi
-    api_url="${src_dir}${down_dir}"
+    api_url="${src_dir}/${KERNEL^}${down_dir}"
     LOG_INFO "api_url: ${api_url}"
     resp="$(ls ${api_url})"
     LOG_INFO "resp: ${resp}"
