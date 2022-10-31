@@ -1,4 +1,18 @@
-FROM debian:buster-slim as downloader
+FROM debian:stable-slim as downloader
+
+ARG name="n2n-downloader"
+ARG summary="Base build image for n2n_lucktu built on-top of debian:stable-slim"
+LABEL description="${summary}" \
+  maintainer="<zctmdc@outlook.com>" \
+  app.kubernetes.io/name="${name}" \
+  org.opencontainers.image.title="${name}" \
+  org.opencontainers.artifact.description="${summary}" \
+  org.opencontainers.image.url="https://hub.docker.com/r/zctmdc/n2n_ntop" \
+  org.opencontainers.image.source="https://github.com/zctmdc/docker/tree/alpha/n2n_lucktu" \
+  org.opencontainers.image.authors="zctmdc@outlook.com" \
+  org.opencontainers.image.description="${summary}" \
+  org.opencontainers.image.documentation="https://github.com/zctmdc/docker/tree/alpha/n2n_lucktu/doc/build.md"\
+  org.opencontainers.image.licenses="MIT"
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get -qq update
@@ -12,16 +26,34 @@ COPY ./scripts/*.sh /tmp/scripts/
 RUN chmod +x /tmp/scripts/*.sh
 
 ARG KERNEL=linux
+
+# 用于自定义机型编译
 ARG MACHINE
+
 ARG BIG_VERSION=v3
 ARG SMALL_VERSION=3.1.1-16
-ARG COMMITS=1200
-ARG OLD
+ARG COMMIT=1200
+
+# 是否在根目录匹配
+ARG LATEST
 
 RUN /tmp/scripts/install_rar.sh
 RUN /tmp/scripts/get_n2n.sh
 
 FROM busybox
+
+ARG name="n2n-lucktu"
+ARG summary="n2n_lucktu built on-top of busybox"
+LABEL description="${summary}" \
+  maintainer="<zctmdc@outlook.com>" \
+  app.kubernetes.io/name="${name}" \
+  org.opencontainers.image.title="${name}" \
+  org.opencontainers.artifact.description="${summary}" \
+  org.opencontainers.image.url="https://hub.docker.com/r/zctmdc/n2n_ntop" \
+  org.opencontainers.image.source="https://github.com/zctmdc/docker/tree/alpha/n2n_lucktu" \
+  org.opencontainers.image.authors="zctmdc@outlook.com" \
+  org.opencontainers.image.description="${summary}" \
+  org.opencontainers.image.licenses="MIT"
 
 COPY --from=downloader \
   /tmp/n2n/supernode \

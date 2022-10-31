@@ -1,6 +1,6 @@
 FROM zctmdc/n2n_lucktu:Alpha as edgeSrc
 
-FROM debian:buster-slim
+FROM debian:stable-slim
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get -qq update  

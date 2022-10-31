@@ -1,4 +1,4 @@
-FROM debian:buster-slim as builder
+FROM debian:stable-slim as builder
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get -qq update
@@ -21,7 +21,7 @@ ARG FRP_VERSION
 RUN /tmp/scripts/frp_download.sh
 
 
-FROM debian:buster-slim
+FROM debian:stable-slim
 
 LABEL author=zctmdc
 LABEL email=<zctmdc@outlook.com>

@@ -19,12 +19,11 @@ env:
     # REGISTRY: ghcr.io
     REGISTRY: docker.io
     # github.repository as <account>/<repo>
-
     KERNEL: linux
-
     BIG_VERSION: v3
+    MACHINE: ""
     SMALL_VERSION: 3.1.1-16
-    COMMITS: r1200
+    COMMIT: r1200
 
 jobs:
     check_version:
@@ -32,8 +31,13 @@ jobs:
         outputs:
             latest_big_version: ${{ steps.latest_info.outputs.latest_big_version }}
             latest_small_version: ${{ steps.latest_info.outputs.latest_small_version }}
-            latest_commits: ${{ steps.latest_info.outputs.latest_commits }}
+            latest_commit: ${{ steps.latest_info.outputs.latest_commit }}
             latest_version: ${{ steps.latest_info.outputs.latest_version }}
+            latest: ${{ steps.latest_info.outputs.latest }}
+            build_big_version: ${{ steps.latest_info.outputs.build_big_version }}
+            build_small_version: ${{ steps.latest_info.outputs.build_small_version }}
+            build_commit: ${{ steps.latest_info.outputs.build_commit }}
+            build_version: ${{ steps.latest_info.outputs.build_version }}
 
         permissions:
             contents: read
@@ -46,44 +50,62 @@ jobs:
               with:
                   cmd: curl -k -sS https://api.github.com/repos/lucktu/n2n/contents/Linux?ref=master | jq '.[]|{path}|..|.path?' | grep linux_x64 | sed 's/\"//g'
 
-            - name: Check latest Version
+            - name: Check latest_info
               id: latest_info
               run: |
                   LOG_INFO() {
                   echo -e "\033[0;32m[INFO] $* \033[0m"
                   }
                   latest_path=${{ steps.get_latest_path.outputs.value }}
-                  LOG_INFO latest_path=${latest_path}
-
+                  LOG_INFO "latest_path: ${latest_path}"
                   # e.g. n2n_v3_linux_x64_v3.1.1-16_r1200_all_by_heiye.rar
                   latest_file=${latest_path##*/}
-                  LOG_INFO latest_file=${latest_file}
-
+                  LOG_INFO "latest_file: ${latest_file}"
                   # e.g. v3
                   latest_big_version=${latest_file#*n2n_}
                   latest_big_version=${latest_big_version%_linux*}
-                  LOG_INFO latest_big_version=${latest_big_version}
-
+                  LOG_INFO "latest_big_version: ${latest_big_version}"
                   # e.g. 3.1.1-16
                   latest_small_version=${latest_file##*_v}
                   latest_small_version=${latest_small_version%%_r*}
-
+                  LOG_INFO "latest_small_version: ${latest_small_version}"
                   # e.g. 1200
-                  latest_commits=${latest_file##*${latest_small_version}}
-                  LOG_INFO latest_small_version=${latest_small_version}
-                  latest_commits=${latest_commits##*_r}
-                  latest_commits=${latest_commits%%.*}
-                  latest_commits=${latest_commits%%_*}
-                  LOG_INFO latest_commits=${latest_commits}
-
-                  latest_version="${latest_big_version}_${latest_small_version}_r${latest_commits}"
-                  LOG_INFO latest_version=${latest_version}
-
-                  # Setting environment variable
+                  latest_commit=${latest_file##*${latest_small_version}}
+                  latest_commit=${latest_commit##*_r}
+                  latest_commit=${latest_commit%%.*}
+                  latest_commit=${latest_commit%%_*}
+                  LOG_INFO "latest_commit: ${latest_commit}"
+                  # build-version
+                  if [[ -z "${{ env.BIG_VERSION }}" || -z "${{ env.SMALL_VERSION }}" ]];then
+                      build_big_version=${latest_big_version}
+                      LOG_INFO "build_big_version: ${build_big_version}"
+                      build_small_version=${latest_small_version}
+                      LOG_INFO "build_small_version: ${build_small_version}"
+                      build_commit=${latest_commit}
+                      LOG_INFO "build_commit: ${build_commit}"
+                  fi
+                  # is latest ?
+                  if [[ "${build_big_version}" == "${latest_big_version}" || "${build_small_version}" == "${latest_small_version}" || "${build_commit}" == "${latest_commit}" ]];then 
+                      latest=true
+                  fi
+                  LOG_INFO "latest: ${latest}"
+                  # latest_version
+                  latest_version="${latest_big_version}_${latest_small_version}_r${latest_commit}"
+                  LOG_INFO "latest_version: ${latest_version}"
+                  # build_version
+                  build_version="${build_big_version}_${build_small_version}_r${build_commit}"
+                  LOG_INFO "build_version: ${build_version}"
+                  # latest variable
                   echo "latest_big_version=${latest_big_version}" >> $GITHUB_OUTPUT
                   echo "latest_small_version=${latest_small_version}" >> $GITHUB_OUTPUT
-                  echo "latest_commits=${latest_commits}" >> $GITHUB_OUTPUT
+                  echo "latest_commit=${latest_commit}" >> $GITHUB_OUTPUT
                   echo "latest_version=${latest_version}" >> $GITHUB_OUTPUT
+                  # build variable
+                  echo "latest=${latest}" >> $GITHUB_OUTPUT
+                  echo "build_big_version=${build_big_version}" >> $GITHUB_OUTPUT
+                  echo "build_small_version=${build_small_version}" >> $GITHUB_OUTPUT
+                  echo "build_commit=${build_commit}" >> $GITHUB_OUTPUT
+                  echo "build_version=${build_version}" >> $GITHUB_OUTPUT
 
     check_push:
         runs-on: ubuntu-latest
@@ -100,7 +122,7 @@ jobs:
               id: get_tag_last_pulled
               uses: sergeysova/jq-action@v2
               with:
-                  cmd: curl -k -sS https://hub.docker.com/v2/repositories/zctmdc/n2n_lucktu/tags/${{ needs.check_version.outputs.latest_version }} | jq '.tag_last_pulled'
+                  cmd: curl -k -sS https://hub.docker.com/v2/repositories/zctmdc/n2n_lucktu/tags/${{ needs.check_version.outputs.build_version }} | jq '.tag_last_pulled'
             - name: Check tag_last_pulled
               id: tag_last_pulled
               run: |
@@ -119,7 +141,7 @@ jobs:
                   if [[ "${{ env.FORCE_PUSH }}" ]]; then
                       LOG_WARNING "强制 编译/推送"
                   elif [[ "${last_pulled_date,,}" != "null" ]]; then
-                      echo "skip_build_push=yes" >> $GITHUB_OUTPUT
+                      echo "skip_build_push=true" >> $GITHUB_OUTPUT
                       LOG_INFO "跳过 编译/推送"
                       exit 0
                   else
@@ -128,7 +150,7 @@ jobs:
 
     build_n2n_lucktu:
         needs: [check_version, check_push]
-        if: ${{ needs.check_push.outputs.skip_build_push }} != yes
+        if: ${{ needs.check_push.outputs.skip_build_push != true }}
         runs-on: ubuntu-latest
         env:
             APP_NAME: n2n_lucktu
@@ -176,20 +198,32 @@ jobs:
               with:
                   images: ${{ env.REGISTRY }}/${{ github.actor }}/${{ env.APP_NAME }}
                   tags: |
-                      type=raw,value=Alpha,enable=${{ github.ref == format('refs/heads/{0}', 'alpha') }}
-                      type=raw,value=${{ needs.check_version.outputs.latest_big_version }}, enable=${{ needs.check_version.outputs.latest_big_version != '' }}
-                      type=raw,value=${{ needs.check_version.outputs.latest_small_version }}, enable=${{ needs.check_version.outputs.latest_small_version != '' }}
-                      type=raw,value=${{ format( 'v.{0}', needs.check_version.outputs.latest_small_version ) }}, enable=${{ needs.check_version.outputs.latest_small_version != '' }}
-                      type=raw,value=${{ format( 'r{0}', needs.check_version.outputs.latest_commits ) }}, enable=${{ needs.check_version.outputs.latest_commits != '' }}
-                      type=raw,value=${{ needs.check_version.outputs.latest_version }}, enable=${{ needs.check_version.outputs.latest_version != '' }}
-                      type=raw,value=${{ format( '{0}_{1}', needs.check_version.outputs.latest_big_version, needs.check_version.outputs.latest_small_version ) }}, enable=${{ needs.check_version.outputs.latest_big_version != '' && needs.check_version.outputs.latest_small_version != '' }}
-                      type=raw,value=${{ format( '{0}_r{1}', needs.check_version.outputs.latest_small_version, needs.check_version.outputs.latest_commits) }}, enable=${{ needs.check_version.outputs.latest_small_version != '' && needs.check_version.outputs.latest_commits != '' }}
-                      type=raw,value=${{ format( 'v.{0}_r{1}', needs.check_version.outputs.latest_small_version, needs.check_version.outputs.latest_commits) }}, enable=${{ needs.check_version.outputs.latest_small_version != '' && needs.check_version.outputs.latest_commits != '' }}
-
-            # latest_big_version: ${{ needs.check_version.outputs.latest_big_version }}
-            # latest_small_version: ${{ needs.check_version.outputs.latest_small_version }}
-            # latest_commits: ${{ needs.check_version.outputs.latest_commits }}
-            # latest_version: ${{ needs.check_version.outputs.latest_version }}
+                      # alpha
+                      type=raw,value=alpha,enable=${{ github.ref == format('refs/heads/{0}', 'alpha') }}
+                      # beta
+                      type=raw,value=beta,enable=${{ github.ref == format('refs/heads/{0}', 'beta') }}
+                      # latest
+                      type=raw,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'master') }}
+                      # releases-v3
+                      type=raw,value=v3,enable=${{ needs.check_version.outputs.latest == true }}
+                      type=raw,value=releases-v3,enable=${{ needs.check_version.outputs.latest == true }}
+                      # releases-v2s
+                      type=raw,value=v2s,enable=${{ needs.check_version.outputs.build_big_version == 'v2s' && needs.check_version.outputs.build_small_version == '2.1.0' && needs.check_version.outputs.build_commit == '124' }}
+                      type=raw,value=releases-v2s,enable=${{ needs.check_version.outputs.build_big_version == 'v2s' && needs.check_version.outputs.build_small_version == '2.1.0' && needs.check_version.outputs.build_commit == '124' }}
+                      # releases-v2
+                      type=raw,value=v2,enable=${{ needs.check_version.outputs.build_big_version == 'v2' && needs.check_version.outputs.build_small_version == '2.7.0' && needs.check_version.outputs.build_commit == '525' }}
+                      type=raw,value=releases-v2,enable=${{ needs.check_version.outputs.build_big_version == 'v2' && needs.check_version.outputs.build_small_version == '2.7.0' && needs.check_version.outputs.build_commit == '525' }}
+                      # releases-v1
+                      type=raw,value=v1,enable=${{ needs.check_version.outputs.build_big_version == 'v1' && needs.check_version.outputs.build_small_version == '1.3.2' && needs.check_version.outputs.build_commit == '124' }}
+                      type=raw,value=releases-v1,enable=${{ needs.check_version.outputs.build_big_version == 'v1' && needs.check_version.outputs.build_small_version == '1.3.2' && needs.check_version.outputs.build_commit == '124' }}
+                      # ${BIG_VERSION}_${SMALL_VERSION}_${COMMIT}
+                      type=raw,value=${{ format( '{0}_{1}_r{2}', needs.check_version.outputs.build_big_version, needs.check_version.outputs.build_small_version, needs.check_version.outputs.build_commit ) }}, enable=${{ needs.check_version.outputs.build_big_version != '' && needs.check_version.outputs.build_small_version != '' && needs.check_version.outputs.build_commit != '' }}
+                      # v.${SMALL_VERSION}_r${COMMIT}
+                      type=raw,value=${{ format( 'v.{1}_r{2}',  needs.check_version.outputs.build_big_version, needs.check_version.outputs.build_small_version, needs.check_version.outputs.build_commit ) }}, enable=${{ needs.check_version.outputs.build_small_version != '' && needs.check_version.outputs.build_commit != '' }}
+                      # v.${SMALL_VERSION}
+                      type=raw,value=${{ format( 'v.{1}',  needs.check_version.outputs.build_big_version, needs.check_version.outputs.build_small_version, needs.check_version.outputs.build_commit ) }}, enable=${{ needs.check_version.outputs.build_small_version != '' }}
+                  labels: |
+                      org.opencontainers.image.version=${{ format( '{0}_{1}_r{2}', needs.check_version.outputs.build_big_version, needs.check_version.outputs.build_small_version, needs.check_version.outputs.build_commit ) }}
 
             # Build and push Docker image with Buildx (don't push on PR)
             # https://github.com/docker/build-push-action
@@ -198,13 +232,18 @@ jobs:
               uses: docker/build-push-action@ac9327eae2b366085ac7f6a2d02df8aa8ead720a
               with:
                   context: ${{ env.APP_NAME }}
-                  platforms: linux/amd64,linux/arm64,linux/arm/v7
+                  platforms: linux/amd64,linux/386,linux/arm64,linux/arm/v7
                   push: ${{ github.event_name != 'pull_request' }}
                   tags: ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}
                   cache-from: type=gha
                   cache-to: type=gha,mode=max
-
+                  build-args: |
+                      BIG_VERSION=${{ needs.check_version.outputs.build_big_version }}
+                      SMALL_VERSION=${{ needs.check_version.outputs.build_small_version }}
+                      COMMIT=${{ needs.check_version.outputs.build_commit }}
+                      LATEST=${{ needs.check_version.outputs.latest }}
+            # "${{ env.BIG_VERSION }}" == "${build_big_version}" || "${{ env.SMALL_VERSION }}" == "${build_small_version}" || "${{ env.COMMIT }}" == "${build_commit}"
             # Sign the resulting Docker image digest except on PRs.
             # This will only write to the public Rekor transparency log when the Docker
             # repository is public to avoid leaking data.  If you would like to publish

@@ -101,7 +101,6 @@ docker run \
     - `./config/edge.conf`
 
       ```conf
-      
         # 虚拟网卡名字
         -d T3
         # edge ip
@@ -127,7 +126,6 @@ docker run \
     - `./config/supernode.conf`
 
       ```conf
-
       -p=10090
       -f
       -v
@@ -160,9 +158,9 @@ docker run \
         edge /etc/n2n/edge.conf
       ```
 
-> [Github中n2n项目配置文件示例][github_n2n_conf]
+> [ntop/n2n 项目配置文件示例][github_n2n_conf]
 
-> [Github中n2n项目配置文件说明][github_n2n_conf_md]
+> [ntop/n2n 项目配置文件说明][github_n2n_conf_md]
 
 ### 使用 _docker-compose_ 配置运行
 
@@ -256,7 +254,7 @@ docker run \
 
 不同版本间参数是不一样的，建议运行前使用 `-h` 或者 `--help` 命令查看。
 
-在 [Github中n2n项目][github_n2n] **doc** 目录中有更多说明。
+在 [ntop/n2n 项目][github_n2n] **doc** 目录中有更多说明。
 
 ```bash
 docker run \
@@ -272,7 +270,7 @@ docker run \
   edge --help
 ```
 
-- 文档参见 [Github中n2n项目文档][github_n2n_doc]
+- 文档参见 [ntop/n2n 项目文档][github_n2n_doc]
 
 - 更多帮助请参考 [好运博客][好运博客] 中 [N2N 新手向导及最新信息][n2n 新手向导及最新信息]
 
@@ -287,10 +285,10 @@ docker run \
 我将引起注意，不再随意的去更改和重命名空间/变量名
 
 [n2n]: https://www.ntop.org/products/n2n/ "n2n官网"
-[github_n2n]: https://github.com/ntop/n2n "Github中n2n项目"
-[github_n2n_doc]: https://github.com/ntop/n2n/tree/dev/doc "Github中n2n项目文档"
-[github_n2n_conf]: https://github.com/ntop/n2n/tree/dev/packages/etc/n2n "Github中n2n项目配置文件示例"
-[github_n2n_conf_md]: https://github.com/ntop/n2n/tree/dev/packages/etc/n2n "Github中n2n项目配置文件说明"
+[github_n2n]: https://github.com/ntop/n2n "ntop/n2n 项目"
+[github_n2n_doc]: https://github.com/ntop/n2n/tree/dev/doc "ntop/n2n 项目文档"
+[github_n2n_conf]: https://github.com/ntop/n2n/tree/dev/packages/etc/n2n "ntop/n2n 项目配置文件示例"
+[github_n2n_conf_md]: https://github.com/ntop/n2n/blob/dev/doc/Advanced.md "ntop/n2n 项目配置文件说明"
 [ntop]: https://github.com/ntop "ntop团队"
 [好运博客]: http://www.lucktu.com "好运博客"
 [n2n 新手向导及最新信息]: http://www.lucktu.com/archives/783.html "N2N 新手向导及最新信息（2019-12-05 更新）"
