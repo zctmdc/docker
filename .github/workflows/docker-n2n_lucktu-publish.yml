@@ -195,7 +195,7 @@ jobs:
                           down_path=$(echo "${result}" | grep ${KERNEL}_${fn_machine}_ | grep ${build_big_version} | grep ${build_small_version} | grep ${build_commit} | sed 's/\"//g')
                           if [[ -z "${down_path}" ]]; then
                               LOG_WARNING "down_path 获取失败 - ${down_dir} - ${api_url}"
-                              LOG_WARNING "${KERNEL}_${fn_machine}_ ${build_big_version} v.${build_small_version} ${build_commit}"
+                              LOG_WARNING "${KERNEL}_${fn_machine}_${build_big_version}_${build_small_version}_${build_commit}"
                               LOG_ERROR "resp: $resp"
                               LOG_ERROR "result : $result"
                               LOG_ERROR "path[] : $(echo ${resp} | jq '.[]|{path}')"
@@ -206,7 +206,7 @@ jobs:
                           LOG_INFO "use down_dir: ${down_dir}"
                           break
                       done
-                      case ${fn_platform} in
+                      case ${fnx_platform} in
                       x64)
                           add_platform="linux/amd64"
                           ;;
@@ -221,15 +221,15 @@ jobs:
                           ;;
 
                       *)
-                          LOG_ERROR "不支持的CPU架构类型 - ${fn_platform}"
+                          LOG_ERROR "不支持的CPU架构类型 - ${fnx_platform}"
                           exit 1
                           ;;
                       esac
                       if [[ -z "${down_path}" ]]; then
-                          LOG_WARNING "not found: ${fn_platform}"
+                          LOG_WARNING "not found: ${fnx_platform}"
                           continue
                       fi
-                      LOG_INFO "find: ${fn_platform}"
+                      LOG_INFO "find: ${fnx_platform}"
                       platforms="${platforms}, ${add_platform}"
                   done
                   platforms="${platforms:2}"
