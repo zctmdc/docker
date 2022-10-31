@@ -128,7 +128,7 @@ jobs:
 
     build_n2n_lucktu:
         needs: [check_version, check_push]
-        if: ${{ needs.check_push.outputs.skip_build_push }} != 'yes'
+        if: ${{ needs.check_push.outputs.skip_build_push }} != yes
         runs-on: ubuntu-latest
         env:
             APP_NAME: n2n_lucktu
@@ -143,7 +143,7 @@ jobs:
             - name: t1
               run: |
                   echo "skip_build_push: ${{ needs.check_push.outputs.skip_build_push }}"
-                  if [[ ${{ needs.check_push.outputs.skip_build_push }} != 'yes' ]]; then
+                  if [[ "${{ needs.check_push.outputs.skip_build_push }}" != yes ]]; then
                       echo 'skip_build_push != yes'
                   else 
                       echo 'skip_build_push == yes'
