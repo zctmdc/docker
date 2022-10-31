@@ -92,11 +92,11 @@ jobs:
                   }
                   # build-version
                   if [[ -z "${{ env.BIG_VERSION }}" || -z "${{ env.SMALL_VERSION }}" ]];then
-                      build_big_version=${step.latest_version.outputs.latest_big_version}
+                      build_big_version=${steps.latest_version.outputs.latest_big_version}
                       LOG_INFO "build_big_version: ${build_big_version}"
-                      build_small_version=${step.latest_version.outputs.latest_small_version}
+                      build_small_version=${steps.latest_version.outputs.latest_small_version}
                       LOG_INFO "build_small_version: ${build_small_version}"
-                      build_commit=${step.latest_version.outputs.latest_commit}
+                      build_commit=${steps.latest_version.outputs.latest_commit}
                       LOG_INFO "build_commit: ${build_commit}"
                   fi
                   LOG_INFO "latest: ${latest}"
@@ -122,9 +122,9 @@ jobs:
                   echo -e "\033[0;33m[WARNING] $* \033[0m"
                   }
                   build_kernel=${{ env.KERNEL }}
-                  build_big_version=${{ step.build_version.outputs.build_big_version }}
-                  build_small_version=${{ step.build_version.outputs.build_small_version }}
-                  build_commit=${{ step.build_version.outputs.build_commit }}
+                  build_big_version=${{ steps.build_version.outputs.build_big_version }}
+                  build_small_version=${{ steps.build_version.outputs.build_small_version }}
+                  build_commit=${{ steps.build_version.outputs.build_commit }}
                   platforms=''
                   for fn_platform in "x64" "x86" "arm64(aarch64)" "arm"; do
                       case ${fn_platform} in
