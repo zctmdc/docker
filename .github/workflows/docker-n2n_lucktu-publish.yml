@@ -87,6 +87,9 @@ jobs:
             - name: Check build_version
               id: build_version
               run: |
+                  LOG_INFO() {
+                  echo -e "\033[0;32m[INFO] $* \033[0m"
+                  }
                   # build-version
                   if [[ -z "${{ env.BIG_VERSION }}" || -z "${{ env.SMALL_VERSION }}" ]];then
                       build_big_version=${step.latest_version.outputs.latest_big_version}
@@ -190,11 +193,9 @@ jobs:
                   LOG_INFO() {
                   echo -e "\033[0;32m[INFO] $* \033[0m"
                   }
-
                   LOG_WARNING() {
                   echo -e "\033[0;33m[WARNING] $* \033[0m"
                   }
-
                   # e.g. "2022-10-30T19:29:49.877019Z"
                   last_pulled_date=${{ steps.get_tag_last_pulled.outputs.value }}
                   echo "last_pulled_date=${last_pulled_date}" >> $GITHUB_OUTPUT
