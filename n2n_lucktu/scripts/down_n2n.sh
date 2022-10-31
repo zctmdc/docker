@@ -32,7 +32,7 @@ for down_dir in "" "/Old/linux_${dn_machine}" "/n2n_${BIG_VERSION}"; do
         LOG_ERROR "result : $result"
         LOG_ERROR "path[] : $(echo ${resp} | jq '.[]|{path}')"
         LOG_ERROR "path|..: $(echo ${resp} | jq '.[]|{path}|..')"
-        LOG_ERROR ".path  : $(echo ${resp} | jq '.[]|{path}|..|..path?')"
+        LOG_ERROR ".path  : $(echo ${resp} | jq '.[]|{path}|..|.path?')"
         continue
     fi
     LOG_INFO "use down_dir: ${down_dir}"
