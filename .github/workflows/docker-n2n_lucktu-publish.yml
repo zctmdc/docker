@@ -140,6 +140,9 @@ jobs:
             id-token: write
 
         steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
+
             - name: Set up QEMU
               uses: docker/setup-qemu-action@v2
 
