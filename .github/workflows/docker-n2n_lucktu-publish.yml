@@ -119,7 +119,7 @@ jobs:
                       build_commit=${{ env.COMMIT }}
                       LOG_INFO "build_commit: ${build_commit}"
                   fi
-                  if [[ ! "${build_big_version}" =~ "v" || ${build_big_version} =~ "v" ||  ${build_commit} =~ "r"  ]];then
+                  if [[ ! "${build_big_version}" =~ "v" || ${build_small_version} =~ "v" ||  ${build_commit} =~ "r"  ]];then
                       LOG_ERROR "不合法 - 版本号"
                       exit 1
                   fi
