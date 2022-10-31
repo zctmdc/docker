@@ -27,6 +27,12 @@ for down_dir in "" "/Old/linux_${dn_machine}" "/n2n_${BIG_VERSION}"; do
     down_path=$(echo "${result}" | grep ${KERNEL}_${fn_machine}_ | grep ${BIG_VERSION} | grep ${SMALL_VERSION} | grep ${COMMIT} | sed 's/\"//g')
     if [[ -z "${down_path}" ]]; then
         LOG_WARNING "down_path 获取失败 - ${down_dir} - ${api_url}"
+        LOG_WARNING "${KERNEL}_${fn_machine}_ ${BIG_VERSION} v.${SMALL_VERSION} ${COMMIT}"
+        LOG_ERROR "resp: $resp"
+        LOG_ERROR "result : $result"
+        LOG_ERROR "path[] : $(echo ${resp} | jq '.[]|{path}')"
+        LOG_ERROR "path|..: $(echo ${resp} | jq '.[]|{path}|..')"
+        LOG_ERROR ".path  : $(echo ${resp} | jq '.[]|{path}|..|..path?')"
         continue
     fi
     LOG_INFO "use down_dir: ${down_dir}"
