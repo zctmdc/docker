@@ -26,16 +26,11 @@ COPY ./scripts/*.sh /tmp/scripts/
 RUN chmod +x /tmp/scripts/*.sh
 
 ARG KERNEL=linux
-
-# 用于自定义机型编译
+# 用于自定义机型编译,未自动识别时请赋值
 ARG MACHINE
-
 ARG BIG_VERSION=v3
 ARG SMALL_VERSION=3.1.1-16
 ARG COMMIT=1200
-
-# 是否在根目录匹配
-ARG LATEST
 
 RUN /tmp/scripts/install_rar.sh
 RUN /tmp/scripts/get_n2n.sh

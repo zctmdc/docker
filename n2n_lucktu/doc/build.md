@@ -17,6 +17,5 @@
 |  BIG_VERSION  |    v3    |               大版本               | **v1** / **v2** / **v2s** / **v3**                                                                                     |
 | SMALL_VERSION | 3.1.1-16 |               小版本               | `(?<=v)\d\.\d\.\d`                                                                                                     |
 |    COMMIT    |   1200   |               提交号               | `(?<=_r).+?(?=[._])`                                                                                                   |
-|    LATEST     |          | 是否匹配 **源仓库** 根目录最新文件 | 若为空 `[[ -z $LATEST ]]` ，则自动判断，若为`(?i)true`,则从 **源仓库** 根目录中下载，其他值否则进入 `/Linux/Old/` 匹配 |
 
 ![版本说明](../img/fille_nameing_method.png)

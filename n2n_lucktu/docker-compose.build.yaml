@@ -9,7 +9,6 @@ services:
         BIG_VERSION: ${BIG_VERSION}
         SMALL_VERSION: ${SMALL_VERSION}
         COMMIT: ${COMMIT}
-        LATEST: ${LATEST}
     image: ${REGISTRY}/zctmdc/n2n_lucktu:${BIG_VERSION}_${SMALL_VERSION}_r${COMMIT}
 
   n2n_evn_v.SMALL_VERSION_rCOMMIT:
@@ -20,7 +19,6 @@ services:
         BIG_VERSION: ${BIG_VERSION}
         SMALL_VERSION: ${SMALL_VERSION}
         COMMIT: ${COMMIT}
-        LATEST: ${LATEST}
     image: ${REGISTRY}/zctmdc/n2n_lucktu:v.${SMALL_VERSION}_r${COMMIT}
   n2n_evn_v.SMALL_VERSION:
     build:
@@ -32,7 +30,6 @@ services:
         BIG_VERSION: ${BIG_VERSION}
         SMALL_VERSION: ${SMALL_VERSION}
         COMMIT: ${COMMIT}
-        LATEST: ${LATEST}
     image: ${REGISTRY}/zctmdc/n2n_lucktu:v.${SMALL_VERSION}
 
   n2n_releases-v2s:
@@ -43,7 +40,6 @@ services:
         BIG_VERSION: v2s
         SMALL_VERSION: 2.1.0
         COMMIT: 124
-        LATEST: false
     image: ${REGISTRY}/zctmdc/n2n_lucktu:releases-v2s
   n2n_releases-v2:
     build:
@@ -53,7 +49,6 @@ services:
         BIG_VERSION: v2
         SMALL_VERSION: 2.7.0
         COMMIT: 525
-        LATEST: false
     image: ${REGISTRY}/zctmdc/n2n_lucktu:releases-v2
   n2n_v2s:
     build:
@@ -63,7 +58,6 @@ services:
         BIG_VERSION: v2s
         SMALL_VERSION: 2.1.0
         COMMIT: 124
-        LATEST: false
     image: ${REGISTRY}/zctmdc/n2n_lucktu:v2s
   n2n_v2:
     build:
@@ -73,7 +67,6 @@ services:
         BIG_VERSION: v2
         SMALL_VERSION: 2.7.0
         COMMIT: 525
-        LATEST: false
     image: ${REGISTRY}/zctmdc/n2n_lucktu:v2
   n2n_releases-v1:
     build:
@@ -83,7 +76,6 @@ services:
         BIG_VERSION: v1
         SMALL_VERSION: 1.3.2
         COMMIT: 124
-        LATEST: false
     image: ${REGISTRY}/zctmdc/n2n_lucktu:releases-v1
   n2n_v1:
     build:
@@ -93,5 +85,4 @@ services:
         BIG_VERSION: v1
         SMALL_VERSION: 1.3.2
         COMMIT: 124
-        LATEST: false
     image: ${REGISTRY}/zctmdc/n2n_lucktu:v1
