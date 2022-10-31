@@ -17,12 +17,13 @@ for down_dir in "" "/Old/linux_${dn_machine}" "/n2n_${BIG_VERSION}"; do
         continue
     fi
     api_url=https://api.github.com/repos/lucktu/n2n/contents/${KERNEL^}${down_dir}?ref=master
-    result="$(curl -k -sS ${api_url})"
-    if [[ ! -z "$(echo $result || jq .message)" ]]; then
-        LOG_ERROR "result: $result"
+    LOG_INFO "api_url: ${api_url}"
+    resp="$(curl -k -sS ${api_url})"
+    if [[ ! -z "$(echo $resp || jq .message)" ]]; then
+        LOG_ERROR "resp: $resp"
         exit 1
     fi
-    result="$(echo ${result} | jq '.[]|{path}|..|.path?')"
+    result=$(echo "${resp}" | jq '.[]|{path}|..|.path?')
     down_path=$(echo "${result}" | grep ${KERNEL}_${fn_machine}_ | grep ${BIG_VERSION} | grep ${SMALL_VERSION} | grep ${COMMIT} | sed 's/\"//g')
     if [[ -z "${down_path}" ]]; then
         LOG_WARNING "down_path 获取失败 - ${down_dir} - ${api_url}"

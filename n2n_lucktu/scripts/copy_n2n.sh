@@ -17,8 +17,11 @@ for down_dir in "" "/Old/linux_${dn_machine}" "/n2n_${BIG_VERSION}"; do
     if [[ "${down_dir}" == "/n2n_v3" ]]; then
         continue
     fi
-    result="$(ls ${src_dir}${down_dir})"
-    down_path=$(echo "${result}" | grep ${KERNEL}_${fn_machine}_ | grep ${BIG_VERSION} | grep ${SMALL_VERSION} | grep ${COMMIT} | sed 's/\"//g')
+    api_url="${src_dir}${down_dir}"
+    LOG_INFO "api_url: ${api_url}"
+    resp="$(ls ${api_url})"
+    LOG_INFO "resp: ${resp}"
+    down_path=$(echo "${resp}" | grep ${KERNEL}_${fn_machine}_ | grep ${BIG_VERSION} | grep ${SMALL_VERSION} | grep ${COMMIT} | sed 's/\"//g')
     if [[ -z "${down_path}" ]]; then
         LOG_WARNING "down_path 获取失败 - ${down_dir} - ${src_dir} - ${result}"
         continue
