@@ -96,7 +96,7 @@ if [[ -z ${MACHINE} ]]; then
         MACHINE="arm"
         ;;
     arm64 | aarch64)
-        MACHINE="arm64(aarch64)"
+        MACHINE="arm64"
         ;;
     armeb | mips | mips64 | mips64el | mipsel)
         MACHINE=$mycpu
@@ -108,3 +108,32 @@ if [[ -z ${MACHINE} ]]; then
     esac
     LOG_INFO "受支持的CPU架构类型 - ${mycpu} -> ${MACHINE}"
 fi
+
+case ${MACHINE} in
+x64)
+    dn_machine="x64"
+    fn_machine="x64"
+    ;;
+x86)
+    dn_machine="x86"
+    fn_machine="x86"
+    ;;
+arm64 | aarch64)
+    dn_machine="arm64"
+    fn_machine="arm64(aarch64)"
+    ;;
+arm64eb | aarch64eb)
+    dn_machine="arm64eb"
+    fn_machine="arm64eb(aarch64eb)"
+    ;;
+arm)
+    dn_machine="arm"
+    fn_machine="arm"
+    ;;
+*)
+    LOG_ERROR "不支持的CPU架构类型 - ${fn_platform}"
+    dn_machine=${MACHINE}
+    fn_machine=${MACHINE}
+    ;;
+esac
+LOG_INFO "dn_machine: ${dn_machine}, fn_machine: ${fn_machine}"

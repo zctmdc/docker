@@ -12,20 +12,15 @@ LOG_INFO "SMALL_VERSION: ${SMALL_VERSION}"
 LOG_INFO "COMMIT: ${COMMIT}"
 
 # 遍历可能存在的文件夹进行匹配
+src_dir='/tmp/n2n'
 for down_dir in "" "/Old/linux_${dn_machine}" "/n2n_${BIG_VERSION}"; do
     if [[ "${down_dir}" == "/n2n_v3" ]]; then
         continue
     fi
-    api_url=https://api.github.com/repos/lucktu/n2n/contents/${KERNEL^}${down_dir}?ref=master
-    result="$(curl -k -sS ${api_url})"
-    if [[ ! -z "$(echo $result || jq .message)" ]]; then
-        LOG_ERROR "result: $result"
-        exit 1
-    fi
-    result="$(echo ${result} | jq '.[]|{path}|..|.path?')"
+    result="$(ls ${src_dir}${down_dir})"
     down_path=$(echo "${result}" | grep ${KERNEL}_${fn_machine}_ | grep ${BIG_VERSION} | grep ${SMALL_VERSION} | grep ${COMMIT} | sed 's/\"//g')
     if [[ -z "${down_path}" ]]; then
-        LOG_WARNING "down_path 获取失败 - ${down_dir} - ${api_url}"
+        LOG_WARNING "down_path 获取失败 - ${down_dir} - ${src_dir} - ${result}"
         continue
     fi
     LOG_INFO "use down_dir: ${down_dir}"
@@ -39,18 +34,17 @@ if [[ -z "${down_path}" ]]; then
     exit 1
 fi
 LOG_INFO "down_path: ${down_path}"
-# e.g. https://github.com/lucktu/n2n/raw/master/Linux/n2n_v3_linux_x64_v3.1.1-16_r1200_all_by_heiye.rar
-down_url="https://github.com/lucktu/n2n/raw/master/${down_path}"
+# e.g. /tmp/n2n/Linux/n2n_v3_linux_x64_v3.1.1-16_r1200_all_by_heiye.rar
+down_url="${src_dir}${down_path}"
 
 down_dir="/tmp/down"
 # e.g. n2n_v3_linux_x64_v3.1.1-16_r1200_all_by_heiye.rar
 down_filename="${down_dir}/${down_url##*/}"
 
-LOG_INFO "Try: 下载 - ${down_url}"
+LOG_INFO "Try: 复制 - ${down_url}"
 mkdir "${down_dir}"
-wget --no-check-certificate -q ${down_url} -O "${down_filename}"
-
+cp ${down_url} "${down_filename}"
 if [[ $? != 0 ]]; then
-    LOG_ERROR "下载失败: ${down_url}"
+    LOG_ERROR "复制失败: ${down_url}"
     exit 1
 fi

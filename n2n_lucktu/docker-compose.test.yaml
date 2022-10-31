@@ -4,7 +4,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: zctmdc/n2n_lucktu:Alpha
+    image: zctmdc/n2n_lucktu:alpha
     container_name: n2n_supernode
     restart: always
     volumes:
@@ -32,7 +32,7 @@ services:
       timeout: 10s
       retries: 3
   n2n_edge_1:
-    image: zctmdc/n2n_lucktu:Alpha
+    image: zctmdc/n2n_lucktu:alpha
     container_name: n2n_edge_1
     restart: always
     privileged: true
@@ -64,7 +64,7 @@ services:
       timeout: 10s
       retries: 3
   n2n_edge_2:
-    image: zctmdc/n2n_lucktu:Alpha
+    image: zctmdc/n2n_lucktu:alpha
     container_name: n2n_edge_2
     restart: always
     privileged: true

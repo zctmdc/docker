@@ -21,7 +21,7 @@ if [[ -z "${n2n_src_dir}" ]]; then
     exit 1
 fi
 
-n2n_desc_dir="/tmp/n2n"
+n2n_desc_dir="/tmp/desc"
 mkdir -p "${n2n_desc_dir}"
 LOG_INFO "n2n_src_dir: ${n2n_src_dir}"
 cp -r ${n2n_src_dir}/* ${n2n_desc_dir}

@@ -1,3 +1,4 @@
+FROM alpine/git
 FROM debian:stable-slim as downloader
 
 ARG name="n2n-downloader"
@@ -18,12 +19,10 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get -qq update
 
 RUN apt-get -qq -y install \
-  bash curl wget unzip jq
+  bash curl wget unzip jq git
 
+RUN git clone https://github.com/lucktu/n2n.git /tmp/n2n 
 
-WORKDIR /tmp/scripts/
-COPY ./scripts/*.sh /tmp/scripts/
-RUN chmod +x /tmp/scripts/*.sh
 
 ARG KERNEL=linux
 # 用于自定义机型编译,未自动识别时请赋值
@@ -32,6 +31,9 @@ ARG BIG_VERSION=v3
 ARG SMALL_VERSION=3.1.1-16
 ARG COMMIT=1200
 
+WORKDIR /tmp/scripts/
+COPY ./scripts/*.sh /tmp/scripts/
+RUN chmod +x /tmp/scripts/*.sh
 RUN /tmp/scripts/install_rar.sh
 RUN /tmp/scripts/get_n2n.sh
 
@@ -51,8 +53,8 @@ LABEL description="${summary}" \
   org.opencontainers.image.licenses="MIT"
 
 COPY --from=downloader \
-  /tmp/n2n/supernode \
-  /tmp/n2n/edge \
+  /tmp/desc/supernode \
+  /tmp/desc/edge \
   /usr/local/sbin/
 
 COPY ./scripts/*.sh /usr/local/sbin/
