@@ -21,7 +21,7 @@ env:
     # github.repository as <account>/<repo>
     KERNEL: linux
     MACHINE: ""
-    
+    CLONE: true
     # BIG_VERSION: v3
     # SMALL_VERSION: 3.1.1-16
     # COMMIT: 1200
@@ -371,6 +371,7 @@ jobs:
                       BIG_VERSION=${{ needs.check_version.outputs.build_big_version }}
                       SMALL_VERSION=${{ needs.check_version.outputs.build_small_version }}
                       COMMIT=${{ needs.check_version.outputs.build_commit }}
+                      CLONE=${{ env.CLONE }}
             # "${{ env.BIG_VERSION }}" == "${build_big_version}" || "${{ env.SMALL_VERSION }}" == "${build_small_version}" || "${{ env.COMMIT }}" == "${build_commit}"
             # Sign the resulting Docker image digest except on PRs.
             # This will only write to the public Rekor transparency log when the Docker

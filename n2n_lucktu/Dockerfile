@@ -19,9 +19,10 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt-get -qq update
 
 RUN apt-get -qq -y install \
-  bash curl wget unzip jq git
+  curl wget unzip jq git
 
-RUN git clone https://github.com/lucktu/n2n.git /tmp/n2n 
+ARG CLONE
+RUN [ $CLONE ] && git clone https://github.com/lucktu/n2n.git /tmp/n2n
 
 
 ARG KERNEL=linux

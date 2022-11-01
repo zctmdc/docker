@@ -5,6 +5,8 @@
 . init_latest_info.sh
 . init_kernel_name_and_machine_name.sh
 
+INIT_LATEST_INFO
+
 LOG_INFO "KERNEL: ${KERNEL}"
 LOG_INFO "MACHINE: ${MACHINE}"
 LOG_INFO "BIG_VERSION: ${BIG_VERSION}"
@@ -16,6 +18,11 @@ for down_dir in "" "/Old/linux_${dn_machine}" "/n2n_${BIG_VERSION}"; do
     if [[ "${down_dir}" == "/n2n_v3" ]]; then
         continue
     fi
+    
+    if [[ "${down_dir}" == "" && "${BIG_VERSION}" != "v3" ]]; then
+        continue
+    fi
+    
     api_url=https://api.github.com/repos/lucktu/n2n/contents/${KERNEL^}${down_dir}?ref=master
     LOG_INFO "api_url: ${api_url}"
     resp="$(curl -k -sS ${api_url})"
@@ -28,9 +35,9 @@ for down_dir in "" "/Old/linux_${dn_machine}" "/n2n_${BIG_VERSION}"; do
     if [[ -z "${down_path}" ]]; then
         LOG_WARNING "down_path 获取失败 - ${down_dir} - ${api_url}"
         LOG_WARNING "${KERNEL}_${fn_machine}_ ${BIG_VERSION} v.${SMALL_VERSION} ${COMMIT}"
-        LOG_ERROR "resp: $resp"
-        LOG_ERROR "path[] : $(echo ${resp} | jq '.[]|{path}')"
-        LOG_ERROR "path|..: $(echo ${resp} | jq '.[]|{path}|..')"
+        # LOG_ERROR "resp: $resp"
+        # LOG_ERROR "path[] : $(echo ${resp} | jq '.[]|{path}')"
+        # LOG_ERROR "path|..: $(echo ${resp} | jq '.[]|{path}|..')"
         LOG_ERROR ".path  : $(echo ${resp} | jq '.[]|{path}|..|.path?')"
         LOG_ERROR "result : $result"
         continue
