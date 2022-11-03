@@ -354,6 +354,19 @@ jobs:
                   labels: |
                       org.opencontainers.image.version=${{ format( '{0}_{1}_r{2}', needs.check_version.outputs.build_big_version, needs.check_version.outputs.build_small_version, needs.check_version.outputs.build_commit ) }}
 
+            - name: Build and export to Docker
+              uses: docker/build-push-action@v3
+              with:
+                  context: .
+                  load: true
+                  tags: ${{ env.REGISTRY }}/${{ github.actor }}/${{ env.APP_NAME }}:test
+                  cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ github.actor }}/${{ env.APP_NAME }}:buildcache
+                  cache-to: type=inline
+
+            - name: Test
+              run: |
+                  docker run --rm ${{ env.REGISTRY }}/${{ github.actor }}/${{ env.APP_NAME }}:test
+
             # Build and push Docker image with Buildx (don't push on PR)
             # https://github.com/docker/build-push-action
             - name: Build and push Docker image
@@ -365,8 +378,9 @@ jobs:
                   push: ${{ github.event_name != 'pull_request' }}
                   tags: ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}
-                  cache-from: type=gha
-                  cache-to: type=gha,mode=max
+                  cache-from: type=inline
+                  cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ github.actor }}/${{ env.APP_NAME }}:buildcache,mode=max
+
                   build-args: |
                       BIG_VERSION=${{ needs.check_version.outputs.build_big_version }}
                       SMALL_VERSION=${{ needs.check_version.outputs.build_small_version }}
