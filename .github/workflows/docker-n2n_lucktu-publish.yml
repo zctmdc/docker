@@ -308,7 +308,6 @@ jobs:
                   echo  ${{ needs.check_push.outputs.skip_build_push }}
                   echo  ${{ needs.check_push.outputs.skip_build_push != true }}
                   echo  ${{ needs.check_push.outputs.skip_build_push != 'true' }}
-                  echo  ${{ needs.check_push.outputs.skip_build_push != "true" }}
 
             - name: Checkout repository
               uses: actions/checkout@v3
