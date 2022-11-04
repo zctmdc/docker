@@ -21,7 +21,7 @@ env:
     # github.repository as <account>/<repo>
     KERNEL: linux
     MACHINE: ""
-    CLONE: true
+    CLONE: 'true'
     # BIG_VERSION: v3
     # SMALL_VERSION: 3.1.1-16
     # COMMIT: 1200
