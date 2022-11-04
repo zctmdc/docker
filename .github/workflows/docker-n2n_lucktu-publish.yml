@@ -26,9 +26,9 @@ env:
     # SMALL_VERSION: 3.1.1-16
     # COMMIT: 1200
 
-    BIG_VERSION: v2
-    SMALL_VERSION: 2.7.0
-    COMMIT: 528
+    # BIG_VERSION: v2
+    # SMALL_VERSION: 2.7.0
+    # COMMIT: 528
 
 jobs:
     check_version:
@@ -388,12 +388,12 @@ jobs:
                   labels: ${{ steps.meta.outputs.labels }}
                   cache-from: type=inline
                   cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ github.actor }}/${{ env.APP_NAME }}:buildcache,mode=max
-
                   build-args: |
                       BIG_VERSION=${{ needs.check_version.outputs.build_big_version }}
                       SMALL_VERSION=${{ needs.check_version.outputs.build_small_version }}
                       COMMIT=${{ needs.check_version.outputs.build_commit }}
                       CLONE=${{ env.CLONE }}
+
             # "${{ env.BIG_VERSION }}" == "${build_big_version}" || "${{ env.SMALL_VERSION }}" == "${build_small_version}" || "${{ env.COMMIT }}" == "${build_commit}"
             # Sign the resulting Docker image digest except on PRs.
             # This will only write to the public Rekor transparency log when the Docker
