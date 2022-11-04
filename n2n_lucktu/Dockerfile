@@ -1,4 +1,3 @@
-FROM alpine/git
 FROM debian:stable-slim as downloader
 
 ARG name="n2n-downloader"
