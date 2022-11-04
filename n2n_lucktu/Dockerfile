@@ -21,7 +21,7 @@ RUN apt-get -qq update
 RUN apt-get -qq -y install \
   bash curl wget unzip jq git
 
-ARG CLONE
+ARG CLONE=true
 RUN [[ "$CLONE" ]] && git clone https://github.com/lucktu/n2n.git /tmp/n2n
 
 
