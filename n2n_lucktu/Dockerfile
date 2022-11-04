@@ -22,7 +22,9 @@ RUN apt-get -qq -y install \
   bash curl wget unzip jq git
 
 ARG CLONE='true'
-RUN [[ "$CLONE" ]] && git clone https://github.com/lucktu/n2n.git /tmp/n2n
+RUN if[[ "$CLONE" ]];then \
+  git clone https://github.com/lucktu/n2n.git /tmp/n2n; \
+  fi
 
 ARG KERNEL=linux
 # 用于自定义机型编译,未自动识别时请赋值
