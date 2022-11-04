@@ -290,7 +290,7 @@ jobs:
 
     build_n2n_lucktu:
         needs: [check_version, check_push]
-        if: ${{ needs.check_push.outputs.skip_build_push != 'true' }}
+        if: ${{ needs.check_push.outputs.skip_build_push != true }}
         runs-on: ubuntu-latest
         env:
             APP_NAME: n2n_lucktu
@@ -306,7 +306,7 @@ jobs:
               id: check_outputs
               run: |
                   echo  ${{ needs.check_push.outputs.skip_build_push }}
-                  echo  ${{ needs.check_push.outputs.skip_build_push != 'true' }}
+                  echo  ${{ needs.check_push.outputs.skip_build_push != true }}
 
             - name: Checkout repository
               uses: actions/checkout@v3
