@@ -261,6 +261,7 @@ jobs:
               uses: sergeysova/jq-action@v2
               with:
                   cmd: curl -k -sS https://hub.docker.com/v2/repositories/zctmdc/n2n_lucktu/tags/${{ needs.check_version.outputs.build_version }} | jq '.tag_last_pulled'
+
             - name: Check tag_last_pulled
               id: tag_last_pulled
               run: |
@@ -301,6 +302,12 @@ jobs:
             id-token: write
 
         steps:
+            - name: echo outputs
+              id: check_outputs
+              run: |
+                  echo  ${{ needs.check_push.outputs.skip_build_push }}
+                  echo  ${{ needs.check_push.outputs.skip_build_push != 'true' }}
+
             - name: Checkout repository
               uses: actions/checkout@v3
 
