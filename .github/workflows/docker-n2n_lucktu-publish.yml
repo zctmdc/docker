@@ -357,7 +357,7 @@ jobs:
             - name: Build and export to Docker
               uses: docker/build-push-action@v3
               with:
-                  context: .
+                  context: ${{ env.APP_NAME }}
                   load: true
                   tags: ${{ env.REGISTRY }}/${{ github.actor }}/${{ env.APP_NAME }}:test
                   cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ github.actor }}/${{ env.APP_NAME }}:buildcache
