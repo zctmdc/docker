@@ -42,7 +42,7 @@ n2n 尽可能在 edge 节点之间建立直接的 P2P 连接;如果不可能（�
 | ---------: | :----: | :---------------------------------------- |
 |       bash | **\\** | <kbd>\\</kbd> 位于<kbd>Enter</kbd> 键上方 |
 | powershell | **`**  | <kbd>\`</kbd> 位于 <kbd>TAB</kbd> 键上方  |
-|        CMD | **＾** | <kbd>TAB</kbd>+<kbd>6</kbd>               |
+|        CMD | **＾** | <kbd>Shift</kbd>+<kbd>6</kbd>               |
 
 ### 建立 _supernode_
 
