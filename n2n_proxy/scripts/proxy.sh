@@ -75,8 +75,8 @@ if [[ "${EDGE_NAT}" == "TRUE" ]]; then
   # lan_gateway=${lan_prefix}1
   # lan_subnet=${lan_prefix}0/24
 
-  edge_ip=$(ifconfig $EDGE_TUN | grep "inet" | awk '{print $2}' | grep -Eo "([0-9]{1,3}.){3}[0-9]{1,3}" | tail -n 1)
-  edge_prefix=$(ifconfig $EDGE_TUN | grep inet | awk '{print $2}' | grep -Eo "([0-9]{1,3}.){3}")
+  edge_ip=$(ifconfig $EDGE_TUN | grep "inet" | awk '{print $2}' | grep -Eo '([0-9]{1,3}.){3}[0-9]{1,3}' | head -n 1)
+  edge_prefix=${edge_ip%.*}
   edge_gateway=${edge_prefix}1
   edge_subnet=${edge_prefix}0/24
 
@@ -102,7 +102,7 @@ if [[ "${EDGE_NAT}" == "TRUE" ]]; then
 
   iptables -t nat -A POSTROUTING -o $EDGE_TUN -j MASQUERADE
   iptables -t nat -A POSTROUTING -o $lan_eth -j MASQUERADE
-  
+
   # iptables -t nat -A PREROUTING -p tcp --dport 22 -j DNAT --to-destination $lan_eth:22
   route -n
 fi

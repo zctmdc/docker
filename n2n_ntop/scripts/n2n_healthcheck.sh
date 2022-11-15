@@ -12,19 +12,6 @@ check_server() {
     fi
 }
 
-status_check() {
-    while true; do
-        echo "STATUS - CHECKING"
-        sleep 30
-        if [[ "$(tail -n 1 /var/log/run.log | grep trying)" ]]; then
-            echo "STATUS - RESTART"
-            killall tail
-        else
-            echo "STATUS - RUNNING"
-        fi
-    done
-}
-# status_check &
 
 MODE=$(echo $MODE | tr '[a-z]' '[A-Z]')
 case $MODE in
@@ -37,7 +24,7 @@ DHCPD)
     ;;
 DHCP)
     # NOW_EDGE_IP=$(ifconfig $EDGE_TUN | grep "inet addr:" | awk '{print $2}' | cut -c 6-)
-    NOW_EDGE_IP=$(ifconfig $EDGE_TUN | grep "inet" | awk '{print $2}')
+    NOW_EDGE_IP=$(ifconfig $EDGE_TUN | grep "inet" | awk '{print $2}' | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}')
     if [[ -n $NOW_EDGE_IP ]]; then
         check_ip=$(echo $NOW_EDGE_IP | grep -Eo "([0-9]{1,3}[\.]){3}")1
     else
@@ -47,7 +34,7 @@ DHCP)
     ;;
 STATIC)
     # NOW_EDGE_IP=$(ifconfig $EDGE_TUN | grep "inet addr:" | awk '{print $2}' | cut -c 6-)
-    NOW_EDGE_IP=$(ifconfig $EDGE_TUN | grep "inet" | awk '{print $2}')
+    NOW_EDGE_IP=$(ifconfig $EDGE_TUN | grep "inet" | awk '{print $2}' | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}')
     check_ip=$(echo $NOW_EDGE_IP | grep -Eo "([0-9]{1,3}[\.]){3}")1
     ;;
 *)

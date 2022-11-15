@@ -1,55 +1,32 @@
 #!/bin/bash
+
 # set -x
-N2N_LOG() {
-  echo $*
-  logger [N2N] $*
-}
-N2N_LOG_RUN() {
-  N2N_LOG $*
-  $*
-}
+. init_logger.sh
 
 MODE=$(echo $MODE | tr '[a-z]' '[A-Z]')
-echo MODE=$MODE
+LOG_INFO "MODE=${MODE}"
 
-if [[ "${EDGE_ENCRYPTION:0:1}" != "-" ]]; then
-  EDGE_ENCRYPTION=-$EDGE_ENCRYPTION
+if [[ -n "${EDGE_ENCRYPTION}" && "${EDGE_ENCRYPTION:0:1}" != "-" ]]; then
+  EDGE_ENCRYPTION="-${EDGE_ENCRYPTION}"
 fi
-echo EDGE_ENCRYPTION=$EDGE_ENCRYPTION
+LOG_INFO "EDGE_ENCRYPTION=${EDGE_ENCRYPTION}"
 
-if [[ "${N2N_ARGS:0:1}" != "-" ]]; then
-  N2N_ARGS=-$N2N_ARGS
+if [[ -n "${N2N_ARGS}" && "${N2N_ARGS:0:1}" != "-" ]]; then
+  N2N_ARGS="-$N2N_ARGS"
 fi
-echo N2N_ARGS=$N2N_ARGS
-
-init_edge_mac_address() {
-
-  if [[ -n "$EDGE_MAC" ]]; then
-    # 判断 $EDGE_MAC 是否为有效MAC地址
-    if [[ $EDGE_MAC =~ ^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$ ]]; then
-      EDGE_MAC=$(echo $EDGE_MAC | tr '[a-z]' '[A-Z]')
-    else
-      EDGE_MAC=""
-      return
-    fi
+LOG_INFO "N2N_ARGS=$N2N_ARGS"
+init_version() {
+  small_version="$(edge -h | grep Welcome | grep -Eo 'v\.[0-9]\.[0-9]\.[0-9]' | grep -Eo '[0-9]\.[0-9]\.[0-9]')"
+  if [[ -n "${small_version}" ]]; then
     return
   fi
-
-  if [[ -n "$GET_MAC_FROM_WAN" ]]; then
+  version_b_s_rc=${VERSION_B_S_rC}
+  if [[ -z "${version_b_s_rc}" ]]; then
+    LOG_ERROR "错误: SCAN_ONE_BUILD - version_b_s_rc - 为空"
     return
   fi
-  ignore_Iface="ztbpaislgc|docker"
-  lan_eth=$(route -ne | grep 0.0.0.0 | grep -Ev "$ignore_Iface" | tail -n 1 | awk '{print $8}')
-  lan_mac=$(cat /sys/class/net/$lan_eth/address)
-  lan_mac_prefix=${lan_mac%:*}
-  if [[ $(echo $(expr $((16#${lan_mac##*:})) - 1) | awk '{printf "%x\n",$0}') != 0 ]]; then
-    lan_mac_suffix=$(echo $(expr $((16#${lan_mac##*:})) - 1) | awk '{printf "%02x\n",$0}')
-  else
-    lan_mac_suffix=$(echo $(expr $(echo 0x${lan_mac##*:} | awk '{printf "%d\n",$0}') - 1) | awk '{printf "%02x\n",$0}')
-  fi
-  EDGE_MAC="${lan_mac_prefix}:${lan_mac_suffix}"
+  small_version="$(echo ${version_b_s_rc} | grep -Eo '[0-9]\.[0-9]\.[0-9]')"
 }
-
 init_dhcpd_conf() {
   IP_PREFIX=$(echo $EDGE_IP | grep -Eo "([0-9]{1,3}[\.]){3}")
   if [ ! -f "/etc/dhcp/dhcpd.conf" ]; then
@@ -68,15 +45,29 @@ EOF
 }
 
 mode_supernode() {
-  echo $MODE -- 超级节点模式
-  N2N_LOG_RUN "supernode -p $SUPERNODE_PORT $N2N_ARGS" &
+  LOG_INFO $MODE -- 超级节点模式
+  init_version
+  if [[ -n "${small_version}" && "${small_version//./}" -ge 290 ]]; then
+    # 3.9.0+  使用 -p
+    ARG_SUPERNODE_PORT="-p $SUPERNODE_PORT"
+  else
+    ARG_SUPERNODE_PORT="-l $SUPERNODE_PORT"
+  fi
+  LOG_RUN "supernode ${ARG_SUPERNODE_PORT} $N2N_ARGS" &
 }
 
 check_edge() {
-  # while [ -z $(ifconfig $EDGE_TUN | grep "inet addr:" | awk '{print $2}' | cut -c 6-) ]; do
-  while [ -z $(ifconfig $EDGE_TUN | grep "inet" | awk '{print $2}') ]; do
+  while true; do
+    if [[ ! -f /sys/class/net/$EDGE_TUN/address ]]; then
+      LOG_WARNING "等待启动: $EDGE_TUN"
+      continue
+    fi
     if [[ $MODE == "DHCP" ]]; then
-      dhclient --dad-wait-time 5 $EDGE_TUN
+      LOG_RUN dhclient -d --dad-wait-time 5 $EDGE_TUN &
+      sleep 3
+    fi
+    if [[ -z $(ifconfig $EDGE_TUN | grep "inet" | awk '{print $2}' | grep -Eo '([0-9]{1,3}[\.]){3}[0-9]{1,3}') ]]; then
+      LOG_RUN dhclient -x
     fi
     sleep 1
   done
@@ -84,31 +75,31 @@ check_edge() {
 
 run_edge() {
   # init_edge_mac_address
-  N2N_LOG_RUN "edge -d $EDGE_TUN ${EDGE_MAC:+ -m ${EDGE_MAC}} -a $EDGE_IP_AGE -c $EDGE_COMMUNITY -i $EDGE_REG_INTERVAL -l $SUPERNODE_IP:$SUPERNODE_PORT ${EDGE_KEY:+ -k ${EDGE_KEY} $EDGE_ENCRYPTION} $N2N_ARGS" &
+  LOG_RUN "edge -d $EDGE_TUN ${EDGE_MAC:+ -m ${EDGE_MAC}} -a $EDGE_IP_AGE -c $EDGE_COMMUNITY -l $SUPERNODE_IP:$SUPERNODE_PORT ${EDGE_KEY:+ -k ${EDGE_KEY} $EDGE_ENCRYPTION} $N2N_ARGS" &
   ifconfig $EDGE_TUN
 }
 
 mode_dhcpd() {
   touch /var/lib/dhcp/dhcpd.leases
-  echo $MODE -- DHCPD 服务器模式
+  LOG_INFO $MODE -- DHCPD 服务器模式
   init_dhcpd_conf
   # EDGE_IP=`echo $EDGE_IP | grep -Eo "([0-9]{1,3}[\.]){3}"`1
   EDGE_IP_AGE=$EDGE_IP
   run_edge
   check_edge
-  echo DHCPD 服务启动中
+  LOG_INFO DHCPD 服务启动中
   dhcpd -f -d $EDGE_TUN &
 }
 
 mode_dhcp() {
-  echo $MODE -- DHCP客户端模式
+  LOG_INFO $MODE -- DHCP客户端模式
   EDGE_IP_AGE="dhcp:0.0.0.0 -r"
   run_edge
   check_edge
 }
 
 mode_static() {
-  echo $MODE -- 静态地址模式
+  LOG_INFO $MODE -- 静态地址模式
   EDGE_IP_AGE=$EDGE_IP
   run_edge
   check_edge
@@ -116,18 +107,18 @@ mode_static() {
 
 check_server() {
   if ping -c 1 $SUPERNODE_HOST >/dev/null 2>&1; then
-    SUPERNODE_IP=$(ping -c 1 $SUPERNODE_HOST | grep -Eo "([0-9]{1,3}\.){3}[0-9]{1,3}" | head -n 1)
-    echo "成功PING SUPERNODE_IP : $SUPERNODE_IP"
+    SUPERNODE_IP=$(busybox ping -c 1 $SUPERNODE_HOST | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' | head -n 1)
+    LOG_INFO "成功PING SUPERNODE_IP : $SUPERNODE_IP"
   elif nslookup $SUPERNODE_HOST 223.5.5.5 >/dev/null 2>&1; then
-    SUPERNODE_IP=$(nslookup -type=a $SUPERNODE_HOST 223.5.5.5 | grep -v 223.5.5.5 | grep ddress | awk '{print $2}')
-    echo "成功nslookup SUPERNODE_IP : $SUPERNODE_IP"
+    SUPERNODE_IP=$(busybox nslookup -type=a $SUPERNODE_HOST 223.5.5.5 | grep -v 223.5.5.5 | grep ddress | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' | head -n 1)
+    LOG_INFO "成功nslookup SUPERNODE_IP : $SUPERNODE_IP"
   else
     SUPERNODE_IP=$SUPERNODE_HOST
-    echo "SUPERNODE_IP : $SUPERNODE_IP"
+    LOG_INFO "SUPERNODE_IP : $SUPERNODE_IP"
   fi
 }
 restart_edge() {
-  killall tail
+  busybox killall edge
 }
 #main
 check_server
@@ -145,7 +136,7 @@ STATIC)
   mode_static
   ;;
 *)
-  echo $MODE -- 判断失败
+  LOG_ERROR "$MODE -- 判断失败"
   exit 1
   ;;
 esac
@@ -164,7 +155,7 @@ while true; do
     fi
     ;;
   *)
-    break
+    continue
     ;;
   esac
 done

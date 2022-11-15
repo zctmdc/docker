@@ -1,46 +1,28 @@
-FROM zctmdc/n2n_lucktu:Alpha as edgeSrc
+ARG VERSION_B_S_rC
+FROM zctmdc/n2n_lucktu:${VERSION_B_S_rC}  
 
-FROM debian:stable-slim
 
-ARG DEBIAN_FRONTEND=noninteractive
+ARG DEBIAN_FRONTEND=noninteractive  
 RUN apt-get -qq update  
 
 RUN apt-get -qq -y install \
   apt-utils tzdata \
   && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
   && echo "Asia/Shanghai" > /etc/timezone \
-  && dpkg-reconfigure -f noninteractive tzdata
+  && dpkg-reconfigure -f noninteractive tzdata  
+ENV TZ Asia/Shanghai
 ##################-----##################
 
-RUN apt-get -qq -y install \
-  wget openssl isc-dhcp-client isc-dhcp-server net-tools iputils-ping \
-  curl  ca-certificates traceroute htop psmisc iptables \
-  && rm -rf /etc/dhcp/dhcpd.conf
-
 ##################-----##################
-RUN apt-get clean 
-
-RUN mkdir -p /usr/local/sbin/
-
-COPY --from=edgeSrc \
-  /usr/local/sbin//supernode \
-  /usr/local/sbin//edge \
-  /usr/local/sbin/
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* 
 
 
-COPY ./scripts/*.sh /usr/local/sbin/
+COPY ./scripts/*.sh /opt/n2n/
 
-# RUN chmod a+x /usr/local/sbin/* \
-#   && . /usr/local/sbin/init.sh \
-#   && wget --no-check-certificate -qO /usr/local/sbin/edge http://rt.qiniu.zctmdc.cn/bin/edge_v2_${myos}_${mycpu} \
-#   && wget --no-check-certificate -qO /usr/local/sbin/supernode http://rt.qiniu.zctmdc.cn/bin/supernode_v2_${myos}_${mycpu}
-
-
-RUN chmod a+x /usr/local/sbin/*
+RUN chmod a+x /opt/n2n/*
 
 ENV MODE SUPERNODE
 
-ENV N2N_ARGS "-v -f"
 
 ENV SUPERNODE_HOST n2n.lucktu.com
 ENV SUPERNODE_PORT 10086
@@ -49,14 +31,14 @@ ENV EDGE_IP 10.10.10.10
 ENV EDGE_NETMASK 255.255.255.0
 ENV EDGE_COMMUNITY n2n
 ENV EDGE_KEY test
-ENV EDGE_TUN edge0
 ENV EDGE_ENCRYPTION A3
-ENV EDGE_REG_INTERVAL 5
-ENV EDGE_MTU 1290
-ENV EDGE_UDP_PORT ""
+ENV EDGE_TUN edge0
+
+ENV N2N_ARGS "-v -f"
+
 ENV EDGE_MAC ""
 ENV GET_MAC_FROM_WAN "false"
 
-CMD [ "/bin/bash" , "-c" , "/usr/local/sbin/run.sh" ]
+ENTRYPOINT [ "/bin/bash" , "-c" , "/opt/n2n/run.sh" ]
 
-HEALTHCHECK --interval=20s --timeout=10s CMD /usr/local/sbin/n2n_healthcheck.sh
+HEALTHCHECK --interval=20s --timeout=10s CMD /opt/n2n/n2n_healthcheck.sh
