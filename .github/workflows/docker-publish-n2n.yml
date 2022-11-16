@@ -266,7 +266,7 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             VERSION_B_S_rC=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
-            
+
       - name: Test n2n
         id: n2n-test
         run: |
@@ -286,19 +286,7 @@ jobs:
           for test_platform in ${l_platforms[@]};do
             LOG_WARNING "Test for platform: ${test_platform}"
             docker network create --driver bridge --subnet=172.71.0.0/16 n2n
-            mkdir -p ./test/
-            cat <<-EOF > ./test/edge.conf
-            # 虚拟网卡名字
-            -d=T3
-            # edge ip
-            -a=10.20.30.40
-            # community 名字
-            -c=n2n
-            # community 密码
-            -k=test
-            # supernode 地址和端口
-            -l=172.71.0.20:7777
-            EOF
+
             docker run -d --name n2n_supernode \
               --network n2n --ip 172.71.0.20 \
               -e MODE="SUPERNODE" \
