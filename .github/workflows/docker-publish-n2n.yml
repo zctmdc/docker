@@ -101,7 +101,7 @@ jobs:
         id: get-pushed-architectures
         uses: sergeysova/jq-action@v2
         with:
-          cmd: echo ${{ toJSON(steps.get-pushed.outputs.response) }} | jq '.data.images[]|{architecture}|..|.architecture?' | sed 's/\"//g'
+          cmd: echo ${{ toJSON(steps.get-pushed.outputs.response) }} | jq '.data.images[]|{architecture}|..|.architecture?' | sed 's/\"//g' | tr '\n' ','
 
       - name: Check pushed digest
         id: get-pushed-digest
@@ -126,7 +126,12 @@ jobs:
 
             build_platforms=''
             build_architectures=${{ steps.get-pushed-architectures.outputs.value }}
-            for architectures in ${build_architectures[@]};do
+            l_build_architectures=(${build_architectures//,/ })
+            if 
+            for architectures in ${l_build_architectures[@]};do
+              if [[ -z "$(echo ${architectures})" ]];then
+                continue
+              fi
               SEL_PLATFORM ${architectures}
               build_platforms="${build_platforms},${platform}"
             done
@@ -221,7 +226,7 @@ jobs:
         id: build-and-load
         uses: docker/build-push-action@v3
         with:
-          context: .
+          context: ${{ env.APP_NAME }}
           load: true
           no-cache: true
           push: ${{ github.event_name != 'pull_request' }}
@@ -316,7 +321,7 @@ jobs:
         id: build-and-push
         uses: docker/build-push-action@v3
         with:
-          context: .
+          context: ${{ env.APP_NAME }}
           file: ${{steps.n2n-test.outputs.build_dockerfile}}
           platforms: ${{ steps.init-build-infos.outputs.BUILD_PLATFORMS }}
           push: ${{ github.event_name != 'pull_request' }}
