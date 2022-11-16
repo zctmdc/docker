@@ -78,7 +78,7 @@ jobs:
               BUILD_VERSION_B_S_rC=${{ inputs.version_b_s_rc }}
               FORCE_PUSH=${{ inputs.force_push }}
             elif [[ -n "${{ env.VERSIONS_B_S_rC }}" ]];then
-              BUILD_VERSION_B_S_rC=${{ env.version_b_s_rc }}
+              BUILD_VERSION_B_S_rC=${{ env.VERSIONS_B_S_rC }}
               FORCE_PUSH=${{ env.FORCE_PUSH }}
             fi
             LOG_INFO "BUILD_VERSION_B_S_rC: ${BUILD_VERSION_B_S_rC}"
