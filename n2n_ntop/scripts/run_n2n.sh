@@ -158,7 +158,7 @@ check_server() {
     LOG_INFO "成功nslookup SUPERNODE_IP : ${SUPERNODE_IP}"
   else
     SUPERNODE_IP=${SUPERNODE_HOST}
-    LOG_INFO "SUPERNODE_IP : ${SUPERNODE_IP}"
+    LOG_WARNING "SUPERNODE_IP : ${SUPERNODE_IP}"
   fi
 }
 
