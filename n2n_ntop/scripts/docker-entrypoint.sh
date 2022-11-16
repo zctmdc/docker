@@ -18,11 +18,21 @@ if [[ -n "$(echo ${app} | grep -E '^(/usr/local/sbin/)?(edge)|(supernode)$')" ]]
     . init_logger.sh
     . init_version.sh
     INIT_VERSION
+
     shift
     if [[ -f "${conf_file}" && "${conf_file##*.}" == "conf" ]]; then
         . conf_read.sh "${conf_file}"
         shift
     fi
+    EDGE_TUN="${cf_EDGE_TUN}"
+    EDGE_IP="${cf_EDGE_IP}"
+    EDGE_COMMUNITY="${cf_EDGE_COMMUNITY}"
+    EDGE_KEY="${cf_EDGE_KEY}"
+    EDGE_ENCRYPTION="${cf_EDGE_ENCRYPTION}"
+    SUPERNODE_HOST="${cf_SUPERNODE_HOST}"
+    SUPERNODE_PORT="${cf_SUPERNODE_PORT}"
+    N2N_ARGS="${cf_N2N_ARGS}"
+
     N2N_ARGS="${N2N_ARGS} ${@}"
     if [[ -n "$(echo ${app} | grep -E '^(/usr/local/sbin/)?edge$')" ]]; then
         if [[ "${EDGE_IP^^}" =~ "DHCP" ]]; then
@@ -73,6 +83,16 @@ if [[ -n "$(echo ${app} | grep -E '^(/usr/local/sbin/)?(edge)|(supernode)$')" ]]
     LOG_INFO "SUPERNODE_HOST: ${SUPERNODE_HOST}"
     LOG_INFO "SUPERNODE_PORT: ${SUPERNODE_PORT}"
     LOG_INFO "N2N_ARGS: ${N2N_ARGS}"
+    touch /n2n/environment
+    echo "export MODE='${MODE}'" >>/n2n/environment
+    echo "export EDGE_TUN='${EDGE_TUN}'" >>/n2n/environment
+    echo "export EDGE_IP='${EDGE_IP}'" >>/n2n/environment
+    echo "export EDGE_COMMUNITY='${EDGE_COMMUNITY}'" >>/n2n/environment
+    echo "export EDGE_KEY='${EDGE_KEY}'" >>/n2n/environment
+    echo "export SUPERNODE_HOST='${SUPERNODE_HOST}'" >>/n2n/environment
+    echo "export SUPERNODE_PORT='${SUPERNODE_PORT}'" >>/n2n/environment
+    echo "export N2N_ARGS='${N2N_ARGS}'" >>/n2n/environment
+    chmod +x /n2n/environment
     . run_n2n.sh
 fi
 

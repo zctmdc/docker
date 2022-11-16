@@ -262,7 +262,7 @@ jobs:
           context: ${{ env.APP_NAME }}
           load: true
           no-cache: true
-          tags: ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test
+          tags: ${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
             VERSION_B_S_rC=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
@@ -285,13 +285,14 @@ jobs:
           l_platforms=(${platforms//,/ })
           for test_platform in ${l_platforms[@]};do
             LOG_WARNING "Test for platform: ${test_platform}"
+
             docker network create --driver bridge --subnet=172.71.0.0/16 n2n
 
             docker run -d --name n2n_supernode \
               --network n2n --ip 172.71.0.20 \
               -e MODE="SUPERNODE" \
               -e SUPERNODE_PORT=7777 \
-              ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test
+              ${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test
 
             docker run -d --name n2n_edge_dhcpd \
               --network n2n --privileged \
@@ -303,7 +304,7 @@ jobs:
               -e SUPERNODE_PORT=7777 \
               -e EDGE_ENCRYPTION=A3 \
               -e EDGE_TUN=n2n_edge_dhcpd \
-              ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test
+              ${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test
 
             docker run -d --name n2n_edge_dhcpc \
               --network n2n --privileged \
@@ -314,23 +315,26 @@ jobs:
               -e SUPERNODE_PORT=7777 \
               -e EDGE_ENCRYPTION=A3 \
               -e EDGE_TUN=n2n_edge_dhcpc \
-              ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test \
-
+              ${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test \
+         
             docker run -d --name n2n_edge_static \
               --network n2n --privileged \
               -e MODE="STATIC" \
               -v $(pwd)/test/:/n2n/conf/ \
-              ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test
+              ${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test
+
+            LOG_WARNING just wait
             sleep 10
+            LOG_WARNING try testing...
             docker exec -i n2n_edge_dhcpd \
-              /bin/busybox ping -c 1 -w 5 -q 10.20.30.41 || exit 1
+              /bin/busybox ping -c 1 -w 5 -q 10.20.30.41 || echo faild 10.20.30.41
 
             docker exec -i n2n_edge_dhcpc \
-              /bin/busybox ping -c 1 -w 5 -q 10.20.30.1 || exit 1
+              /bin/busybox ping -c 1 -w 5 -q 10.20.30.1 || echo faild 10.20.30.1
 
             docker exec -i n2n_edge_static \
               /bin/busybox ping -c 1 -w 5 -q 172.71.0.20 || exit 1
-
+            exit 1
             # LOG_WARNING "Test done - ALL"
           done
           LOG_WARNING "Test done: ${{ steps.init-build-infos.outputs.BUILD_VERSION_B_S_rC }}"
