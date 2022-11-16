@@ -80,7 +80,7 @@ services:
       test-n2n_supernode:
         condition: service_healthy
     image: ${REGISTRY_USERNAME}/${APP_NAME}:test
-    container_name: test_n2n_edge_tatic
+    container_name: test_n2n_edge_static
     restart: always
     privileged: true
     platform: ${TEST_PLATFORM}
