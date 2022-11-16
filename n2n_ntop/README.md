@@ -74,7 +74,6 @@ docker run \
 ```bash
 docker run \
   -d --restart=always \
-  --privileged  \
   --name=supernode_t1 \
   -e MODE="SUPERNODE" \
   -e SUPERNODE_PORT=10090 \
