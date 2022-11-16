@@ -262,6 +262,7 @@ jobs:
         with:
           context: ${{ env.APP_NAME }}
           load: true
+          platforms: ${{ steps.init-build-infos.outputs.TEST_PLATFORM }}
           no-cache: true
           tags: ${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test
           labels: ${{ steps.meta.outputs.labels }}
