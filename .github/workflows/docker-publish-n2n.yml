@@ -94,7 +94,7 @@ jobs:
           # The target URL
           # Required: true if custom-config is not set
           url: https://hub.docker.com/v2/repositories/zctmdc/n2n_lucktu/tags/${{ steps.init-version.outputs.BUILD_VERSION_B_S_rC }}
-
+      - run: echo ${{ steps.get-pushed.outputs }}
       - name: Check pushed architectures
         id: get-pushed-architectures
         uses: sergeysova/jq-action@v2
@@ -132,7 +132,7 @@ jobs:
             LOG_INFO "BUILD_PLATFORMS: ${BUILD_PLATFORMS}"
             echo "BUILD_PLATFORMS=${BUILD_PLATFORMS}" >> $GITHUB_OUTPUT
 
-            if [[ ${{ steps.get-pushed-digest.outputs.value }} == ${{ steps.get-pushed-latest.outputs.value }} ]];then
+            if [[ "${{ steps.get-pushed-digest.outputs.value }}" == "${{ steps.get-pushed-latest.outputs.value }}" ]];then
               LATEST_VERSION=true
               LOG_INFO "LATEST_VERSION: ${LATEST_VERSION}"
               echo "LATEST_VERSION=${LATEST_VERSION}" >> $GITHUB_OUTPUT
@@ -221,11 +221,10 @@ jobs:
         with:
           context: .
           load: true
+          no-cache: true
           push: ${{ github.event_name != 'pull_request' }}
           tags: ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:buildcache
-          cache-to: type=inline
 
       - name: Test n2n
         id: n2n-test
@@ -322,7 +321,7 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           # no-cache: true
-          cache-from: type=inline
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:buildcache
           cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:buildcache,mode=max
 
       # Sign the resulting Docker image digest except on PRs.
