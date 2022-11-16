@@ -83,7 +83,7 @@ jobs:
             fi
             LOG_INFO "BUILD_VERSION_B_S_rC: ${BUILD_VERSION_B_S_rC}"
             LOG_INFO "FORCE_PUSH: ${FORCE_PUSH}"
-            echo "BUILD_BIG_VERSION=${BUILD_VERSION_B_S_rC}" >> $GITHUB_OUTPUT
+            echo "BIG_VERSION=${BUILD_VERSION_B_S_rC}" >> $GITHUB_OUTPUT
             echo "BUILD_VERSION_B_S_rC=${BUILD_VERSION_B_S_rC}" >> $GITHUB_OUTPUT
             echo "FORCE_PUSH=${FORCE_PUSH}" >> $GITHUB_OUTPUT
 
@@ -119,10 +119,17 @@ jobs:
             . init_logger.sh
             . sel_platform.sh
 
-            VERSION_B_S_rC=${{ steps.init-build-version.outputs.VERSION_B_S_rC }}
+            BUILD_VERSION_B_S_rC=${{ steps.init-build-version.outputs.BUILD_VERSION_B_S_rC }}
             LOG_INFO "BUILD_VERSION_B_S_rC: ${BUILD_VERSION_B_S_rC}"
             echo "BUILD_VERSION_B_S_rC=${BUILD_VERSION_B_S_rC}" >> $GITHUB_OUTPUT
-            echo "BUILD_BIG_VERSION=${BUILD_VERSION_B_S_rC}" >> $GITHUB_OUTPUT
+
+            BUILD_BIG_VERSION=${BUILD_VERSION_B_S_rC%%_*}
+            LOG_INFO "BUILD_BIG_VERSION: ${BUILD_BIG_VERSION}"
+            echo "BUILD_BIG_VERSION=${BUILD_BIG_VERSION}" >> $GITHUB_OUTPUT
+
+            FORCE_PUSH=${{ steps.init-build-version.outputs.FORCE_PUSH }}
+            LOG_INFO "FORCE_PUSH: ${FORCE_PUSH}"
+            echo "FORCE_PUSH=${FORCE_PUSH}" >> $GITHUB_OUTPUT
 
             build_platforms=''
             build_architectures=${{ steps.get-pushed-architectures.outputs.value }}
@@ -151,11 +158,31 @@ jobs:
               echo "TEST_PLATFORM=${BUILD_PLATFORMS%%,*}" >> $GITHUB_OUTPUT
             fi
 
+            DEFAULT_SUPERNODE_HOST="n2n.zctmdc.cc"
+            case "${VERSION_B_S_rC%%_*}" in
+            "v1")
+                DEFAULT_SUPERNODE_PORT="10082"
+                ;;
+            "v2")
+                DEFAULT_SUPERNODE_PORT="10086"
+                ;;
+            "v2s")
+                DEFAULT_SUPERNODE_PORT="10088"
+                ;;
+            "v3")
+                DEFAULT_SUPERNODE_PORT="10090"
+                ;;
+            esac
+            LOG_INFO "DEFAULT_SUPERNODE_HOST: ${DEFAULT_SUPERNODE_HOST}"
+            LOG_INFO "DEFAULT_SUPERNODE_PORT: ${DEFAULT_SUPERNODE_PORT}"
+            echo "DEFAULT_SUPERNODE_HOST=${DEFAULT_SUPERNODE_HOST}" >> $GITHUB_OUTPUT
+            echo "DEFAULT_SUPERNODE_PORT=${DEFAULT_SUPERNODE_PORT}" >> $GITHUB_OUTPUT
+
       - name: get tag_last_pushed
         id: get_tag_last_pushed
         uses: sergeysova/jq-action@v2
         with:
-          cmd: curl -k -sS https://hub.docker.com/v2/repositories/${{ secrets.REGISTRY_USERNAME }}/n2n_ntop/tags/${{ needs.init-build-version.outputs.BUILD_VERSION_B_S_rC }} | jq '.tag_last_pushed'
+          cmd: curl -k -sS https://hub.docker.com/v2/repositories/${{ secrets.REGISTRY_USERNAME }}/n2n_ntop/tags/${{ steps.init-build-infos.outputs.BUILD_VERSION_B_S_rC }} | jq '.tag_last_pushed'
 
       - name: Check tag_last_pushed
         id: tag_last_pushed
@@ -330,6 +357,10 @@ jobs:
           # no-cache: true
           cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:buildcache
           cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:buildcache,mode=max
+          build-args: |
+            VERSION_B_S_rC=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
+            DEFAULT_SUPERNODE_HOST=${{ steps.init-build-infos.outputs.DEFAULT_SUPERNODE_HOST }}
+            DEFAULT_SUPERNODE_PORT=${{ steps.init-build-infos.outputs.DEFAULT_SUPERNODE_PORT }}
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker

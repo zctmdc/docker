@@ -33,18 +33,21 @@ if [[ -n "$(echo ${app} | grep -E '^(/usr/local/sbin/)?(edge)|(supernode)$')" ]]
             MODE="STATIC"
         fi
         if [[ "${USE_DEFALT_ARG,,}" == "true" ]]; then
-            if [[ "${VERSION_B_S_rC%%_*}" == "v1" ]]; then
+
+            case "${VERSION_B_S_rC%%_*}" in
+            "v1")
                 N2N_ARGS="${N2N_ARGS} -br"
-            fi
-            if [[ "${VERSION_B_S_rC%%_*}" == "v2" ]]; then
+                ;;
+            "v2")
                 N2N_ARGS="${N2N_ARGS} -EfrA"
-            fi
-            if [[ "${VERSION_B_S_rC%%_*}" == "v2s" ]]; then
+                ;;
+            "v2s")
                 N2N_ARGS="${N2N_ARGS} -bfr -L auto"
-            fi
-            if [[ "${VERSION_B_S_rC%%_*}" == "v3" ]]; then
+                ;;
+            "v3")
                 N2N_ARGS="${N2N_ARGS} -Efr -e auto"
-            fi
+                ;;
+            esac
         fi
     elif [[ -n "$(echo ${app} | grep -E '^(/usr/local/sbin/)?supernode$')" ]]; then
         MODE="SUPERNODE"
