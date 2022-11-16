@@ -3,20 +3,7 @@
 # set -x
 . init_logger.sh
 
-
-INIT_EDGE_MAC_ADDRESS() {
-    
-  if [[ -n "${EDGE_MAC}" ]]; then
-    # 判断 $EDGE_MAC 是否为有效MAC地址
-    if [[ "${EDGE_MAC}" =~ ^([0-9a-fA-F]{2}:){5}[0-9a-fA-F]{2}$ ]]; then
-      EDGE_MAC=$(echo $EDGE_MAC | tr '[a-z]' '[A-Z]')
-    else
-      EDGE_MAC=""
-      return
-    fi
-    return
-  fi
-
+INIT_EDGE_MAC_FROM_WAN() {
   if [[ -n "$GET_MAC_FROM_WAN" ]]; then
     return
   fi

@@ -1,0 +1,339 @@
+name: Docker
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+on:
+  schedule:
+    - cron: "28 9 * * *"
+  push:
+    branches: ["*"]
+  pull_request:
+    branches: ["*"]
+
+  workflow_dispatch:
+    inputs:
+      version_b_s_rc:
+        description: "version_b_s_rc e.g. v2_2.7.0_r528 | v2"
+        required: false
+      force_push:
+        description: "force push to registry"
+        required: true
+        type: boolean
+        default: false
+
+  workflow_call:
+    inputs:
+      version_b_s_rc:
+        required: true
+        type: string
+      force_push:
+        description: "force push to registry"
+        required: true
+        type: boolean
+        default: false
+
+env:
+  # Use docker.io for Docker Hub if empty
+  # REGISTRY: ghcr.io
+  REGISTRY: docker.io
+  # github.repository as <account>/<repo>
+  VERSIONS_B_S_rC: v3
+  FORCE_PUSH: false
+  TEST_PLATFORM: "linux/386"
+
+jobs:
+  build:
+    env:
+      APP_NAME: n2n_ntop
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      # This is used to complete the identity challenge
+      # with sigstore/fulcio when running outside of PRs.
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Check pushed latest
+        id: get-pushed-latest
+        uses: sergeysova/jq-action@v2
+        with:
+          cmd: curl https://hub.docker.com/v2/repositories/zctmdc/n2n_lucktu/tags/latest  | jq '.digest' | sed 's/\"//g'
+
+      - name: Check init-build-version
+        id: init-build-version
+        run: |
+          PROJECT_ROOT_DIR=$(pwd)
+          echo "init-version - PROJECT_ROOT_DIR: ${PROJECT_ROOT_DIR}"
+          cd ${{ env.APP_NAME }}/scripts
+            chmod +x *.sh
+            . init_logger.sh
+            if [[ -n "${{ inputs.version_b_s_rc }}" ]];then
+              BUILD_VERSION_B_S_rC=${{ inputs.version_b_s_rc }}
+              FORCE_PUSH=${{ inputs.force_push }}
+            elif [[ -n "${{ env.version_b_s_rc }}" ]];then
+              BUILD_VERSION_B_S_rC=${{ env.version_b_s_rc }}
+              FORCE_PUSH=${{ env.FORCE_PUSH }}
+            fi
+            LOG_INFO "BUILD_VERSION_B_S_rC: ${BUILD_VERSION_B_S_rC}"
+            LOG_INFO "FORCE_PUSH: ${FORCE_PUSH}"
+            echo "BUILD_BIG_VERSION=${BUILD_VERSION_B_S_rC}" >> $GITHUB_OUTPUT
+            echo "BUILD_VERSION_B_S_rC=${BUILD_VERSION_B_S_rC}" >> $GITHUB_OUTPUT
+            echo "FORCE_PUSH=${FORCE_PUSH}" >> $GITHUB_OUTPUT
+
+      - name: Check pushed
+        id: get-pushed
+        uses: indiesdev/curl@v1.1
+        with:
+          # The target URL
+          # Required: true if custom-config is not set
+          url: https://hub.docker.com/v2/repositories/zctmdc/n2n_lucktu/tags/${{ steps.init-version.outputs.BUILD_VERSION_B_S_rC }}
+
+      - name: Check pushed architectures
+        id: get-pushed-architectures
+        uses: sergeysova/jq-action@v2
+        with:
+          cmd: echo ${{ steps.get-pushed.outputs.response }} | jq '.images[]|{architecture}|..|.architecture?' | sed 's/\"//g'
+
+      - name: Check pushed digest
+        id: get-pushed-digest
+        uses: sergeysova/jq-action@v2
+        with:
+          cmd: echo ${{ steps.get-pushed.outputs.response }} | jq '.digest' | sed 's/\"//g'
+
+      - name: Check init-build-infos
+        id: init-build-infos
+        run: |
+          PROJECT_ROOT_DIR=$(pwd)
+          echo "init-build-infos - PROJECT_ROOT_DIR: ${PROJECT_ROOT_DIR}"
+          cd ${{ env.APP_NAME }}/scripts
+            chmod +x *.sh
+            . init_logger.sh
+            . sel_platform.sh
+
+            VERSION_B_S_rC=${{ steps.init-build-version.outputs.VERSION_B_S_rC }}
+            LOG_INFO "BUILD_VERSION_B_S_rC: ${BUILD_VERSION_B_S_rC}"
+            echo "BUILD_VERSION_B_S_rC=${BUILD_VERSION_B_S_rC}" >> $GITHUB_OUTPUT
+            echo "BUILD_BIG_VERSION=${BUILD_VERSION_B_S_rC}" >> $GITHUB_OUTPUT
+
+            build_platforms=''
+            build_architectures=${{ steps.get-pushed-architectures.outputs.value }}
+            for architectures in ${build_architectures[@]};do
+              SEL_PLATFORM ${architectures}
+              build_platforms="${build_platforms},${platform}"
+            done
+            BUILD_PLATFORMS="${build_platforms:1}"
+            LOG_INFO "BUILD_PLATFORMS: ${BUILD_PLATFORMS}"
+            echo "BUILD_PLATFORMS=${BUILD_PLATFORMS}" >> $GITHUB_OUTPUT
+
+            if [[ ${{ steps.get-pushed-digest.outputs.value }} == ${{ steps.get-pushed-latest.outputs.value }} ]];then
+              LATEST_VERSION=true
+              LOG_INFO "LATEST_VERSION: ${LATEST_VERSION}"
+              echo "LATEST_VERSION=${LATEST_VERSION}" >> $GITHUB_OUTPUT
+            fi
+
+            if [[ ${BUILD_PLATFORMS} =~ ${{ env.TEST_PLATFORM }} ]];then
+              echo "TEST_PLATFORM=${{ env.TEST_PLATFORM }}" >> $GITHUB_OUTPUT
+            else
+              echo "TEST_PLATFORM=${BUILD_PLATFORMS%%,*}" >> $GITHUB_OUTPUT
+            fi
+
+      - name: get tag_last_pushed
+        id: get_tag_last_pushed
+        uses: sergeysova/jq-action@v2
+        with:
+          cmd: curl -k -sS https://hub.docker.com/v2/repositories/${{ secrets.REGISTRY_USERNAME }}/n2n_ntop/tags/${{ needs.init-version.outputs.BUILD_VERSION_B_S_rC }} | jq '.tag_last_pushed'
+
+      - name: Check tag_last_pushed
+        id: tag_last_pushed
+        run: |
+
+          LOG_INFO() {
+          echo -e "\033[0;32m[INFO] $* \033[0m"
+          }
+          LOG_WARNING() {
+              echo -e "\033[0;33m[WARNING] $* \033[0m"
+          }
+          LOG_ERROR() {
+              echo -e "\033[0;31m[ERROR] $* \033[0m"
+          }
+          # e.g. "2022-10-30T19:29:49.877019Z"
+          last_pulled_date=${{ steps.get_tag_last_pushed.outputs.value }}
+          echo "last_pulled_date=${last_pulled_date}" >> $GITHUB_OUTPUT
+          LOG_INFO "check tag - ${{ needs.init-version.outputs.BUILD_VERSION_B_S_rC }}"
+          LOG_INFO "last_pulled_date - ${last_pulled_date}"
+          if [[ "true" == "${{ env.FORCE_PUSH }}" || "true" == "${{ inputs.force_push }}" ]]; then
+              LOG_WARNING "强制 编译/推送"
+          elif [[ "${last_pulled_date,,}" != "null" || "${{ needs.init-version.outputs.BUILD_PLATFORMS }}" == "" ]]; then
+              echo "skip_build_push=true" >> $GITHUB_OUTPUT
+              LOG_INFO "跳过 编译/推送"
+              exit 0
+          else
+              LOG_INFO "准备 编译/推送"
+          fi
+
+      # Install the cosign tool except on PR
+      # https://github.com/sigstore/cosign-installer
+      - name: Install cosign
+        if: github.event_name != 'pull_request'
+        uses: sigstore/cosign-installer@main
+        with:
+          cosign-release: "v1.13.1"
+
+      # Workaround: https://github.com/docker/build-push-action/issues/461
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Login against a Docker registry except on PR
+      # https://github.com/docker/login-action
+      - name: Log into registry ${{ env.REGISTRY }}
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_TOKEN }}
+
+      # Extract metadata (tags, labels) for Docker
+      # https://github.com/docker/metadata-action
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}
+          labels: |
+            org.opencontainers.image.version=${{ steps.init-build-infos.outputs.BUILD_VERSION_B_S_rC }}
+          tags: |
+            type=raw,value=${{ steps.init-build-infos.outputs.BUILD_VERSION_B_S_rC }}
+            type=raw,value=latest,enable=${{ steps.init-build-infos.outputs.LATEST_VERSION == 'true' }}
+
+      # Build and push Docker image with Buildx (don't push on PR)
+      # https://github.com/docker/build-push-action
+      - name: Build and load Docker image
+        id: build-and-push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          load: true
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:buildcache
+          cache-to: type=inline
+
+      - name: Test n2n
+        id: n2n-test
+        run: |
+          LOG_INFO() {
+              echo -e "\033[0;32m[INFO] $* \033[0m"
+          }
+          LOG_WARNING() {
+              echo -e "\033[0;33m[WARNING] $* \033[0m"
+          }
+          LOG_ERROR() {
+              echo -e "\033[0;31m[ERROR] $* \033[0m"
+          }
+          set -e
+          LOG_WARNING "Test start: ${{ steps.init-build-infos.outputs.BUILD_VERSION_B_S_rC }}"
+          platforms=${{ steps.init-build-infos.outputs.TEST_PLATFORM }}
+          l_platforms=(${platforms//,/ })
+          for test_platform in ${l_platforms[@]};do
+            LOG_WARNING "Test for platform: ${test_platform}"
+            docker network create --driver bridge --subnet=172.71.0.0/16 n2n
+            mkdir -p ./test/
+            cat <<-EOF > ./test/edge.conf
+            # 虚拟网卡名字
+            -d=T3
+            # edge ip
+            -a=10.20.30.40
+            # community 名字
+            -c=n2n
+            # community 密码
+            -k=test
+            # supernode 地址和端口
+            -l=172.71.0.20:7777
+            EOF
+            docker run -d --name n2n_supernode \
+              --network n2n --ip 172.71.0.20 \
+              -e MODE="SUPERNODE" \
+              -e SUPERNODE_PORT=7777 \
+              ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test
+
+            docker run -d --name n2n_edge_dhcpd \
+              --network n2n --privileged \
+              -e MODE="DHCPD" \
+              -e EDGE_IP="10.20.30.1" \
+              -e EDGE_COMMUNITY="n2n" \
+              -e EDGE_KEY="test" \
+              -e SUPERNODE_HOST=172.71.0.20 \
+              -e SUPERNODE_PORT=7777 \
+              -e EDGE_ENCRYPTION=A3 \
+              -e EDGE_TUN=n2n_edge_dhcpd \
+              ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test
+
+            docker run -d --name n2n_edge_dhcpc \
+              --network n2n --privileged \
+              -e MODE="DHCPC" \
+              -e EDGE_COMMUNITY="n2n" \
+              -e EDGE_KEY="test" \
+              -e SUPERNODE_HOST=172.71.0.20 \
+              -e SUPERNODE_PORT=7777 \
+              -e EDGE_ENCRYPTION=A3 \
+              -e EDGE_TUN=n2n_edge_dhcpc \
+              ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test \
+
+            docker run -d --name n2n_edge_static \
+              --network n2n --privileged \
+              -e MODE="STATIC" \
+              -v $(pwd)/test/:/n2n/conf/ \
+              ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test
+
+            docker exec -ti n2n_edge_dhcpd \
+              /bin/busybox ping -c 1 -w 5 -q 10.20.30.41 || exit 1
+
+            docker exec -ti n2n_edge_dhcpc \
+              /bin/busybox ping -c 1 -w 5 -q 10.20.30.1 || exit 1
+
+            docker exec -ti n2n_edge_static \
+              /bin/busybox ping -c 1 -w 5 -q 172.71.0.20 || exit 1
+
+            # LOG_WARNING "Test done - ALL"
+          done
+          LOG_WARNING "Test done: ${{ steps.init-build-infos.outputs.BUILD_VERSION_B_S_rC }}"
+          echo "build_dockerfile=Dockerfile">> $GITHUB_OUTPUT
+          exit 0
+
+      # Build and push Docker image with Buildx (don't push on PR)
+      # https://github.com/docker/build-push-action
+      - name: Build and push Docker image
+        id: build-and-push
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          file: ${{steps.n2n-test.outputs.build_dockerfile}}
+          platforms: ${{ steps.init-build-infos.outputs.BUILD_PLATFORMS }}
+          push: ${{ github.event_name != 'pull_request' }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          # no-cache: true
+          cache-from: type=inline
+          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:buildcache,mode=max
+
+      # Sign the resulting Docker image digest except on PRs.
+      # This will only write to the public Rekor transparency log when the Docker
+      # repository is public to avoid leaking data.  If you would like to publish
+      # transparency data even for private images, pass --force to cosign below.
+      # https://github.com/sigstore/cosign
+      - name: Sign the published Docker image
+        if: ${{ github.event_name != 'pull_request' }}
+        env:
+          COSIGN_EXPERIMENTAL: "true"
+        # This step uses the identity token to provision an ephemeral certificate
+        # against the sigstore community Fulcio instance.
+        run: echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}

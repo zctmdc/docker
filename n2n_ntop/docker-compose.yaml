@@ -4,27 +4,29 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: zctmdc/n2n_ntop:Beta
+    image: zctmdc/n2n_ntop
+    container_name: n2n_supernode
     restart: always
     privileged: true
     ports:
-      - 10086:10086/udp
+      - 10090:10090/udp
     environment:
       - MODE=SUPERNODE
-      - SUPERNODE_PORT=10086
+      - SUPERNODE_PORT=10090
       - N2N_ARGS=-f
 
   n2n_edge_dhcpd:
     depends_on:
       - n2n_supernode
-    image: zctmdc/n2n_ntop:Beta
+    image: zctmdc/n2n_ntop
+    container_name: n2n_edge_dhcpd
     restart: always
     privileged: true
     # network_mode: host
     environment:
       - MODE=DHCPD
       - SUPERNODE_HOST=n2n_supernode
-      - SUPERNODE_PORT=10086
+      - SUPERNODE_PORT=10090
       - EDGE_TUN=edge_dhcpd
       - EDGE_IP=10.10.10.1
       - EDGE_COMMUNITY=n2n
@@ -36,19 +38,20 @@ services:
     links:
       - n2n_supernode
 
-  n2n_edge_dhcp:
+  n2n_edge_dhcpc:
     depends_on:
-      - n2n_edge_dhcpd
-      - n2n_supernode
-    image: zctmdc/n2n_ntop:Beta
+      n2n_edge_dhcpd:
+        condition: service_healthy
+    image: zctmdc/n2n_ntop
+    container_name: n2n_edge_dhcpc
     restart: always
     privileged: true
     # network_mode: host
     environment:
-      - MODE=DHCP
+      - MODE=DHCPC
       - SUPERNODE_HOST=n2n_supernode
-      - SUPERNODE_PORT=10086
-      - EDGE_TUN=edge_dhcp
+      - SUPERNODE_PORT=10090
+      - EDGE_TUN=edge_dhcpc
       - EDGE_COMMUNITY=n2n
       - EDGE_KEY=test
       - EDGE_ENCRYPTION=A3
@@ -59,14 +62,15 @@ services:
   n2n_edge_static:
     depends_on:
       - n2n_supernode
-    image: zctmdc/n2n_ntop:Beta
+    image: zctmdc/n2n_ntop
+    container_name: n2n_edge_static
     restart: always
     privileged: true
     # network_mode: host
     environment:
       - MODE=STATIC
       - SUPERNODE_HOST=n2n_supernode
-      - SUPERNODE_PORT=10086
+      - SUPERNODE_PORT=10090
       - EDGE_TUN=edge_static
       - EDGE_IP=10.10.10.10
       - EDGE_COMMUNITY=n2n

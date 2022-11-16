@@ -1,4 +1,4 @@
-# docker n2n_ntop:Beta
+# docker n2n_ntop
 
 ## 关于
 
@@ -45,59 +45,77 @@ n2n 尽可能在 edge 节点之间建立直接的 P2P 连接;如果不可能（�
 
 ```bash
 docker run --rm -ti \
- -p 10086:10086 zctmdc/n2n_ntop:Beta \
- supernode -l 10086 -v
+ -p 10090:10090  \
+ zctmdc/n2n_ntop \
+ supernode -p 10090 -vf
 ```
 
 ### 建立 _supernode_
 
--   前台模式
+- 前台模式
 
 ```bash
 docker run \
   --rm -ti \
   -e MODE="SUPERNODE" \
-  -p 10086:10086/udp \
-  zctmdc/n2n_ntop:Beta
+  -p 10090:10090/udp \
+  zctmdc/n2n_ntop
 ```
 
--   后台模式
+- 后台模式
 
 ```bash
 docker run \
   -d --restart=always \
-  --name=supernode \
+  --name=supernode_t1 \
   -e MODE="SUPERNODE" \
-  -e SUPERNODE_PORT=10086 \
-  -p 10086:10086/udp \
-  zctmdc/n2n_ntop:Beta
+  -e SUPERNODE_PORT=10090 \
+  -p 10090:10090/udp \
+  zctmdc/n2n_ntop
 ```
 
 ### 建立 _edge_
 
--   前台模式
+- 前台模式
 
 ```bash
-docker run --rm -ti --privileged zctmdc/n2n_ntop:Beta
+docker run \
+  --rm -ti \
+  --privileged \
+  --net=host \
+  -e MODE="DHCPD" \
+  -e EDGE_IP="10.10.10.1" \
+  -e EDGE_COMMUNITY="n2n" \
+  -e EDGE_KEY="test" \
+  -e SUPERNODE_HOST=127.0.0.1 \
+  -e SUPERNODE_PORT=10090 \
+  -e EDGE_ENCRYPTION=A3 \
+  -e EDGE_TUN=edge_dhcpd_t1 \
+  zctmdc/n2n_ntop
 ```
 
--   后台模式
+- 后台模式
 
 ```bash
 docker run \
   -d --restart=always \
-  --name n2n_edge \
-  --privileged \
+  --name n2n_edge_dhcpc_t1 \
+  --privileged  \
   --net=host \
-  -e MODE="STATIC" \
-  -e EDGE_IP="10.10.10.10" \
+  -e MODE="DHCPC" \
   -e EDGE_COMMUNITY="n2n" \
   -e EDGE_KEY="test" \
-  -e SUPERNODE_HOST=n2n.lucktu.com \
-  -e SUPERNODE_PORT=10086 \
+  -e SUPERNODE_HOST=127.0.0.1 \
+  -e SUPERNODE_PORT=10090 \
   -e EDGE_ENCRYPTION=A3 \
-  -e N2N_ARGS="-f" \
-  zctmdc/n2n_ntop:Beta
+  -e EDGE_TUN=edge_dhcpc_t1  \
+  zctmdc/n2n_ntop
+```
+
+- test
+
+```bash
+docker exec -ti n2n_edge_dhcpc_t1 ifconfig edge_dhcpc_t1
 ```
 
 ## 更多模式
@@ -107,11 +125,11 @@ docker run \
 ```bash
 docker run \
   -d --restart=always \
-  --name=supernode \
+  --name=supernode_t2 \
   -e MODE="SUPERNODE" \
-  -e SUPERNODE_PORT=10086 \
-  -p 10086:10086/udp \
-  zctmdc/n2n_ntop:Beta
+  -e SUPERNODE_PORT=10090 \
+  -p 10090:10090/udp \
+  zctmdc/n2n_ntop
 ```
 
 ### DHCPD - DHCP 服务端模式
@@ -119,18 +137,18 @@ docker run \
 ```bash
 docker run \
   -d --restart=always \
-  --name n2n_edge \
+  --name n2n_edge_dhcpd_t2 \
   --privileged \
   --net=host \
   -e MODE="DHCPD" \
   -e EDGE_IP="10.10.10.1" \
   -e EDGE_COMMUNITY="n2n" \
   -e EDGE_KEY="test" \
-  -e SUPERNODE_HOST=n2n.lucktu.com \
-  -e SUPERNODE_PORT=10086 \
+  -e SUPERNODE_HOST=127.0.0.1 \
+  -e SUPERNODE_PORT=10090 \
   -e EDGE_ENCRYPTION=A3 \
-  -e N2N_ARGS="-f" \
-  zctmdc/n2n_ntop:Beta
+  -e EDGE_TUN=edge_dhcpd_t2 \
+  zctmdc/n2n_ntop
 ```
 
 如果你需要自定义 DHCPD 服务配置文件
@@ -139,22 +157,22 @@ docker run \
 -v path/to/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro \
 ```
 
-### DHCP - DHCP 动态 IP 模式
+### DHCPC - DHCP 动态 IP 模式
 
 ```bash
 docker run \
   -d --restart=always \
-  --name n2n_edge \
+  --name n2n_edge_dhcpc_t2 \
   --privileged \
   --net=host \
-  -e MODE="DHCP" \
+  -e MODE="DHCPC" \
   -e EDGE_COMMUNITY="n2n" \
   -e EDGE_KEY="test" \
-  -e SUPERNODE_HOST=n2n.lucktu.com \
-  -e SUPERNODE_PORT=10086 \
+  -e SUPERNODE_HOST=127.0.0.1 \
+  -e SUPERNODE_PORT=10090 \
   -e EDGE_ENCRYPTION=A3 \
-  -e N2N_ARGS="-f" \
-  zctmdc/n2n_ntop:Beta
+  -e EDGE_TUN=edge_dhcpc_t2 \
+  zctmdc/n2n_ntop
 ```
 
 ### STATIC - 静态 IP 模式
@@ -162,37 +180,37 @@ docker run \
 ```bash
 docker run \
   -d --restart=always \
-  --name n2n_edge \
+  --name n2n_edge_static_t2 \
   --privileged \
   --net=host \
   -e MODE="STATIC" \
-  -e EDGE_IP="10.10.10.10" \
+  -e EDGE_IP="10.10.10.11" \
   -e EDGE_COMMUNITY="n2n" \
   -e EDGE_KEY="test" \
-  -e SUPERNODE_HOST=n2n.lucktu.com \
-  -e SUPERNODE_PORT=10086 \
+  -e SUPERNODE_HOST=127.0.0.1 \
+  -e SUPERNODE_PORT=10090 \
   -e EDGE_ENCRYPTION=A3 \
-  -e N2N_ARGS="-f" \
-  zctmdc/n2n_ntop:Beta
+  -e EDGE_TUN=edge_static_t2 \
+  zctmdc/n2n_ntop
 ```
 
-## 使用 _docker-compose_ 配置运行
+## 使用 _docker compose_ 配置运行
 
 see: <docker-compose.yaml>
 
 ```bash
-# docker-compose build #编译
+# docker compose build #编译
 
-#启动 n2n_edge_dhcp
-# docker-compose up n2n_edge_dhcp #前台运行 n2n_edge_dhcp
-# docker-compose up -d n2n_edge_dhcp #后台运行
+docker compose up n2n_edge_dhcpc #前台运行 n2n_edge_dhcpc 依赖项将启动
+docker compose exec n2n_edge_dhcpc busybox ping  10.10.10.1 # 测试
+docker compose down
 ```
 
 ## 环境变量介绍
 
 |          变量名 | 变量说明              | 备注                     | 对应参数                                                                                                    |
 | --------------: | :-------------------- | :----------------------- | :---------------------------------------------------------------------------------------------------------- |
-|            MODE | 模式                  | 对应启动的模式           | _`SUPERNODE`_ _`DHCPD`_ _`DHCP`_ _`STATIC`_                                                                 |
+|            MODE | 模式                  | 对应启动的模式           | _`SUPERNODE`_ _`DHCPD`_ _`DHCPC`_ _`STATIC`_                                                                |
 |  SUPERNODE_PORT | 超级节点端口          | 在 SUPERNODE/EDGE 中使用 | -l $SUPERNODE_PORT                                                                                          |
 |  SUPERNODE_HOST | 要连接的 N2N 超级节点 | IP/HOST                  | -l $SUPERNODE_HOST:$SUPERNODE_PORT                                                                          |
 |         EDGE_IP | 静态 IP               | 在静态模式和 DHCPD 使用  | -a $EDGE_IP                                                                                                 |
@@ -201,6 +219,7 @@ see: <docker-compose.yaml>
 | EDGE_ENCRYPTION | 加密方式              | edge 间连接加密方式      | -A1 = disabled, -A2 = Twofish (default), -A3 or -A (deprecated) = AES-CBC, -A4 = ChaCha20, -A5 = Speck-CTR. |
 |        EDGE_TUN | 网卡名                | edge 使用的网卡名        | -d $EDGE_TUN                                                                                                |
 |        N2N_ARGS | 更多参数              | 运行时附加的更多参数     | -v -f                                                                                                       |
+|  USE_DEFALT_ARG | 默认参数              | 运行时附加的默认参数     | `false` / `true` ：`v1:-br` , `v2:-EfrA` , `v2s:--bfr -L auto` , `v3:-Efr -e auto`                          |
 
 更多帮助请参考 [好运博客][好运博客] 中 [N2N 新手向导及最新信息][n2n 新手向导及最新信息] , [N2N 支持参数版本一览表][n2n_args]
 

@@ -1,10 +1,7 @@
 ARG VERSION_B_S_rC
 FROM zctmdc/n2n_lucktu:${VERSION_B_S_rC}  
-
-
 ARG DEBIAN_FRONTEND=noninteractive  
 RUN apt-get -qq update  
-
 RUN apt-get -qq -y install \
   apt-utils tzdata \
   && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
@@ -16,29 +13,31 @@ ENV TZ Asia/Shanghai
 ##################-----##################
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* 
 
-
-COPY ./scripts/*.sh /opt/n2n/
-
-RUN chmod a+x /opt/n2n/*
-
 ENV MODE SUPERNODE
-
-
-ENV SUPERNODE_HOST n2n.lucktu.com
-ENV SUPERNODE_PORT 10086
 
 ENV EDGE_IP 10.10.10.10
 ENV EDGE_NETMASK 255.255.255.0
 ENV EDGE_COMMUNITY n2n
 ENV EDGE_KEY test
-ENV EDGE_ENCRYPTION A3
-ENV EDGE_TUN edge0
+ENV EDGE_ENCRYPTION -A3
+ENV EDGE_TUN ''
 
-ENV N2N_ARGS "-v -f"
+ENV N2N_ARGS ""
+# v1:-br v2:-EfrA v2s--bfr -L auto v3:-Efr -e auto
+ENV USE_DEFALT_ARG "true"
 
 ENV EDGE_MAC ""
 ENV GET_MAC_FROM_WAN "false"
 
-ENTRYPOINT [ "/bin/bash" , "-c" , "/opt/n2n/run.sh" ]
+WORKDIR /n2n/
+VOLUME [ "/n2n/conf/" ]
 
-HEALTHCHECK --interval=20s --timeout=10s CMD /opt/n2n/n2n_healthcheck.sh
+ARG DEFAULT_SUPERNODE_HOST=127.0.0.1
+ARG DEFAULT_SUPERNODE_PORT=10090
+ENV SUPERNODE_HOST ${DEFAULT_SUPERNODE_HOST}
+ENV SUPERNODE_PORT ${DEFAULT_SUPERNODE_PORT}
+
+COPY ./scripts/*.sh /n2n/
+RUN chmod a+x /n2n/*
+ENTRYPOINT ["/n2n/docker-entrypoint.sh"]
+HEALTHCHECK --interval=20s --timeout=10s CMD /n2n/n2n_healthcheck.sh
