@@ -52,6 +52,7 @@ docker run --rm -ti \
 
 ```bash
 docker run --rm -ti \
+  --privileged \
   -e MODE="DHCPC" \
   zctmdc/n2n_ntop
 ```
