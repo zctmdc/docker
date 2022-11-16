@@ -321,7 +321,7 @@ jobs:
               -e MODE="STATIC" \
               -v $(pwd)/test/:/n2n/conf/ \
               ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test
-
+            sleep 10
             docker exec -ti n2n_edge_dhcpd \
               /bin/busybox ping -c 1 -w 5 -q 10.20.30.41 || exit 1
 
