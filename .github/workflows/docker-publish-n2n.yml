@@ -264,7 +264,9 @@ jobs:
           no-cache: true
           tags: ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test
           labels: ${{ steps.meta.outputs.labels }}
-
+          build-args: |
+            VERSION_B_S_rC=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
+            
       - name: Test n2n
         id: n2n-test
         run: |
