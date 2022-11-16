@@ -373,7 +373,7 @@ jobs:
           for test_platform in ${l_platforms[@]};do
             LOG_WARNING "Test for platform: ${test_platform}"
             export TEST_PLATFORM="${test_platform}"
-              cd ./script/
+              cd ./scripts/
               . ./compose-test.sh
             LOG_WARNING "Test done - ${test_platform}"
           done
@@ -424,7 +424,7 @@ jobs:
           for test_platform in ${l_platforms[@]};do
             LOG_WARNING "Test for platform: ${test_platform}"
             export TEST_PLATFORM="${test_platform}"
-              cd ./script/
+              cd ./scripts/
               . ./compose-test.sh
             LOG_WARNING "Test done - ${test_platform}"
           done
