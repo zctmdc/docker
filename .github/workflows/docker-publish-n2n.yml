@@ -280,6 +280,7 @@ jobs:
               echo -e "\033[0;31m[ERROR] $* \033[0m"
           }
           set -e
+          cd /n2n_ntop/
           LOG_WARNING "Test start: ${{ steps.init-build-infos.outputs.BUILD_VERSION_B_S_rC }}"
           platforms=${{ steps.init-build-infos.outputs.TEST_PLATFORM }}
           l_platforms=(${platforms//,/ })
@@ -293,7 +294,7 @@ jobs:
               -e MODE="SUPERNODE" \
               -e SUPERNODE_PORT=7777 \
               ${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test
-
+            sleep 10
             docker run -d --name n2n_edge_dhcpd \
               --network n2n --privileged \
               -e MODE="DHCPD" \
@@ -305,6 +306,7 @@ jobs:
               -e EDGE_ENCRYPTION=A3 \
               -e EDGE_TUN=n2n_edge_dhcpd \
               ${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test
+            sleep 10
 
             docker run -d --name n2n_edge_dhcpc \
               --network n2n --privileged \
@@ -315,17 +317,24 @@ jobs:
               -e SUPERNODE_PORT=7777 \
               -e EDGE_ENCRYPTION=A3 \
               -e EDGE_TUN=n2n_edge_dhcpc \
-              ${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test \
-         
+              ${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test 
+            sleep 10
+
             docker run -d --name n2n_edge_static \
               --network n2n --privileged \
               -e MODE="STATIC" \
               -v $(pwd)/test/:/n2n/conf/ \
               ${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test
+            sleep 10
 
             LOG_WARNING just wait
-            sleep 10
+            sleep 20
             LOG_WARNING try testing...
+            docker logs n2n_supernode
+            docker logs n2n_edge_dhcpd
+            docker logs n2n_edge_dhcpc
+            docker logs n2n_edge_static
+            
             docker exec -i n2n_edge_dhcpd \
               /bin/busybox ping -c 1 -w 5 -q 10.20.30.41 || echo faild 10.20.30.41
 

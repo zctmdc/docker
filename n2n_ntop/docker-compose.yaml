@@ -17,7 +17,8 @@ services:
 
   n2n_edge_dhcpd:
     depends_on:
-      - n2n_supernode
+      n2n_supernode:
+        condition: service_healthy
     image: zctmdc/n2n_ntop
     container_name: n2n_edge_dhcpd
     restart: always
@@ -61,7 +62,8 @@ services:
 
   n2n_edge_static:
     depends_on:
-      - n2n_supernode
+      n2n_supernode:
+        condition: service_healthy
     image: zctmdc/n2n_ntop
     container_name: n2n_edge_static
     restart: always
