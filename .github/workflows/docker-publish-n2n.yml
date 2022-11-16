@@ -95,7 +95,7 @@ jobs:
           # Required: true if custom-config is not set
           url: https://hub.docker.com/v2/repositories/zctmdc/n2n_lucktu/tags/${{ steps.init-build-version.outputs.BUILD_VERSION_B_S_rC }}
       
-      - run: echo ${{ steps.get-pushed.outputs.response }}
+      - run: echo ${{ steps.get-pushed.outputs.response.data }}
 
       - name: Check pushed architectures
         id: get-pushed-architectures
