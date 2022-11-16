@@ -133,8 +133,10 @@ jobs:
 
             build_platforms=''
             build_architectures="${{ steps.get-pushed-architectures.outputs.value }}"
+            if [[ "${build_architectures: -1}" == "," ]]; then
+              build_architectures="${build_architectures%?}"
+            fi
             l_build_architectures=(${build_architectures//,/ })
-            if 
             for architectures in ${l_build_architectures[@]}; do
               if [[ -z "$(echo ${architectures})" ]];then
                 continue
