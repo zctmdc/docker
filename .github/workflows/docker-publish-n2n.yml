@@ -132,10 +132,10 @@ jobs:
             echo "FORCE_PUSH=${FORCE_PUSH}" >> $GITHUB_OUTPUT
 
             build_platforms=''
-            build_architectures=${{ steps.get-pushed-architectures.outputs.value }}
+            build_architectures="${{ steps.get-pushed-architectures.outputs.value }}"
             l_build_architectures=(${build_architectures//,/ })
             if 
-            for architectures in ${l_build_architectures[@]};do
+            for architectures in ${l_build_architectures[@]}; do
               if [[ -z "$(echo ${architectures})" ]];then
                 continue
               fi
@@ -147,31 +147,35 @@ jobs:
             echo "BUILD_PLATFORMS=${BUILD_PLATFORMS}" >> $GITHUB_OUTPUT
 
             if [[ "${{ steps.get-pushed-digest.outputs.value }}" == "${{ steps.get-pushed-latest.outputs.value }}" ]];then
-              LATEST_VERSION=true
+              LATEST_VERSION="true"
               LOG_INFO "LATEST_VERSION: ${LATEST_VERSION}"
               echo "LATEST_VERSION=${LATEST_VERSION}" >> $GITHUB_OUTPUT
             fi
 
-            if [[ ${BUILD_PLATFORMS} =~ ${{ env.TEST_PLATFORM }} ]];then
+            if [[ "${BUILD_PLATFORMS}" =~ "${{ env.TEST_PLATFORM }}" ]];then
               echo "TEST_PLATFORM=${{ env.TEST_PLATFORM }}" >> $GITHUB_OUTPUT
             else
               echo "TEST_PLATFORM=${BUILD_PLATFORMS%%,*}" >> $GITHUB_OUTPUT
             fi
 
             DEFAULT_SUPERNODE_HOST="n2n.zctmdc.cc"
-            case "${VERSION_B_S_rC%%_*}" in
-            "v1")
-                DEFAULT_SUPERNODE_PORT="10082"
-                ;;
-            "v2")
-                DEFAULT_SUPERNODE_PORT="10086"
-                ;;
-            "v2s")
-                DEFAULT_SUPERNODE_PORT="10088"
-                ;;
-            "v3")
-                DEFAULT_SUPERNODE_PORT="10090"
-                ;;
+            case "${BUILD_BIG_VERSION}" in
+              "v1")
+                  DEFAULT_SUPERNODE_PORT="10082"
+                  ;;
+              "v2")
+                  DEFAULT_SUPERNODE_PORT="10086"
+                  ;;
+              "v2s")
+                  DEFAULT_SUPERNODE_PORT="10088"
+                  ;;
+              "v3")
+                  DEFAULT_SUPERNODE_PORT="10090"
+                  ;;
+              *)
+                  DEFAULT_SUPERNODE_HOST="127.0.0.1"
+                  DEFAULT_SUPERNODE_PORT="7777"
+                  ;;
             esac
             LOG_INFO "DEFAULT_SUPERNODE_HOST: ${DEFAULT_SUPERNODE_HOST}"
             LOG_INFO "DEFAULT_SUPERNODE_PORT: ${DEFAULT_SUPERNODE_PORT}"
