@@ -40,7 +40,7 @@ env:
   # REGISTRY: ghcr.io
   REGISTRY: docker.io
   # github.repository as <account>/<repo>
-  VERSIONS_B_S_rC: v3
+  VERSIONS_B_S_rC: "v3"
   FORCE_PUSH: false
   TEST_PLATFORM: "linux/386"
 
@@ -77,7 +77,7 @@ jobs:
             if [[ -n "${{ inputs.version_b_s_rc }}" ]];then
               BUILD_VERSION_B_S_rC=${{ inputs.version_b_s_rc }}
               FORCE_PUSH=${{ inputs.force_push }}
-            elif [[ -n "${{ env.version_b_s_rc }}" ]];then
+            elif [[ -n "${{ env.VERSIONS_B_S_rC }}" ]];then
               BUILD_VERSION_B_S_rC=${{ env.version_b_s_rc }}
               FORCE_PUSH=${{ env.FORCE_PUSH }}
             fi
@@ -94,18 +94,18 @@ jobs:
           # The target URL
           # Required: true if custom-config is not set
           url: https://hub.docker.com/v2/repositories/zctmdc/n2n_lucktu/tags/${{ steps.init-version.outputs.BUILD_VERSION_B_S_rC }}
-      - run: echo ${{ steps.api.outputs.response }}
+      - run: echo ${{ steps.api.outputs.response.data }}
       - name: Check pushed architectures
         id: get-pushed-architectures
         uses: sergeysova/jq-action@v2
         with:
-          cmd: echo ${{ steps.get-pushed.outputs.response }} | jq '.images[]|{architecture}|..|.architecture?' | sed 's/\"//g'
+          cmd: echo ${{ steps.get-pushed.outputs.response.data }} | jq '.images[]|{architecture}|..|.architecture?' | sed 's/\"//g'
 
       - name: Check pushed digest
         id: get-pushed-digest
         uses: sergeysova/jq-action@v2
         with:
-          cmd: echo ${{ steps.get-pushed.outputs.response }} | jq '.digest' | sed 's/\"//g'
+          cmd: echo ${{ steps.get-pushed.outputs.response.data }} | jq '.digest' | sed 's/\"//g'
 
       - name: Check init-build-infos
         id: init-build-infos
