@@ -62,7 +62,8 @@ main() {
     LOG_INFO "测试开始"
     stop
     LOG_INFO "即将启动"
-    start >>/dev/null 2>&1 &
+    # start >>/dev/null 2>&1 &
+    start
     LOG_INFO "测试中"
     sleep 10
     check_status
