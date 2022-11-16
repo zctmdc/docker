@@ -4,6 +4,8 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
+      args:
+        - VERSION_B_S_rC=latest
     image: zctmdc/n2n_ntop
     container_name: n2n_supernode
     restart: always

@@ -1,4 +1,4 @@
-ARG VERSION_B_S_rC
+ARG VERSION_B_S_rC=latest
 FROM zctmdc/n2n_lucktu:${VERSION_B_S_rC}  
 ARG DEBIAN_FRONTEND=noninteractive  
 RUN apt-get -qq update  
