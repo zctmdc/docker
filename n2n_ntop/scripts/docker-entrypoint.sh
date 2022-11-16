@@ -11,6 +11,9 @@ if [[ -z "$@" ]]; then
         app="supernode"
         conf_file=/n2n/conf/supernode.conf
     else
+        if [[ -z "${EDGE_TUN}" ]]; then
+            EDGE_TUN="$(hostname)"
+        fi
         . run_n2n.sh
     fi
 fi
