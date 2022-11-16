@@ -94,7 +94,7 @@ jobs:
           # The target URL
           # Required: true if custom-config is not set
           url: https://hub.docker.com/v2/repositories/zctmdc/n2n_lucktu/tags/${{ steps.init-version.outputs.BUILD_VERSION_B_S_rC }}
-      - run: echo ${{ steps.get-pushed.outputs }}
+      - run: echo ${{ toJSON(steps.get-pushed.outputs) }}
       - name: Check pushed architectures
         id: get-pushed-architectures
         uses: sergeysova/jq-action@v2
