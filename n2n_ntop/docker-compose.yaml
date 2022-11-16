@@ -13,7 +13,7 @@ services:
     environment:
       - MODE=SUPERNODE
       - SUPERNODE_PORT=10090
-      - N2N_ARGS=-f
+      - N2N_ARGS=-v
 
   n2n_edge_dhcpd:
     depends_on:
@@ -29,11 +29,10 @@ services:
       - SUPERNODE_HOST=n2n_supernode
       - SUPERNODE_PORT=10090
       - EDGE_TUN=edge_dhcpd
-      - EDGE_IP=10.10.10.1
+      - EDGE_IP=10.31.32.1
       - EDGE_COMMUNITY=n2n
       - EDGE_KEY=test
       - EDGE_ENCRYPTION=A3
-      - N2N_ARGS=-f
     # volumes:
     #   - ./config/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
     links:
@@ -56,7 +55,6 @@ services:
       - EDGE_COMMUNITY=n2n
       - EDGE_KEY=test
       - EDGE_ENCRYPTION=A3
-      - N2N_ARGS=-f
     links:
       - n2n_supernode
 
@@ -74,10 +72,9 @@ services:
       - SUPERNODE_HOST=n2n_supernode
       - SUPERNODE_PORT=10090
       - EDGE_TUN=edge_static
-      - EDGE_IP=10.10.10.10
+      - EDGE_IP=10.31.32.10
       - EDGE_COMMUNITY=n2n
       - EDGE_KEY=test
       - EDGE_ENCRYPTION=A3
-      - N2N_ARGS=-f
     links:
       - n2n_supernode

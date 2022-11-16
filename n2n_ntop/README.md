@@ -84,7 +84,7 @@ docker run \
   --privileged \
   --net=host \
   -e MODE="DHCPD" \
-  -e EDGE_IP="10.10.10.1" \
+  -e EDGE_IP="10.11.12.1" \
   -e EDGE_COMMUNITY="n2n" \
   -e EDGE_KEY="test" \
   -e SUPERNODE_HOST=127.0.0.1 \
@@ -141,7 +141,7 @@ docker run \
   --privileged \
   --net=host \
   -e MODE="DHCPD" \
-  -e EDGE_IP="10.10.10.1" \
+  -e EDGE_IP="10.21.22.1" \
   -e EDGE_COMMUNITY="n2n" \
   -e EDGE_KEY="test" \
   -e SUPERNODE_HOST=127.0.0.1 \
@@ -184,7 +184,7 @@ docker run \
   --privileged \
   --net=host \
   -e MODE="STATIC" \
-  -e EDGE_IP="10.10.10.11" \
+  -e EDGE_IP="10.21.22.23" \
   -e EDGE_COMMUNITY="n2n" \
   -e EDGE_KEY="test" \
   -e SUPERNODE_HOST=127.0.0.1 \
@@ -202,7 +202,7 @@ see: <docker-compose.yaml>
 # docker compose build #编译
 
 docker compose up n2n_edge_dhcpc #前台运行 n2n_edge_dhcpc 依赖项将启动
-docker compose exec n2n_edge_dhcpc busybox ping  10.10.10.1 # 测试
+docker compose exec n2n_edge_dhcpc busybox ping  10.31.32.1 # 测试
 docker compose down
 ```
 

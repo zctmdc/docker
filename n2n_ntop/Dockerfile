@@ -15,7 +15,7 @@ RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ENV MODE SUPERNODE
 
-ENV EDGE_IP 10.10.10.10
+ENV EDGE_IP 10.11.12.10
 ENV EDGE_NETMASK 255.255.255.0
 ENV EDGE_COMMUNITY n2n
 ENV EDGE_KEY test
@@ -24,10 +24,10 @@ ENV EDGE_TUN ''
 
 ENV N2N_ARGS ""
 # v1:-br v2:-EfrA v2s--bfr -L auto v3:-Efr -e auto
-ENV USE_DEFALT_ARG "true"
+ENV USE_DEFALT_ARG "TRUE"
 
 ENV EDGE_MAC ""
-ENV GET_MAC_FROM_WAN "false"
+ENV GET_MAC_FROM_WAN "FALSE"
 
 WORKDIR /n2n/
 VOLUME [ "/n2n/conf/" ]
@@ -36,8 +36,10 @@ ARG DEFAULT_SUPERNODE_HOST=127.0.0.1
 ARG DEFAULT_SUPERNODE_PORT=10090
 ENV SUPERNODE_HOST ${DEFAULT_SUPERNODE_HOST}
 ENV SUPERNODE_PORT ${DEFAULT_SUPERNODE_PORT}
-
+# WATCH DOG 使用 /n2n/n2n_healthcheck.sh 匹配
+ENV HEALTHCHECK_IP ''
+ENV WATCH_DOG 'TRUE'
 COPY ./scripts/*.sh /n2n/
 RUN chmod a+x /n2n/*
 ENTRYPOINT ["/n2n/docker-entrypoint.sh"]
-HEALTHCHECK --interval=20s --timeout=10s CMD /n2n/n2n_healthcheck.sh
+HEALTHCHECK --interval=1m --timeout=30s CMD /n2n/n2n_healthcheck.sh

@@ -14,6 +14,7 @@ if [[ -z "$@" ]]; then
         . run_n2n.sh
     fi
 fi
+
 if [[ -n "$(echo ${app} | grep -E '^(/usr/local/sbin/)?(edge)|(supernode)$')" ]]; then
     . init_logger.sh
     . init_version.sh
@@ -42,23 +43,7 @@ if [[ -n "$(echo ${app} | grep -E '^(/usr/local/sbin/)?(edge)|(supernode)$')" ]]
         else
             MODE="STATIC"
         fi
-        if [[ "${USE_DEFALT_ARG,,}" == "true" ]]; then
 
-            case "${VERSION_B_S_rC%%_*}" in
-            "v1")
-                N2N_ARGS="${N2N_ARGS} -br"
-                ;;
-            "v2")
-                N2N_ARGS="${N2N_ARGS} -EfrA"
-                ;;
-            "v2s")
-                N2N_ARGS="${N2N_ARGS} -bfr -L auto"
-                ;;
-            "v3")
-                N2N_ARGS="${N2N_ARGS} -Efr -e auto"
-                ;;
-            esac
-        fi
     elif [[ -n "$(echo ${app} | grep -E '^(/usr/local/sbin/)?supernode$')" ]]; then
         MODE="SUPERNODE"
         if [[ -n "${SUPERNODE_PORT_V3}" ]]; then
@@ -67,11 +52,7 @@ if [[ -n "$(echo ${app} | grep -E '^(/usr/local/sbin/)?(edge)|(supernode)$')" ]]
             fi
             SUPERNODE_PORT="${SUPERNODE_PORT_V3}"
         fi
-        if [[ "${USE_DEFALT_ARG,,}" == "true" ]]; then
-            if [[ "${VERSION_B_S_rC%%_*}" != "v1" ]]; then
-                N2N_ARGS="${N2N_ARGS} -f"
-            fi
-        fi
+
     fi
     N2N_ARGS="$(echo ${N2N_ARGS})"
     LOG_INFO "MODE: ${MODE}"
@@ -83,7 +64,7 @@ if [[ -n "$(echo ${app} | grep -E '^(/usr/local/sbin/)?(edge)|(supernode)$')" ]]
     LOG_INFO "SUPERNODE_HOST: ${SUPERNODE_HOST}"
     LOG_INFO "SUPERNODE_PORT: ${SUPERNODE_PORT}"
     LOG_INFO "N2N_ARGS: ${N2N_ARGS}"
-    touch /n2n/environment
+
     echo "export MODE='${MODE}'" >>/n2n/environment
     echo "export EDGE_TUN='${EDGE_TUN}'" >>/n2n/environment
     echo "export EDGE_IP='${EDGE_IP}'" >>/n2n/environment

@@ -268,6 +268,7 @@ jobs:
             VERSION_B_S_rC=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
 
       - name: Test n2n
+        if: false
         id: n2n-test
         run: |
           LOG_INFO() {
@@ -280,7 +281,7 @@ jobs:
               echo -e "\033[0;31m[ERROR] $* \033[0m"
           }
           set -e
-          cd /n2n_ntop/
+          cd ./${{ env.APP_NAME }}/
           LOG_WARNING "Test start: ${{ steps.init-build-infos.outputs.BUILD_VERSION_B_S_rC }}"
           platforms=${{ steps.init-build-infos.outputs.TEST_PLATFORM }}
           l_platforms=(${platforms//,/ })
@@ -343,12 +344,41 @@ jobs:
 
             docker exec -i n2n_edge_static \
               /bin/busybox ping -c 1 -w 5 -q 172.71.0.20 || exit 1
-            exit 1
             # LOG_WARNING "Test done - ALL"
           done
           LOG_WARNING "Test done: ${{ steps.init-build-infos.outputs.BUILD_VERSION_B_S_rC }}"
           echo "build_dockerfile=Dockerfile">> $GITHUB_OUTPUT
           exit 0
+
+      - name: Test n2n with compose
+        id: n2n-test-use-compose
+        run: |
+          LOG_INFO() {
+              echo -e "\033[0;32m[INFO] $* \033[0m"
+          }
+          LOG_WARNING() {
+              echo -e "\033[0;33m[WARNING] $* \033[0m"
+          }
+          LOG_ERROR() {
+              echo -e "\033[0;31m[ERROR] $* \033[0m"
+          }
+          set -e
+          cd ./${{ env.APP_NAME }}/
+
+          export REGISTRY_USERNAME="${{ secrets.REGISTRY_USERNAME }}"
+          export APP_NAME="${{ env.APP_NAME }}"
+          LOG_WARNING "Test start: ${{ steps.init-build-infos.outputs.BUILD_VERSION_B_S_rC }}"
+          platforms=${{ steps.init-build-infos.outputs.TEST_PLATFORM }}
+          l_platforms=(${platforms//,/ })
+          for test_platform in ${l_platforms[@]};do
+            LOG_WARNING "Test for platform: ${test_platform}"
+            export TEST_PLATFORM="${test_platform}"
+              cd ./script/
+              . ./compose-test.sh
+            LOG_WARNING "Test done - ${test_platform}"
+          done
+          LOG_WARNING "Test done: ${{ steps.init-build-infos.outputs.BUILD_VERSION_B_S_rC }}"
+          echo "build_dockerfile=Dockerfile">> $GITHUB_OUTPUT
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
@@ -370,6 +400,36 @@ jobs:
             VERSION_B_S_rC=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
             DEFAULT_SUPERNODE_HOST=${{ steps.init-build-infos.outputs.DEFAULT_SUPERNODE_HOST }}
             DEFAULT_SUPERNODE_PORT=${{ steps.init-build-infos.outputs.DEFAULT_SUPERNODE_PORT }}
+
+      - name: Test n2n with compose again
+        id: n2n-test-use-compose-again
+        run: |
+          LOG_INFO() {
+              echo -e "\033[0;32m[INFO] $* \033[0m"
+          }
+          LOG_WARNING() {
+              echo -e "\033[0;33m[WARNING] $* \033[0m"
+          }
+          LOG_ERROR() {
+              echo -e "\033[0;31m[ERROR] $* \033[0m"
+          }
+          set -e
+          cd ./${{ env.APP_NAME }}/
+
+          export REGISTRY_USERNAME="${{ secrets.REGISTRY_USERNAME }}"
+          export APP_NAME="${{ env.APP_NAME }}"
+          LOG_WARNING "Test start: ${{ steps.init-build-infos.outputs.BUILD_VERSION_B_S_rC }}"
+          platforms=${{ steps.init-build-infos.outputs.BUILD_PLATFORMS }}
+          l_platforms=(${platforms//,/ })
+          for test_platform in ${l_platforms[@]};do
+            LOG_WARNING "Test for platform: ${test_platform}"
+            export TEST_PLATFORM="${test_platform}"
+              cd ./script/
+              . ./compose-test.sh
+            LOG_WARNING "Test done - ${test_platform}"
+          done
+          LOG_WARNING "Test done: ${{ steps.init-build-infos.outputs.BUILD_VERSION_B_S_rC }}"
+          echo "build_dockerfile=Dockerfile">> $GITHUB_OUTPUT
 
       # Sign the resulting Docker image digest except on PRs.
       # This will only write to the public Rekor transparency log when the Docker

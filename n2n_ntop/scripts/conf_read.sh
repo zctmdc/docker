@@ -1,3 +1,8 @@
+#!/bin/bash
+
+# set -x
+. init_logger.sh
+
 conf_file="$1"
 for arg in $(cat ${conf_file} | grep -Ev '^($|#)'); do
     LOG_INFO "arg=${arg}"

@@ -12,6 +12,29 @@ if [[ -n "${EDGE_ENCRYPTION}" && "${EDGE_ENCRYPTION:0:1}" != "-" ]]; then
 fi
 LOG_INFO "EDGE_ENCRYPTION=${EDGE_ENCRYPTION}"
 
+if [[ "${USE_DEFALT_ARG^^}" == "TRUE" ]]; then
+  LOG_INFO "USE_DEFALT_ARG=${USE_DEFALT_ARG}"
+  if [[ "${MODE}" == "SUPERNODE" ]]; then
+    if [[ "${VERSION_B_S_rC%%_*}" != "v1" ]]; then
+      N2N_ARGS="${N2N_ARGS} -f"
+    fi
+  elif [[ "${MODE}" == "EDGE" ]]; then
+    case "${VERSION_B_S_rC%%_*}" in
+    "v1")
+      N2N_ARGS="${N2N_ARGS} -br"
+      ;;
+    "v2")
+      N2N_ARGS="${N2N_ARGS} -EfrA"
+      ;;
+    "v2s")
+      N2N_ARGS="${N2N_ARGS} -bfr -L auto"
+      ;;
+    "v3")
+      N2N_ARGS="${N2N_ARGS} -Efr -e auto"
+      ;;
+    esac
+  fi
+fi
 if [[ -n "${N2N_ARGS}" && "${N2N_ARGS:0:1}" != "-" ]]; then
   N2N_ARGS="-${N2N_ARGS}"
 fi
@@ -72,7 +95,7 @@ check_edge() {
   done
 }
 check_mac_address() {
-  if [[ "${GET_MAC_FROM_WAN,,}" == true ]]; then
+  if [[ "${GET_MAC_FROM_WAN^^}" == 'TRUE' ]]; then
     . init_edge_mac_from_wan.sh
     INIT_EDGE_MAC_FROM_WAN
   fi
@@ -183,6 +206,13 @@ check_run() {
       continue
       ;;
     esac
+    if [[ "${WATCH_DOG^^}" == "TRUE" ]]; then
+      if ! /n2n/n2n_healthcheck.sh >/dev/null 2>&1; then
+        LOG_ERROR "守护程序检测到掉线，请检查： $(/n2n/n2n_healthcheck.sh)"
+        restart_edge
+        break
+      fi
+    fi
   done
 }
 
