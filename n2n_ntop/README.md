@@ -50,6 +50,12 @@ docker run --rm -ti \
  supernode -p 10090 -vf
 ```
 
+```bash
+docker run --rm -ti \
+  -e MODE="DHCPC" \
+  zctmdc/n2n_ntop
+```
+
 ### 建立 _supernode_
 
 - 前台模式

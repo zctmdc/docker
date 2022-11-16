@@ -370,6 +370,7 @@ jobs:
 
           export REGISTRY_USERNAME="${{ secrets.REGISTRY_USERNAME }}"
           export APP_NAME="${{ env.APP_NAME }}"
+          export test_tag=test
           LOG_WARNING "Test start: ${{ steps.init-build-infos.outputs.BUILD_VERSION_B_S_rC }}"
           platforms=${{ steps.init-build-infos.outputs.TEST_PLATFORM }}
           l_platforms=(${platforms//,/ })
@@ -422,6 +423,7 @@ jobs:
 
           export REGISTRY_USERNAME="${{ secrets.REGISTRY_USERNAME }}"
           export APP_NAME="${{ env.APP_NAME }}"
+          export test_tag=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
           LOG_WARNING "Test start: ${{ steps.init-build-infos.outputs.BUILD_VERSION_B_S_rC }}"
           platforms=${{ steps.init-build-infos.outputs.BUILD_PLATFORMS }}
           l_platforms=(${platforms//,/ })

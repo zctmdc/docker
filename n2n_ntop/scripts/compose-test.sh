@@ -12,6 +12,9 @@ fi
 if [[ -z "${REGISTRY_USERNAME}" ]]; then
     REGISTRY_USERNAME="zctmdc"
 fi
+if [[ -z "${test_tag}" ]]; then
+    test_tag="test"
+fi
 if [[ -z "${test_platform}" ]]; then
     test_platform="linux/amd64"
 fi
