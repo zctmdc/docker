@@ -52,7 +52,9 @@ if [[ -n "$(echo ${app} | grep -E '^(/usr/local/sbin/)?(edge)|(supernode)$')" ]]
             fi
             SUPERNODE_PORT="${SUPERNODE_PORT_V3}"
         fi
-
+    fi
+    if [[ -z "${EDGE_TUN}" ]]; then
+        EDGE_TUN="$(hostname)"
     fi
     N2N_ARGS="$(echo ${N2N_ARGS})"
     LOG_INFO "MODE: ${MODE}"

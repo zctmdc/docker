@@ -14,11 +14,23 @@ LOG_INFO "EDGE_ENCRYPTION=${EDGE_ENCRYPTION}"
 
 if [[ "${USE_DEFALT_ARG^^}" == "TRUE" ]]; then
   LOG_INFO "USE_DEFALT_ARG=${USE_DEFALT_ARG}"
+  
   if [[ "${MODE}" == "SUPERNODE" ]]; then
-    if [[ "${VERSION_B_S_rC%%_*}" != "v1" ]]; then
-      N2N_ARGS="${N2N_ARGS} -f"
-    fi
-  elif [[ "${MODE}" == "EDGE" ]]; then
+    case "${VERSION_B_S_rC%%_*}" in
+    "v1")
+      N2N_ARGS="${N2N_ARGS}"
+      ;;
+    "v2")
+      N2N_ARGS="${N2N_ARGS}  -f"
+      ;;
+    "v2s")
+      N2N_ARGS="${N2N_ARGS}  -f"
+      ;;
+    "v3")
+      N2N_ARGS="${N2N_ARGS}  -f -F ${EDGE_TUN}"
+      ;;
+    esac
+  elif [[ "$(echo ${MODE} | grep -E '^(DHCPD)|(DHCPC)|(STATIC)$')" ]]; then
     case "${VERSION_B_S_rC%%_*}" in
     "v1")
       N2N_ARGS="${N2N_ARGS} -br"
@@ -30,7 +42,7 @@ if [[ "${USE_DEFALT_ARG^^}" == "TRUE" ]]; then
       N2N_ARGS="${N2N_ARGS} -bfr -L auto"
       ;;
     "v3")
-      N2N_ARGS="${N2N_ARGS} -Efr -e auto"
+      N2N_ARGS="${N2N_ARGS} -Efr -e auto -I ${EDGE_TUN}"
       ;;
     esac
   fi
