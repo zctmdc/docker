@@ -59,7 +59,7 @@ docker run --rm -ti \
 
 ### 建立 _supernode_
 
-- 前台模式
+-   前台模式
 
 ```bash
 docker run \
@@ -69,7 +69,7 @@ docker run \
   zctmdc/n2n_ntop
 ```
 
-- 后台模式
+-   后台模式
 
 ```bash
 docker run \
@@ -83,7 +83,7 @@ docker run \
 
 ### 建立 _edge_
 
-- 前台模式
+-   前台模式
 
 ```bash
 docker run \
@@ -101,7 +101,7 @@ docker run \
   zctmdc/n2n_ntop
 ```
 
-- 后台模式
+-   后台模式
 
 ```bash
 docker run \
@@ -119,7 +119,7 @@ docker run \
   zctmdc/n2n_ntop
 ```
 
-- test
+-   test
 
 ```bash
 docker exec -ti n2n_edge_dhcpc_t1 ifconfig edge_dhcpc_t1
@@ -203,7 +203,7 @@ docker run \
 
 ## 使用 _docker compose_ 配置运行
 
-see: <docker-compose.yaml>
+see: [<docker-compose.yaml>](https://github.com/zctmdc/docker/blob/alpha/n2n_ntop/docker-compose.yaml)
 
 ```bash
 # docker compose build #编译
@@ -227,6 +227,8 @@ docker compose down
 |        EDGE_TUN | 网卡名                | edge 使用的网卡名        | -d $EDGE_TUN                                                                                                |
 |        N2N_ARGS | 更多参数              | 运行时附加的更多参数     | -v -f                                                                                                       |
 |  USE_DEFALT_ARG | 默认参数              | 运行时附加的默认参数     | `false` / `true` ：`v1:-br` , `v2:-EfrA` , `v2s:--bfr -L auto` , `v3:-Efr -e auto`                          |
+
+所有的通过此文件测试：[<docker-compose.test.yaml>](https://github.com/zctmdc/docker/blob/alpha/n2n_ntop/docker-compose.test.yaml) , [<compose-test.sh>](https://github.com/zctmdc/docker/blob/alpha/n2n_ntop/scripts/compose-test.sh)
 
 更多帮助请参考 [好运博客][好运博客] 中 [N2N 新手向导及最新信息][n2n 新手向导及最新信息] , [N2N 支持参数版本一览表][n2n_args]
 

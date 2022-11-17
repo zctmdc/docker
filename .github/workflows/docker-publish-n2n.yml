@@ -407,6 +407,7 @@ jobs:
 
       - name: Test n2n with compose again
         id: n2n-test-use-compose-again
+        if: steps.tag_last_pushed.outputs.skip_build_push != 'true' || github.event_name != 'pull_request'
         run: |
           LOG_INFO() {
               echo -e "\033[0;32m[INFO] $* \033[0m"
