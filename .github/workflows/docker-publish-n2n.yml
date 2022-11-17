@@ -207,7 +207,7 @@ jobs:
           # e.g. "2022-10-30T19:29:49.877019Z"
           last_pulled_date=${{ steps.get_tag_last_pushed.outputs.value }}
           echo "last_pulled_date=${last_pulled_date}" >> $GITHUB_OUTPUT
-          LOG_INFO "check tag - ${{ steps.init-build-infos.outputs.BUILD_VERSION_B_S_rC }}
+          LOG_INFO "check tag - ${{ steps.init-build-infos.outputs.BUILD_VERSION_B_S_rC }}"
           LOG_INFO "last_pulled_date - ${last_pulled_date}"
           if [[ "true" == "${{ env.FORCE_PUSH }}" || "true" == "${{ inputs.force_push }}" ]]; then
               LOG_WARNING "强制 编译/推送"
