@@ -21,6 +21,9 @@ fi
 
 TOTLA_WAIT_TIME=$((60 * 10))
 
+pull() {
+    docker compose -f "${compsoe_file}" pull
+}
 start() {
     docker compose --project-directory "${compsoe_file%/*}/" -f "${compsoe_file}" up -d
 }
@@ -64,6 +67,7 @@ check_status() {
 main() {
     LOG_INFO "测试开始"
     stop
+    pull
     LOG_INFO "即将启动"
     start >>/dev/null &
     # start
