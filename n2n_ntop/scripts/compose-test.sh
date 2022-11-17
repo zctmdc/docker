@@ -22,6 +22,9 @@ fi
 TOTLA_WAIT_TIME=$((60 * 10))
 
 pull() {
+    if [[ "${test_tag}" == "test" ]]; then
+        return
+    fi
     docker compose -f "${compsoe_file}" pull
 }
 start() {
