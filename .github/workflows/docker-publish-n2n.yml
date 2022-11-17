@@ -207,11 +207,11 @@ jobs:
           # e.g. "2022-10-30T19:29:49.877019Z"
           last_pulled_date=${{ steps.get_tag_last_pushed.outputs.value }}
           echo "last_pulled_date=${last_pulled_date}" >> $GITHUB_OUTPUT
-          LOG_INFO "check tag - ${{ needs.init-build-infos.outputs.BUILD_VERSION_B_S_rC }}"
+          LOG_INFO "check tag - ${{ steps.init-build-infos.outputs.BUILD_VERSION_B_S_rC }}
           LOG_INFO "last_pulled_date - ${last_pulled_date}"
           if [[ "true" == "${{ env.FORCE_PUSH }}" || "true" == "${{ inputs.force_push }}" ]]; then
               LOG_WARNING "强制 编译/推送"
-          elif [[ "${last_pulled_date,,}" != "null" || "${{ needs.init-build-infos.outputs.BUILD_PLATFORMS }}" == "" ]]; then
+          elif [[ "${last_pulled_date,,}" != "null" || "${{ steps.init-build-infos.outputs.BUILD_PLATFORMS }}" == "" ]]; then
               echo "skip_build_push=true" >> $GITHUB_OUTPUT
               LOG_INFO "跳过 编译/推送"
               exit 0
@@ -388,7 +388,7 @@ jobs:
       # https://github.com/docker/build-push-action
       - name: Build and push Docker image
         id: build-and-push
-        if: steps.tag_last_pushed.outputs.skip_build_push != 'true' || github.event_name != 'pull_request'
+        if: steps.tag_last_pushed.outputs.skip_build_push != 'true' && github.event_name != 'pull_request'
         uses: docker/build-push-action@v3
         with:
           context: ${{ env.APP_NAME }}
@@ -407,7 +407,7 @@ jobs:
 
       - name: Test n2n with compose again
         id: n2n-test-use-compose-again
-        if: steps.tag_last_pushed.outputs.skip_build_push != 'true' || github.event_name != 'pull_request'
+        if: steps.tag_last_pushed.outputs.skip_build_push != 'true' && github.event_name != 'pull_request'
         run: |
           LOG_INFO() {
               echo -e "\033[0;32m[INFO] $* \033[0m"
