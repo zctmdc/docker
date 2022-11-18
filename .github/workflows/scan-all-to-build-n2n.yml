@@ -23,8 +23,8 @@ jobs:
       id-token: write
     steps:
       - run:
-          echo "force-push ${{ inputs.force-push }} - ${{ inputs.force-push == 'true' }}"
-          echo "build-releases-versio ${{ inputs.build-releases-versio }} - ${{ inputs.build-releases-versio == 'true' }}"
+          echo "force-push ${{ inputs.force-push }}
+          echo "build-releases-versio ${{ inputs.build-releases-versio }}
 
   build-all-releases-version:
     permissions:

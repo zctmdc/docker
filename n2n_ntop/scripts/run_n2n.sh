@@ -54,6 +54,7 @@ fi
 LOG_INFO "N2N_ARGS=${N2N_ARGS}"
 
 init_dhcpd_conf() {
+  touch /var/lib/dhcp/dhcpd.leases
   IP_PREFIX=$(echo "${EDGE_IP}" | grep -Eo "([0-9]{1,3}[\.]){3}")
   mkdir -p /etc/dhcp/
   if [ -f "/n2n/conf/dhcpd.conf" ]; then
@@ -91,7 +92,7 @@ check_edge() {
   while true; do
     if [[ ! -f /sys/class/net/${EDGE_TUN}/address ]]; then
       LOG_WARNING "等待启动: ${EDGE_TUN}"
-      sleep 5
+      sleep 1
       continue
     fi
     if [[ "${MODE}" == "DHCPC" ]]; then
@@ -129,7 +130,7 @@ run_edge() {
 }
 
 mode_dhcpd() {
-  touch /var/lib/dhcp/dhcpd.leases
+
   LOG_INFO "${MODE} -- DHCPD 服务器模式"
   init_dhcpd_conf
   # EDGE_IP=`echo $EDGE_IP | grep -Eo "([0-9]{1,3}[\.]){3}"`1
@@ -204,7 +205,7 @@ restart_edge() {
 check_run() {
   LOG_INFO "启动程序执行完毕，守护程序启动。"
   while true; do
-    sleep 60
+    sleep 15
     case ${MODE} in
     DHCPD | DHCPC | STATIC)
       last_supernode_ip="${SUPERNODE_IP}"
