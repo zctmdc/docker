@@ -29,5 +29,5 @@ jobs:
     uses: ./.github/workflows/docker-publish-n2n.yml
     with:
       version_b_s_rc: ${{ matrix.version_b_s_rc }}
-      force_push: ${{ inputs.force_push == 'true'}}
+      force_push: ${{ inputs.force-push == 'true' }}
     secrets: inherit
