@@ -15,6 +15,17 @@ on:
         default: false
 
 jobs:
+  echo-input:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    steps:
+      - run:
+          echo "force-push ${{ inputs.force-push }} - ${{ inputs.force-push == 'true' }}"
+          echo "build-releases-versio ${{ build-releases-versio }} - ${{ inputs.build-releases-versio == 'true' }}"
+
   build-all-releases-version:
     permissions:
       contents: read
@@ -26,8 +37,9 @@ jobs:
       max-parallel: 1
       matrix:
         version_b_s_rc: [v1, v2, v2s, v3]
+
     uses: ./.github/workflows/docker-publish-n2n.yml
     with:
       version_b_s_rc: ${{ matrix.version_b_s_rc }}
-      force_push: ${{ inputs.force-push == 'true' }}
+      force_push: ${{ inputs.force-push }}
     secrets: inherit
