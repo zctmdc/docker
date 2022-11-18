@@ -203,7 +203,7 @@ restart_edge() {
 check_run() {
   LOG_INFO "启动程序执行完毕，守护程序启动。"
   while true; do
-    sleep 30
+    sleep 60
     case ${MODE} in
     DHCPD | DHCPC | STATIC)
       last_supernode_ip="${SUPERNODE_IP}"
