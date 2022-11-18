@@ -24,7 +24,7 @@ jobs:
     steps:
       - run:
           echo "force-push ${{ inputs.force-push }} - ${{ inputs.force-push == 'true' }}"
-          echo "build-releases-versio ${{ build-releases-versio }} - ${{ inputs.build-releases-versio == 'true' }}"
+          echo "build-releases-versio ${{ inputs.build-releases-versio }} - ${{ inputs.build-releases-versio == 'true' }}"
 
   build-all-releases-version:
     permissions:
