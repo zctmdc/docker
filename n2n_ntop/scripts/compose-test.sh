@@ -25,13 +25,13 @@ pull() {
     if [[ "${test_tag}" == "test" ]]; then
         return
     fi
-    docker compose -f "${compsoe_file}" pull
+    LOG_RUN docker compose -f "${compsoe_file}" pull
 }
 start() {
-    docker compose --project-directory "${compsoe_file%/*}/" -f "${compsoe_file}" up -d
+    LOG_RUN docker compose --project-directory "${compsoe_file%/*}/" -f "${compsoe_file}" up -d
 }
 stop() {
-    docker compose -f "${compsoe_file}" down
+    LOG_RUN docker compose -f "${compsoe_file}" down
 }
 check_status() {
     startTime=$(date +%Y%m%d-%H:%M:%S)
@@ -44,19 +44,19 @@ check_status() {
 
         run_status="$(docker compose -f ${compsoe_file} ps)"
         count_all_runing=$(echo "${run_status}" | grep test-n2n | wc -l)
-        count_healthy=$(echo "${run_status}" | grep healthy | wc -l)
-        count_healthy=$(echo "${run_status}" | grep healthy | wc -l)
-        count_starting=$(echo "${run_status}" | grep starting | wc -l)
-        count_created=$(echo "${run_status}" | grep created | wc -l)
+        count_healthy=$(echo "${run_status}" | grep '(healthy)' | wc -l)
+        count_healthy=$(echo "${run_status}" | grep '(healthy)' | wc -l)
+        count_starting=$(echo "${run_status}" | grep '(starting)' | wc -l)
+        count_created=$(echo "${run_status}" | grep '(created)' | wc -l)
 
         LOG_INFO "### run_status:\n${run_status}"
         LOG_INFO "count_healthy: ${count_healthy} / count_all_runing: ${count_all_runing}"
 
         if [[ "${count_all_runing}" == "${count_healthy}" ]]; then
-            LOG_INFO "已通过: ${count_healthy}/${count_all_runing} - ${sumTime}s"
+            LOG_INFO "已通过:${test_platform}${platforms:+ - }${platforms} - ${count_healthy}/${count_all_runing} - ${sumTime}s"
             return 0
         else
-            LOG_WARNING "测试中: ${count_healthy}/${count_all_runing} - ${sumTime}s\n"
+            LOG_WARNING "测试中:${test_platform}${platforms:+ - }${platforms} - ${count_healthy}/${count_all_runing} - ${sumTime}s\n"
         fi
 
         if [[ ${sumTime} -gt ${TOTLA_WAIT_TIME} ]]; then
