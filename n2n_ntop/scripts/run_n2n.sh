@@ -14,7 +14,7 @@ LOG_INFO "EDGE_ENCRYPTION=${EDGE_ENCRYPTION}"
 
 if [[ "${USE_DEFALT_ARG^^}" == "TRUE" ]]; then
   LOG_INFO "USE_DEFALT_ARG=${USE_DEFALT_ARG}"
-  
+
   if [[ "${MODE}" == "SUPERNODE" ]]; then
     case "${VERSION_B_S_rC%%_*}" in
     "v1")
@@ -47,6 +47,7 @@ if [[ "${USE_DEFALT_ARG^^}" == "TRUE" ]]; then
     esac
   fi
 fi
+N2N_ARGS="$(echo ${N2N_ARGS})"
 if [[ -n "${N2N_ARGS}" && "${N2N_ARGS:0:1}" != "-" ]]; then
   N2N_ARGS="-${N2N_ARGS}"
 fi

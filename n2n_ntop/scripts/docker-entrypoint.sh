@@ -59,7 +59,6 @@ if [[ -n "$(echo ${app} | grep -E '^(/usr/local/sbin/)?(edge)|(supernode)$')" ]]
     if [[ -z "${EDGE_TUN}" ]]; then
         EDGE_TUN="$(hostname)"
     fi
-    N2N_ARGS="$(echo ${N2N_ARGS})"
     LOG_INFO "MODE: ${MODE}"
     LOG_INFO "EDGE_TUN: ${EDGE_TUN}"
     LOG_INFO "EDGE_IP: ${EDGE_IP}"
