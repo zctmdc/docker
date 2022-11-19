@@ -21,6 +21,9 @@ fi
 if [[ -z "${build_docker_file}" ]]; then
     build_docker_file="Dockerfile"
 fi
+if [[ -z "${BUILD_VERSION_B_S_rC}" ]]; then
+    BUILD_VERSION_B_S_rC="latest"
+fi
 
 export REGISTRY_USERNAME="${REGISTRY_USERNAME}"
 export APP_NAME="${APP_NAME}"
@@ -36,7 +39,9 @@ pull() {
     LOG_RUN docker compose -f "${compsoe_file}" pull
 }
 build() {
-
+    if [[ "${need_build^^}" != "TRUE" ]]; then
+        return
+    fi
     docker_build_command="docker buildx build --progress plain \
                 --platform '${TEST_PLATFORM}' \
                 --build-arg VERSION_B_S_rC=${BUILD_VERSION_B_S_rC} \

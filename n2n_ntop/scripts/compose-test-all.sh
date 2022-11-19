@@ -14,6 +14,7 @@ export REGISTRY_USERNAME="zctmdc"
 export APP_NAME="n2n_ntop"
 export test_tag="test"
 export build_docker_file="Dockerfile"
+export need_build="true"
 for build_version_b_s_rc in ${l_build_version_b_s_rcs[@]}; do
     export BUILD_VERSION_B_S_rC="${build_version_b_s_rc}"
     LOG_WARNING "Test start: ${BUILD_VERSION_B_S_rC}"
