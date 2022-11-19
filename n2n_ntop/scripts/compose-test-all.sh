@@ -4,7 +4,7 @@
 . init_logger.sh
 set -e
 
-export PROXY_SERVER="http://host.docker.internal:21089"
+# export PROXY_SERVER="http://host.docker.internal:21089"
 
 docker run --privileged --rm tonistiigi/binfmt --install all
 docker buildx create --use --name build --node build --driver-opt network=host
@@ -22,21 +22,6 @@ for build_version_b_s_rc in ${l_build_version_b_s_rcs[@]}; do
     for test_platform in ${l_platforms[@]}; do
         LOG_WARNING "Test for platform: ${test_platform}"
         export TEST_PLATFORM="${test_platform}"
-
-        docker_build_command="docker buildx build --progress plain \
-                --platform '${TEST_PLATFORM}' \
-                --build-arg VERSION_B_S_rC=${BUILD_VERSION_B_S_rC} \
-                -f ../${build_docker_file}"
-
-        if [[ -n "${PROXY_SERVER}" ]]; then
-            docker_build_command="${docker_build_command} \
-                --build-arg http_proxy=${PROXY_SERVER,,} \
-                --build-arg https_proxy=${PROXY_SERVER,,}"
-        fi
-
-        LOG_RUN "${docker_build_command} \
-                -t ${REGISTRY_USERNAME}/${APP_NAME}:${test_tag} \
-                --load ../. "
 
         chmod +x *.sh
         sh -c ./compose-test.sh

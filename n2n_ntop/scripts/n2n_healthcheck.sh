@@ -1,15 +1,15 @@
 #!/bin/bash
-
+set -e
 touch /n2n/environment
 . /n2n/environment
 
 check_server() {
     if busybox ping -c 1 -w 3 $SUPERNODE_HOST >/dev/null 2>&1; then
         SUPERNODE_IP=$(busybox ping -c 1 -w 3 $SUPERNODE_HOST | grep -Eo "([0-9]{1,3}\.){3}[0-9]{1,3}" | head -n 1)
-        echo "SUPERNODE_IP 成功PING : ${SUPERNODE_IP}"
+        echo "SUPERNODE_IP 获取成功: PING - ${SUPERNODE_IP}"
     elif nslookup $SUPERNODE_HOST 223.5.5.5 >/dev/null 2>&1; then
         SUPERNODE_IP=$(nslookup -type=a $SUPERNODE_HOST 223.5.5.5 | grep -v 223.5.5.5 | grep ddress | awk '{print $2}')
-        echo "SUPERNODE_IP 成功nslookup : ${SUPERNODE_IP}"
+        echo "SUPERNODE_IP 获取成功: nslookup - ${SUPERNODE_IP}"
     else
         SUPERNODE_IP=$SUPERNODE_HOST
         echo "SUPERNODE_IP : ${SUPERNODE_IP}"
@@ -55,4 +55,4 @@ else
         cat /sys/class/net/$EDGE_TUN/address || exit 1
     fi
 fi
-/bin/busybox ping -c 1 -w 3 -q $check_ip || exit 1
+/bin/busybox ping -c 5 -w 10 -W 2 -q $check_ip || exit 1

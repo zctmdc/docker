@@ -39,10 +39,10 @@ services:
       - SUPERNODE_HOST=test-n2n_supernode
       - SUPERNODE_PORT=7777
       - EDGE_TUN=t_edge_dhcpd
-      - EDGE_IP=10.20.30.1
-      - EDGE_COMMUNITY=n2n
-      - EDGE_KEY=test
-      - EDGE_ENCRYPTION=-A3
+      - EDGE_IP=10.24.38.1
+      - EDGE_COMMUNITY=n2n_test
+      - EDGE_KEY=test_n2n
+      - EDGE_ENCRYPTION=-A2
     # volumes:
     #   - ./config/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
     links:
@@ -66,9 +66,9 @@ services:
       - SUPERNODE_HOST=test-n2n_supernode
       - SUPERNODE_PORT=7777
       - EDGE_TUN=t_edge_dhcpc
-      - EDGE_COMMUNITY=n2n
-      - EDGE_KEY=test
-      - EDGE_ENCRYPTION=-A3
+      - EDGE_COMMUNITY=n2n_test
+      - EDGE_KEY=test_n2n
+      - EDGE_ENCRYPTION=-A2
     links:
       - test-n2n_supernode
     networks:
@@ -90,10 +90,10 @@ services:
       - SUPERNODE_HOST=test-n2n_supernode
       - SUPERNODE_PORT=7777
       - EDGE_TUN=t_edge_static
-      - EDGE_IP=10.20.30.10
-      - EDGE_COMMUNITY=n2n
-      - EDGE_KEY=test
-      - EDGE_ENCRYPTION=-A3
+      - EDGE_IP=10.24.38.10
+      - EDGE_COMMUNITY=n2n_test
+      - EDGE_KEY=test_n2n
+      - EDGE_ENCRYPTION=-A2
     links:
       - test-n2n_supernode
     networks:
@@ -118,9 +118,37 @@ services:
       n2n:
 
 
+  test-n2n_manual_server:
+    depends_on:
+      test-n2n_supernode:
+        condition: service_healthy
+    image: ${REGISTRY_USERNAME}/${APP_NAME}:${test_tag}
+    container_name: test_n2n_edge_manual_server
+    restart: always
+    privileged: true
+    platform: ${TEST_PLATFORM}
+    # network_mode: host
+    links:
+      - test-n2n_supernode
+    command:
+      [
+        "edge",
+        "-d t_edge_manual",
+        "-a 10.24.38.42",
+        "-c n2n_test",
+        "-l 172.77.6.10:7777",
+        "-k test_n2n",
+        "-A2"
+      ]
+    networks:
+      n2n:
+
+
   test-n2n_manual:
     depends_on:
       test-n2n_edge_dhcpd:
+        condition: service_healthy
+      test-n2n_manual_server:
         condition: service_healthy
     image: ${REGISTRY_USERNAME}/${APP_NAME}:${test_tag}
     container_name: test_n2n_edge_manual
@@ -128,16 +156,28 @@ services:
     privileged: true
     platform: ${TEST_PLATFORM}
     # network_mode: host
-    environment:
-      - MODE=DHCPC
-      - EDGE_TUN=t_edge_manual
     links:
       - test-n2n_supernode
     command:
       [
         "/bin/bash",
         "-c",
-        "edge -d t_edge_manual -a dhcp:0.0.0.0 -c n2n -l 172.77.6.10:7777  -k test -A3 & sleep 20 && dhclient --dad-wait-time 5 t_edge_manual && /bin/busybox ping 10.20.30.10"
+        "edge -d t_edge_manual -a dhcp:0.0.0.0 -c n2n_test -l 172.77.6.10:7777  -k test_n2n -Efr -A2 & sleep 5 && dhclient --dad-wait-time 5 t_edge_manual && /bin/busybox ping 10.24.38.42"
       ]
     networks:
       n2n:
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "/bin/busybox",
+          "ping",
+          "-c",
+          "1",
+          "-w",
+          "2",
+          "10.24.38.42"
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5

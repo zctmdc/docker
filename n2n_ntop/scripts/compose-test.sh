@@ -18,7 +18,15 @@ fi
 if [[ -z "${test_platform}" ]]; then
     test_platform="linux/amd64"
 fi
+if [[ -z "${build_docker_file}" ]]; then
+    build_docker_file="Dockerfile"
+fi
 
+export REGISTRY_USERNAME="${REGISTRY_USERNAME}"
+export APP_NAME="${APP_NAME}"
+export test_tag="${test_tag}"
+export TEST_PLATFORM="${test_platform}"
+export build_docker_file="${build_docker_file}"
 TOTLA_WAIT_TIME=$((60 * 10))
 
 pull() {
@@ -26,6 +34,24 @@ pull() {
         return
     fi
     LOG_RUN docker compose -f "${compsoe_file}" pull
+}
+build() {
+
+    docker_build_command="docker buildx build --progress plain \
+                --platform '${TEST_PLATFORM}' \
+                --build-arg VERSION_B_S_rC=${BUILD_VERSION_B_S_rC} \
+                -f ../${build_docker_file}"
+
+    if [[ -n "${PROXY_SERVER}" ]]; then
+        docker_build_command="${docker_build_command} \
+                --build-arg http_proxy=${PROXY_SERVER,,} \
+                --build-arg https_proxy=${PROXY_SERVER,,}"
+    fi
+
+    LOG_RUN "${docker_build_command} \
+                -t ${REGISTRY_USERNAME}/${APP_NAME}:${test_tag} \
+                --load ../. "
+
 }
 start() {
     LOG_RUN docker compose --project-directory "${compsoe_file%/*}/" -f "${compsoe_file}" up -d
@@ -70,6 +96,7 @@ check_status() {
 main() {
     LOG_INFO "测试开始"
     stop
+    build
     pull
     LOG_INFO "即将启动"
     start >>/dev/null &

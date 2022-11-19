@@ -45,21 +45,21 @@ n2n 尽可能在 edge 节点之间建立直接的 P2P 连接;如果不可能（�
 
 ```bash
 docker run --rm -ti \
- -p 10090:10090  \
- zctmdc/n2n_ntop \
- supernode -p 10090 -vf
+  --privileged \
+  zctmdc/n2n_ntop
 ```
 
 ```bash
 docker run --rm -ti \
-  --privileged \
-  -e MODE="DHCPC" \
-  zctmdc/n2n_ntop
+ -p 10090:10090  \
+ zctmdc/n2n_ntop \
+ supernode -p 10090
 ```
 
+<!--
 ### 建立 _supernode_
 
--   前台模式
+- 前台模式
 
 ```bash
 docker run \
@@ -69,7 +69,7 @@ docker run \
   zctmdc/n2n_ntop
 ```
 
--   后台模式
+- 后台模式
 
 ```bash
 docker run \
@@ -83,7 +83,7 @@ docker run \
 
 ### 建立 _edge_
 
--   前台模式
+- 前台模式
 
 ```bash
 docker run \
@@ -101,7 +101,7 @@ docker run \
   zctmdc/n2n_ntop
 ```
 
--   后台模式
+- 后台模式
 
 ```bash
 docker run \
@@ -119,13 +119,87 @@ docker run \
   zctmdc/n2n_ntop
 ```
 
--   test
+- test
 
 ```bash
 docker exec -ti n2n_edge_dhcpc_t1 ifconfig edge_dhcpc_t1
+``` -->
+
+```mermaid
+flowchart TD
+  subgraph docker-entrypoint.sh
+    LOAD("开始")
+    EXIT("结束")
+    LOAD-->docker_entrypoint[docker-entrypoint.sh]-->set_app_use_parma1[app=$1]-->set_conf_file_use_parma2[conf_file=$2]-->不存在参数-DOCKER-CMD-->从配置文件中解析-->exec_raw
+    subgraph 不存在参数-DOCKER-CMD
+      edge_conf{存在文件 /n2n/conf/edge.conf}-->
+        |是|empty_conf_file_edge["
+                            app=edge
+                            $conf_file=/n2n/conf/edge.conf
+                          "]
+      edge_conf-->|否|supernode_conf{存在文件 /n2n/conf/supernode.conf}
+      supernode_conf-->
+        |是|empty_conf_file_supernode["
+                                app=supernode
+                                $conf_file=/n2n/conf/supernode.conf
+                              "]
+      supernode_conf-->|否|exist_conf_edge_path_n2n{"存在 /n2n/conf/edge.conf"}
+
+      exist_conf_edge_path_n2n-->
+        |是|use_conf_edge_path_n2n["
+                                    app=edge
+                                    conf_file=/n2n/conf/edge.conf
+                                  "]
+      exist_conf_edge_path_n2n-->
+        |否|exist_conf_supernode_path_n2n{"存在 /n2n/conf/supernode.conf"}
+
+      exist_conf_supernode_path_n2n-->
+        |是|use_conf_supernode_path_n2n["
+                                    app=supernode
+                                    conf_file=/n2n/conf/supernode.conf
+                                  "]
+
+      exist_conf_supernode_path_n2n-->
+        |否|env_mode_supernode{"${MODE}==SUPERNODE"}
+      env_mode_supernode-->
+        |是|empty_use_supernode["app=supernode"]
+      env_mode_supernode-->
+        |否|empty_use_edge["app=edge"]
+      empty_use_supernode & empty_use_edge -->
+        conf_save_env["
+              conf_file=/tmp/conf_file_env.conf
+              CONF_SAVE ${conf_file}
+            "]
+      use_conf_edge_path_n2n & use_conf_supernode_path_n2n & empty_conf_file_edge & empty_conf_file_supernode & conf_save_env-->
+      empty_conf_file_save["
+                          保存配置文件
+                          echo ${conf_file} >/tmp/conf_file_from_exec_params.conf
+                        "]
+    end
+
+
+    subgraph 从配置文件中解析
+      edge_or_supernode{"
+                          参数 $1 匹配 ^(/usr/local/sbin/)?(edge)|(supernode)$')
+                          以及 参数 $2 不是 -h --help
+                          以及 $conf_file 不为 空
+                        "}
+      edge_or_supernode-->|是|conf_file_read
+      conf_file_read-->exec_params_more{"存在两个以上参数"}
+      exec_params_more-->|是|conf_save_params["将运行参数储存至 /tmp/conf_file_from_exec_params.conf"]
+      exec_params_more & conf_save_params -->
+        conf_read["CONF_READ /tmp/conf_file_from_exec_params.conf"]-->change_env["处理参数"]
+      change_env-->run_n2n[run_n2n.sh]
+    end
+    exec_raw["
+                    运行原始命令
+                    exec $@
+                  "]
+    exec_raw --> EXIT
+  end
 ```
 
-## 更多模式
+## MODE 模式
 
 ### SUPERNODE - 超级节点
 
@@ -161,7 +235,7 @@ docker run \
 如果你需要自定义 DHCPD 服务配置文件
 
 ```bash
--v path/to/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro \
+-v path/to/dhcpd.conf:/n2n/conf/dhcpd.conf:ro
 ```
 
 ### DHCPC - DHCP 动态 IP 模式
@@ -209,7 +283,8 @@ see: [<docker-compose.yaml>](https://github.com/zctmdc/docker/blob/alpha/n2n_nto
 # docker compose build #编译
 
 docker compose up n2n_edge_dhcpc #前台运行 n2n_edge_dhcpc 依赖项将启动
-docker compose exec n2n_edge_dhcpc busybox ping  10.31.32.1 # 测试
+docker exec n2n_edge_dhcpc busybox ping  10.31.32.1 # 测试
+# docker compose exec n2n_edge_dhcpc busybox ping  10.31.32.1 # 测试
 docker compose down
 ```
 
@@ -226,7 +301,236 @@ docker compose down
 | EDGE_ENCRYPTION | 加密方式              | edge 间连接加密方式      | -A1 = disabled, -A2 = Twofish (default), -A3 or -A (deprecated) = AES-CBC, -A4 = ChaCha20, -A5 = Speck-CTR. |
 |        EDGE_TUN | 网卡名                | edge 使用的网卡名        | -d $EDGE_TUN                                                                                                |
 |        N2N_ARGS | 更多参数              | 运行时附加的更多参数     | -v -f                                                                                                       |
-|  USE_DEFALT_ARG | 默认参数              | 运行时附加的默认参数     | `false` / `true` ：`v1:-br` , `v2:-EfrA` , `v2s:--bfr -L auto` , `v3:-Efr -e auto`                          |
+| USE_DEFALT_ARGS | 默认参数              | 运行时附加的默认参数     | `false` / `true` ：`v1:-br` , `v2:-EfrA` , `v2s:--bfr -L auto` , `v3:-Efr -e auto`                          |
+
+## 运行流程
+
+```mermaid display:none
+flowchart TD
+  subgraph docker-entrypoint.sh
+    LOAD("开始")
+    EXIT("结束")
+    LOAD-->docker_entrypoint[docker-entrypoint.sh]-->set_app_use_parma1[app=$1]-->set_conf_file_use_parma2[conf_file=$2]-->EXEC_PARAMS
+
+    EXEC_PARAMS{是否存在参数}-->|否|edge_conf
+    EXEC_PARAMS{是否存在参数}-->|是|edge_or_supernode
+
+    subgraph 不存在参数
+      edge_conf{存在文件 /n2n/conf/edge.conf}-->
+        |是|empty_conf_file_edge["
+                            app=edge
+                            $conf_file=/n2n/conf/edge.conf
+                          "]
+      edge_conf-->|否|supernode_conf{存在文件 /n2n/conf/supernode.conf}
+      supernode_conf-->
+        |是|empty_conf_file_supernode["
+                                app=supernode
+                                $conf_file=/n2n/conf/supernode.conf
+                              "]
+      supernode_conf-->|否|exist_conf_edge_path_n2n{"存在 /n2n/conf/edge.conf"}
+
+      exist_conf_edge_path_n2n-->
+        |是|use_conf_edge_path_n2n["
+                                    app=edge
+                                    conf_file=/n2n/conf/edge.conf
+                                  "]
+      exist_conf_edge_path_n2n-->
+        |否|exist_conf_supernode_path_n2n{"存在 /n2n/conf/supernode.conf"}
+
+      exist_conf_supernode_path_n2n-->
+        |是|use_conf_supernode_path_n2n["
+                                    app=supernode
+                                    conf_file=/n2n/conf/supernode.conf
+                                  "]
+
+      exist_conf_supernode_path_n2n-->
+        |否|env_mode_supernode{"${MODE}==SUPERNODE"}
+      env_mode_supernode-->
+        |是|empty_use_supernode["app=supernode"]
+      env_mode_supernode-->
+        |否|empty_use_edge["app=edge"]
+      empty_use_supernode & empty_use_edge -->
+        conf_save_env["
+              conf_file=/tmp/conf_file_env.conf
+              CONF_SAVE ${conf_file}
+            "]
+      use_conf_edge_path_n2n & use_conf_supernode_path_n2n & empty_conf_file_edge & empty_conf_file_supernode & conf_save_env-->
+      empty_conf_file_save["
+                          保存配置文件
+                          echo ${conf_file} >/tmp/conf_file_from_exec_params.conf
+                        "]
+    end
+
+    empty_conf_file_save -->
+      edge_or_supernode{"
+                          参数 $1 匹配 ^(/usr/local/sbin/)?(edge)|(supernode)$')
+                          以及 参数 $2 不是 -h --help
+                          以及 $conf_file 不为 空
+                        "}
+    edge_or_supernode-->|是|CONF_READ
+
+    subgraph 从配置文件中解析
+      CONF_READ-->exec_params_more{"存在两个以上参数"}
+      exec_params_more-->|是|conf_save_params["将运行参数储存至 /tmp/conf_file_from_exec_params.conf"]
+      exec_params_more & conf_save_params -->
+        conf_read["CONF_READ /tmp/conf_file_from_exec_params.conf"]-->change_env["处理参数"]
+    end
+    change_env-->run_n2n[run_n2n.sh]
+    edge_or_supernode-->
+      |否|exec_raw["
+                    运行原始命令
+                    exec $@
+                  "]
+    exec_raw & run_n2n --> EXIT
+  end
+```
+
+```mermaid
+flowchart TD
+  subgraph conf_read.sh
+  LOAD("开始")
+  EXIT("结束运行")
+    LOAD-->CONF_READ-->prama_1{"存在参数 $1"};
+    prama_1-->|是|set_conf_file_read["设置conf_file_read=$1"]-->read_conf_file["解析文件"]-->inner_conf_file{"解析到引用其他配置文件"}
+    inner_conf_file-->|是|CONF_READ
+    inner_conf_file-->|否|parse_file["解析参数"]-->update_arg["更新参数"]
+    prama_1  -->|否|EXIT
+    update_arg -->EXIT
+  end
+```
+
+```mermaid
+flowchart TB
+  subgraph run_n2n.sh
+    LOAD("开始")
+    EXIT("结束运行")
+
+    subgraph init_dhcpd_conf
+      init_dhcpd_conf_start["初始化 DHPCD 配置文件"]-->exist_conf_dhcpd_path_n2n{"存在 /n2n/conf/dhcpd.conf"}
+      exist_conf_dhcpd_path_n2n-->|是|cp_conf_dhcpd["cp /n2n/conf/dhcpd.conf /etc/dhcp/dhcpd.conf"]
+      exist_conf_dhcpd_path_n2n-->|否|exist_conf_udhcpd_path_n2n{"存在 /n2n/conf/udhcpd.conf"}
+      exist_conf_udhcpd_path_n2n-->|是|cp_conf_udhcpd["cp /n2n/conf/udhcpd.conf /etc/dhcp/udhcpd.conf"]
+      exist_conf_udhcpd_path_n2n-->
+        |否|craet_conf_dhcpd["
+                              创建 /etc/dhcp/dhcpd.conf
+                              subnet ${IP_PREFIX}0 netmask ${EDGE_NETMASK}
+                              range ${IP_PREFIX}120 ${IP_PREFIX}240;
+                            "]
+      cp_conf_dhcpd &  cp_conf_udhcpd & craet_conf_dhcpd --> init_dhcpd_conf_finish["初始化 DHPCD 完毕"]
+    end
+
+    subgraph run_dhcpd
+      run_dhcpd_start-->init_dhcpd_conf-->exist_conf_dhcpd_path_etc{"存在 /etc/dhcp/dhcpd.conf"}
+      exist_conf_dhcpd_path_etc-->|是|start_dhcpd["dhcpd -f -d ${EDGE_TUN} &"]
+      exist_conf_dhcpd_path_etc-->|否|exist_conf_udhcpd_path_etc{"存在 /etc/udhcp/dhcpd.conf"}
+      exist_conf_udhcpd_path_etc-->|是|start_udhcpd["busybox udhcpd -f /etc/dhcp/udhcpd.conf &"]
+      start_udhcpd-->run_dhcpd_finish
+    end
+    subgraph run_dhcpc
+      run_dhcpc_start
+        -->start_dhcpc["
+          LOG_RUN dhclient -x
+          LOG_RUN dhclient -d --dad-wait-time 5 ${EDGE_TUN} &
+        "]
+        -->run_dhcpc_finish
+    end
+    subgraph check_mac_address
+      check_mac_address_start["检查$EDGE_MAC"]-->GET_MAC_FROM_WAN{"环境变量 GET_MAC_FROM_WAN值*大写"}
+      GET_MAC_FROM_WAN-->|TRUE|INIT_EDGE_MAC_FROM_WAN["获取容器网关mac地址-1"]
+      check_mac_address_valid{"是否合法"}
+      GET_MAC_FROM_WAN-->|其他|check_mac_address_valid
+      INIT_EDGE_MAC_FROM_WAN-->check_mac_address_valid
+      check_mac_address_valid-->|是|mac_upper["$EDGE_MAC转大写"]
+      check_mac_address_valid-->|否|mac_empty["$EDGE_MAC=''"]
+      mac_upper & mac_empty-->check_mac_address_start_finish["检查完毕"]
+    end
+    subgraph check_edge
+    check_edge_start-->
+      init_TOTLA_WAIT_TIME["TOTLA_WAIT_TIME=30"]
+        --> startTime["记录开始时间"]
+        -->sumTime["记录当前时间"]
+        -->check_edge_time_out{"是否超时 / 30秒"}
+      check_edge_time_out-->|是|EXIT
+      check_edge_time_out-->|否|get_edge_addr{"判断EDGE是否启动成功"}
+      get_edge_addr-->|是|check_edge_mode{"是否DHCPC模式"}
+      get_edge_addr-->|否|sumTime
+      check_edge_mode-->|是|run_dhcpc-->check_edge_addr{"是否获取到地址"}
+      check_edge_mode-->|否|check_edge_addr
+      check_edge_addr-->|否|sumTime
+      check_edge_addr-->|是|check_edge_finish
+    end
+    subgraph run_edge
+      run_edge_start["处理参数"]-->start_edge["命令方式运行"]
+    end
+    subgraph mode_dhcpd
+      mode_dhcpd_start-->check_mac_address-->run_edge-->check_edge-->run_dhcpd-->mode_dhcpd_finish
+    end
+    subgraph mode_dhcpc
+      mode_dhcpc_start-->mode_dhcpc_EDGE_IP{"EDGE_IP 是否包含 dhcp"}
+      mode_dhcpc_EDGE_IP-->|否|mode_dhcpc_set_EDGE_IP_AGE["设置为 dhcp:0.0.0.0"]
+      mode_dhcpc_EDGE_IP-->|是|mode_dhcpc_N2N_ARGS{"N2N_ARGS 是否包含 r"}
+      mode_dhcpc_set_EDGE_IP_AGE-->mode_dhcpc_N2N_ARGS
+      mode_dhcpc_N2N_ARGS-->|否|mode_dhcpc_add_N2N_ARG["添加 -r"]
+      mode_dhcpc_N2N_ARGS-->|是|check_mac_address
+      mode_dhcpc_add_N2N_ARG-->check_mac_address
+      check_mac_address-->run_edge-->check_edge-->mode_dhcpc_finish
+    end
+    subgraph mode_static
+      mode_static_start-->check_mac_address-->run_edge-->check_edgemode_static_finish
+    end
+    subgraph mode_supernode
+      mode_supernode_start-->INIT_VERSION["获取small_version"]-->small_version{"small_version>2.9.0"}
+      small_version-->|是|argp["ARG_SUPERNODE_PORT=-p ${SUPERNODE_PORT}"]
+      small_version-->|否|argl["ARG_SUPERNODE_PORT=-l ${SUPERNODE_PORT}"]
+      argp & argl--> run_supernode -->mode_supernode_finish
+    end
+    subgraph check_server
+      check_server_start-->
+        check_server_use_ping{"使用ping命令获取"}
+      check_server_use_ping-->|获取失败|check_server_use_nslookup{"使用nslookup命令获取"}
+      check_server_use_ping-->|获取成功|check_server_finish
+      check_server_use_nslookup-->|获取失败|use_raw{"使用 $SUPERNODE_HOST"}
+      check_server_use_nslookup-->|获取成功|check_server_finish
+      use_raw-->check_server_finish
+    end
+    subgraph restart_edge
+      restart_edge_start
+        -->stop_dhclient
+        -->killall_edge
+        -->killall_dhcpd
+        -->killall_udhcpd
+        -->main
+        -->restart_edge_finish
+    end
+    subgraph check_run
+      check_run_start-->check_run_edge{"edge 模式"}
+      check_run_edge-->|是|check_server-->check_run_ip_change{"SUPERNODE_IP 变化"}
+      check_run_ip_change-->|是|restart_edge
+      check_run_ip_change-->|否|check_run_start
+      check_run_edge-->|否|check_run_WATCH_DOG["${WATCH_DOG^^}==TRUE"]
+      check_run_WATCH_DOG-->|是|check_run_n2n_healthcheck{"/n2n/n2n_healthcheck.sh出错"}
+      check_run_WATCH_DOG-->|否|check_run_start
+      check_run_n2n_healthcheck-->|是|restart_edge
+      check_run_n2n_healthcheck-->|否|check_run_start
+
+      restart_edge-->check_run_finish
+    end
+    subgraph main
+      main_start-->check_server["获取 SUPERNODE_IP"]-->
+        case_MODE{"case ${MODE}"}
+      case_MODE-->|SUPERNODE|mode_supernode
+      case_MODE-->|DHCPD|mode_dhcpd
+      case_MODE-->|DHCPC|mode_dhcpc
+      case_MODE-->|STATIC|mode_static
+      case_MODE-->|其他|case_faild
+      mode_supernode & mode_dhcpd & mode_dhcpc & mode_static & case_faild -->
+      main_finish
+    end
+    LOAD-->run_n2n_start["处理参数"]--->main-->check_run-->EXIT
+  end
+```
+
+## 更多帮助
 
 所有的通过此文件测试：[<docker-compose.test.yaml>](https://github.com/zctmdc/docker/blob/alpha/n2n_ntop/docker-compose.test.yaml) , [<compose-test.sh>](https://github.com/zctmdc/docker/blob/alpha/n2n_ntop/scripts/compose-test.sh)
 
