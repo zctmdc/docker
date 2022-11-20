@@ -148,8 +148,6 @@ services:
     depends_on:
       test-n2n_edge_dhcpd:
         condition: service_healthy
-      test-n2n_manual_server:
-        condition: service_healthy
     image: ${REGISTRY_USERNAME}/${APP_NAME}:${test_tag}
     container_name: test_n2n_edge_manual
     restart: always
