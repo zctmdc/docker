@@ -2,8 +2,6 @@
 
 # set -x
 app="${1}"
-conf_file="${2}"
-
 if [[ -z "$@" ]]; then
     . init_logger.sh
     if [[ -f /n2n/conf/edge.conf ]]; then
@@ -25,16 +23,18 @@ if [[ -z "$@" ]]; then
         CONF_SAVE ${conf_file}
         LOG_INFO "解析环境变量到配置文件: ${conf_file}"
     fi
-    LOG_INFO "检测到配置文件: ${conf_file}"
     LOG_INFO "app: ${app}"
-    echo ${conf_file} >/tmp/conf_file_from_exec_params.conf
 fi
 
-if [[ -n "$(echo ${app} | grep -E '^(/usr/local/sbin/)?(edge)|(supernode)$')" && -n "${conf_file}" && -z "$(echo ${@:2} | grep -E '^(-h)|(--help)$')" ]]; then
+if [[ -n "$(echo ${app} | grep -E '^(/usr/local/sbin/)?(edge)|(supernode)$')" && -n "${2}" && -z "$(echo ${@:2} | grep -E '^(-h)|(--help)$')" ]]; then
     . init_logger.sh
     . init_version.sh
     . conf_read.sh
-
+    # : >/tmp/conf_file_load.conf
+    if [[ -n "${conf_file}" ]]; then
+        LOG_INFO "检测到配置文件: ${conf_file}"
+        echo ${conf_file} >/tmp/conf_file_load.conf
+    fi
     INIT_VERSION
     EXEC_PARAMS=" ${@:2}"
     if [[ -n "${@:2}" ]]; then
@@ -43,9 +43,9 @@ if [[ -n "$(echo ${app} | grep -E '^(/usr/local/sbin/)?(edge)|(supernode)$')" &&
         f_EXEC_PARAMS=$(echo -e "${s_EXEC_PARAMS}")
         # echo "${f_EXEC_PARAMS}"
         echo -e "${f_EXEC_PARAMS}" >>/tmp/conf_file_from_exec_params.conf
+        echo "/tmp/conf_file_from_exec_params.conf" >>/tmp/conf_file_load.conf
     fi
-    CONF_READ /tmp/conf_file_from_exec_params.conf
-
+    CONF_READ /tmp/conf_file_load.conf
     EDGE_TUN="${cf_EDGE_TUN:-${EDGE_TUN}}"
     EDGE_IP="${cf_EDGE_IP:-${EDGE_IP}}"
     EDGE_COMMUNITY="${cf_EDGE_COMMUNITY:-${EDGE_COMMUNITY}}"
@@ -54,7 +54,6 @@ if [[ -n "$(echo ${app} | grep -E '^(/usr/local/sbin/)?(edge)|(supernode)$')" &&
     SUPERNODE_HOST="${cf_SUPERNODE_HOST:-${SUPERNODE_HOST}}"
     SUPERNODE_PORT="${cf_SUPERNODE_PORT:-${SUPERNODE_PORT}}"
     N2N_ARGS="${cf_N2N_ARGS:-${N2N_ARGS}}"
-
     if [[ -n "$(echo ${app} | grep -E '^(/usr/local/sbin/)?edge$')" ]]; then
         if [[ "${EDGE_IP,,}" =~ "dhcp" ]]; then
             MODE="${MODE:-DHCPC}"
