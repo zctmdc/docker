@@ -7,10 +7,10 @@
 MODE=$(echo "${MODE}" | tr '[a-z]' '[A-Z]')
 LOG_INFO "MODE=${MODE}"
 
-# if [[ -n "${EDGE_ENCRYPTION}" && "${EDGE_ENCRYPTION:0:1}" != "-" ]]; then
-#   EDGE_ENCRYPTION="-${EDGE_ENCRYPTION}"
-# fi
-# LOG_INFO "EDGE_ENCRYPTION=${EDGE_ENCRYPTION}"
+if [[ -n "${EDGE_ENCRYPTION}" && "${EDGE_ENCRYPTION:0:1}" != "-" ]]; then
+  EDGE_ENCRYPTION="-${EDGE_ENCRYPTION}"
+fi
+LOG_INFO "EDGE_ENCRYPTION=${EDGE_ENCRYPTION}"
 
 # N2N_ARGS=$(echo "${N2N_ARGS}")
 # if [[ -n "${N2N_ARGS}" && "${N2N_ARGS:0:1}" != "-" ]]; then
