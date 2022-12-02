@@ -41,7 +41,7 @@ COPY ./scripts/*  /opt/frp/
 RUN ln -s /usr/bin/frps /opt/frp/fprs \
   && ln -s /usr/bin/frpc /opt/frp/fprc
 
-chmod a+x /opt/frp/* 
+RUN chmod a+x /opt/frp/* 
 
 
 # string 二级域名后缀/服务器地址
