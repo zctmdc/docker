@@ -35,66 +35,79 @@ frp 是一个专注于内网穿透的高性能的反向代理应用，支持 TCP
 
 ## 在线配置
 
+-   HTTP
 
-- HTTP
-   1. 访问 [http://${服务端域名}:7500/static/#/proxies/http](http://frp.example.org:7500/static/#/proxies/http) `SUBDOMAIN_HOST`
-   2. 使用服务端账号密码登录 `ADMIN_USER` `ADMIN_PWD`
-   3. 找到 `-admin` 结尾的名称
-   4. 访问 `xxx-admin.服务端域名`
-   5. 使用客户端账号密码登录，进行相关配置 `ADMIN_USER` `ADMIN_PWD`
-   6. 
-   ```ini
-   [http_admin_UI]
-    type = http
-    subdomain = {{ .Envs.HOSTNAME }}-admin
-    local_ip = localhost
-    local_port = {{ .Envs.ADMIN_PORT }}
+    1. 访问 [http://${服务端域名}:7500/static/#/proxies/http](http://frp.example.org:7500/static/#/proxies/http) `SUBDOMAIN_HOST`
+    
+    2. 使用服务端账号密码登录 `ADMIN_USER` `ADMIN_PWD`
+    
+    3. 找到 `-admin` 结尾的名称
+    
+    4. 访问 `xxx-admin.服务端域名`
+    
+    5. 使用客户端账号密码登录，进行相关配置 `ADMIN_USER` `ADMIN_PWD`
+
+    ```ini
+    [http_admin_UI]
+     type = http
+     subdomain = {{ .Envs.HOSTNAME }}-admin
+     local_ip = localhost
+     local_port = {{ .Envs.ADMIN_PORT }}
     ```
 
 ## 远程配置
+
 1. 在服务端启动 `frps`，确保所有的客户端可以访问该主机。
 2. 在被访问端启动 `frpc` `remote frpc`
 3. 在访问客端启动 `frpc` `local frpc`
 4. 配置访问端 `frpc`
-   
-- stcp
-  - remote
-    ```ini
-    [stcp_admin_UI]
-    type = stcp
-    sk = {{ .Envs.SK }}
-    local_ip = localhost
-    local_port = {{ .Envs.ADMIN_PORT }}
-    ```
-  - lcocal
-    ```ini
-    [stcp_admin_UI_visitor]
-    role = visitor
-    type = stcp
-    server_name = {{ .Envs.HOSTNAME }}.stcp_admin_UI
-    sk = {{ .Envs.SK }}
-    bind_addr = localhost
-    bind_port = 9000
-    ```
-- xtcp
-  - remote
-    ```ini
-    [p2p_admin_UI]
-    type = xtcp
-    sk = {{ .Envs.SK }}
-    local_ip = localhost
-    local_port = {{ .Envs.ADMIN_PORT }}
-    ```
-  - lcocal
-    ```ini
-    [p2p_admin_UI_visitor]
-    role = visitor
-    type = xtcp
-    server_name = {{ .Envs.HOSTNAME }}.p2p_admin_UI
-    sk = {{ .Envs.SK }}
-    bind_addr = localhost
-    bind_port = 9001
-    ```
+
+-   stcp
+
+    -   remote
+
+        ```ini
+        [stcp_admin_UI]
+        type = stcp
+        sk = {{ .Envs.SK }}
+        local_ip = localhost
+        local_port = {{ .Envs.ADMIN_PORT }}
+        ```
+
+    -   lcocal
+
+        ```ini
+        [stcp_admin_UI_visitor]
+        role = visitor
+        type = stcp
+        server_name = {{ .Envs.HOSTNAME }}.stcp_admin_UI
+        sk = {{ .Envs.SK }}
+        bind_addr = localhost
+        bind_port = 9000
+        ```
+
+-   xtcp
+-   -   remote
+
+        ```ini
+        [p2p_admin_UI]
+        type = xtcp
+        sk = {{ .Envs.SK }}
+        local_ip = localhost
+        local_port = {{ .Envs.ADMIN_PORT }}
+        ```
+
+    -   lcocal
+
+        ```ini
+        [p2p_admin_UI_visitor]
+        role = visitor
+        type = xtcp
+        server_name = {{ .Envs.HOSTNAME }}.p2p_admin_UI
+        sk = {{ .Envs.SK }}
+        bind_addr = localhost
+        bind_port = 9001
+        ```
 
 ### 容器环境变量说明
 
