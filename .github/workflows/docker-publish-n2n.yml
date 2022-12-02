@@ -1,4 +1,4 @@
-name: build n2n_ntop
+name: docker publish n2n_ntop
 
 # This workflow uses actions that are not certified by GitHub.
 # They are provided by a third-party and are governed by
@@ -6,8 +6,8 @@ name: build n2n_ntop
 # documentation.
 
 on:
-  schedule:
-    - cron: "28 9 * * *"
+  # schedule:
+  #   - cron: "28 9 * * *"
   push:
     branches: ["*"]
   pull_request:
