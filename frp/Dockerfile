@@ -1,5 +1,5 @@
-FROM fatedier/frpc as frpc_src
-FROM fatedier/frps as frps_src
+FROM snowdreamtech/frpc as frpc_src
+FROM snowdreamtech/frps as frps_src
 
 FROM alpine
 
