@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 LOG_INFO() {
   echo -e $(caller) "\033[0;32m[INFO] $* \033[0m"
 }
