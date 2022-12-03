@@ -111,12 +111,12 @@ jobs:
 
           sleep 15
           result="$(docker exec -i frps curl --head "http://localhost:${ADMIN_PORT}/healthz")"
-          if [[ -z "$(echo ${result}| head -n 1 | grep -o '200')"]];then
+          if [[ -z "$(echo ${result}| head -n 1 | grep -o '200')" ]];then
               echo "test faild: frps: http resp code - '${result}'"
               exit 1
           fi
           result="$(docker exec -i frpc curl --head "http://localhost:${ADMIN_PORT}/healthz")"
-          if [[ -z "$(echo ${result}| head -n 1 | grep -o '200')"]];then
+          if [[ -z "$(echo ${result}| head -n 1 | grep -o '200')" ]];then
               echo "test faild: frpc: http resp code - '${result}'"
               exit 1
           fi
