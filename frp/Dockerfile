@@ -17,17 +17,14 @@ LABEL description="${summary}" \
   org.opencontainers.image.documentation="https://github.com/zctmdc/docker/tree/alpha/frp/README.MD"\
   org.opencontainers.image.licenses="Apache License 2.0"
 
-
-RUN apk add --update --no-cache tzdata \
+RUN apk add --update --no-cache tzdata curl bash \
   && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
   && echo "Asia/Shanghai" > /etc/timezone \
   && apk del tzdata
 RUN mkdir -p /usr/share/zoneinfo/Asia/ \
   && ln -s /etc/localtime /usr/share/zoneinfo/Asia/Shanghai
 
-
 COPY --from=frpc_src  /usr/bin/frpc  /usr/bin/frpc
-
 COPY --from=frps_src  /usr/bin/frps  /usr/bin/frps
 
 RUN chmod +x /usr/bin/frpc /usr/bin/frps
@@ -35,14 +32,12 @@ RUN chmod +x /usr/bin/frpc /usr/bin/frps
 WORKDIR /opt/frp/
 
 COPY ./config/*  /etc/frp/
-
 COPY ./scripts/*  /opt/frp/
 
 RUN ln -s /usr/bin/frps /opt/frp/fprs \
   && ln -s /usr/bin/frpc /opt/frp/fprc
 
 RUN chmod a+x /opt/frp/* 
-
 
 # string 二级域名后缀/服务器地址
 ENV SUBDOMAIN_HOST=localhost

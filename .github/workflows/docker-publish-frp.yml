@@ -6,8 +6,8 @@ name: docker publish frp
 # documentation.
 
 on:
-  # schedule:
-  #   - cron: '44 1 * * *'
+  schedule:
+    - cron: '30 21 * * *'
   push:
     branches: ["*"]
     # Publish semver tags as releases.
@@ -87,77 +87,39 @@ jobs:
         id: docker-test
         run: |
           echo "test start"
-          # docker network create --driver bridge --subnet=172.31.0.0/16 inotify-rsync-server-test
-          # REGISTRY_USERNAME=${{ secrets.REGISTRY_USERNAME }}
-          # APP_NAME=${{ env.APP_NAME }}
-          # # REGISTRY_USERNAME=zctmdc
-          # # APP_NAME=inotify-rsync-server
-          # docker run -d --name rsync-server-ip \
-          #     --network inotify-rsync-server-test \
-          #     -e USERNAME=admin \
-          #     -e PASSWORD=mysecret \
-          #     -e ALLOW='172.16.0.0/12' \
-          #     --ip 172.31.0.31 \
-          #     ${REGISTRY_USERNAME}/${APP_NAME}:test
+          docker network create --driver bridge --subnet=172.31.0.0/16 frp-test
+          REGISTRY_USERNAME=${{ secrets.REGISTRY_USERNAME }}
+          APP_NAME=${{ env.APP_NAME }}
+          # REGISTRY_USERNAME=zctmdc
+          # APP_NAME=frp
+          ADMIN_PORT=7480
+          docker run -d --name frps \
+              --network frp-test \
+              -e SUBDOMAIN_HOST=frp.example.com \
+              -e ADMIN_PORT=${ADMIN_PORT} \
+              -e MODE=RUN_FRPS \
+              --ip 172.31.0.30 \
+              --add-host frp.example.com:172.31.0.30 \
+              ${REGISTRY_USERNAME}/${APP_NAME}:test
 
-          # docker run -d --name rsync-server-domain \
-          #     --network inotify-rsync-server-test \
-          #     -e USERNAME=admin \
-          #     -e PASSWORD=mysecret \
-          #     -e ALLOW='172.16.0.0/12' \
-          #     --ip 172.31.0.30 \
-          #     ${REGISTRY_USERNAME}/${APP_NAME}:test
+          docker run -d --name frpc \
+              --network frp-test \
+              -e SUBDOMAIN_HOST=frp.example.com \
+              -e ADMIN_PORT=${ADMIN_PORT} \
+              --add-host frp.example.com:172.31.0.30 \
+              ${REGISTRY_USERNAME}/${APP_NAME}:test
 
-          # docker run -d --name rsync-server-name \
-          #     --network inotify-rsync-server-test \
-          #     -e USERNAME=admin \
-          #     -e PASSWORD=mysecret \
-          #     -e ALLOW='172.16.0.0/12' \
-          #     ${REGISTRY_USERNAME}/${APP_NAME}:test
-
-          # docker run -d --name rsync-server-inotify \
-          #     --network inotify-rsync-server-test \
-          #     -e USERNAME=admin \
-          #     -e PASSWORD=mysecret \
-          #     -e ALLOW='172.16.0.0/12' \
-          #     -e SERVICE_NAMES=172.31.0.31,syncd.example.com,rsync-server-name \
-          #     --add-host syncd.example.com:172.31.0.30 \
-          #     ${REGISTRY_USERNAME}/${APP_NAME}:test
-              
-          # mkdir -p ./test/
-          # echo init > ./test/test.txt
-          # cat ./test/test.txt
-          # docker run -d --name rsync-server-inotify-init \
-          #     --network inotify-rsync-server-test \
-          #     -v $(pwd)/test/:/data:ro \
-          #     -e USERNAME=admin \
-          #     -e PASSWORD=mysecret \
-          #     -e ALLOW='172.16.0.0/12' \
-          #     -e SERVICE_NAMES=rsync-server-inotify \
-          #     ${REGISTRY_USERNAME}/${APP_NAME}:test
-
-          # sleep 60
-          # result="$(docker exec -i rsync-server-ip cat /data/test.txt 2>&1)"
-          # if [[ "${result}" != "init" ]]; then
-          #   echo "test faild: rsync-server-ip: 'init' - '${result}'"
-          #   exit 1
-          # fi
-          # echo modifly > ./test/test.txt
-          # sleep 60
-          # cat ./test/test.txt
-          # result="$(docker exec -i rsync-server-domain cat /data/test.txt 2>&1)"
-          # if [[ "${result}" != "modifly" ]]; then
-          #   echo "test faild: rsync-server-domain: 'modifly' - '${result}'"
-          #   exit 1
-          # fi
-          # echo latest > ./test/test.txt
-          # sleep 60
-          # cat ./test/test.txt
-          # result="$(docker exec -i rsync-server-name cat /data/test.txt 2>&1)"
-          # if [[ "${result}" != "latest" ]]; then
-          #   echo "test faild: rsync-server-name: 'latest' - '${result}'"
-          #   exit 1
-          # fi
+          sleep 15
+          result="$(docker exec -i frps curl --head "http://localhost:${ADMIN_PORT}/healthz")"
+          if [[ "$(echo ${result}| head -n 1 | grep '200')" != 200 ]];then
+              echo "test faild: frps: http resp code - '${result}'"
+              exit 1
+          fi
+          result="$(docker exec -i frpc curl --head "http://localhost:${ADMIN_PORT}/healthz")"
+          if [[ "$(echo ${result}| head -n 1 | grep '200')" != 200 ]];then
+              echo "test faild: frpc: http resp code - '${result}'"
+              exit 1
+          fi
           echo "test pass"
 
       # Build and push Docker image with Buildx (don't push on PR)
