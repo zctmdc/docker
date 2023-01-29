@@ -21,6 +21,7 @@ if [[ -z "$@" ]]; then
             app="edge"
         fi
         conf_file="/tmp/conf_file_env.conf"
+        : >${conf_file}
         . conf_save.sh
         LOG_INFO "环境变量到配置文件: ${conf_file}"
         CONF_SAVE ${conf_file}

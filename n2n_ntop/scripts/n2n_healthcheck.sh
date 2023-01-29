@@ -55,4 +55,4 @@ else
         cat /sys/class/net/$EDGE_TUN/address || exit 1
     fi
 fi
-/bin/busybox ping -c 5 -w 10 -W 2 -q $check_ip || exit 1
+/bin/busybox ping -c 5 -q $check_ip || exit 1
