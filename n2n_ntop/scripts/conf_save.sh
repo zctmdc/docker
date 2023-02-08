@@ -12,10 +12,12 @@ CONF_SAVE() {
   touch ${conf_file_env}
   if [[ "${MODE^^}" == "SUPERNODE" ]]; then
     INIT_VERSION
-    if [[ -n "${small_version}" && "${small_version//./}" -ge 290 ]]; then
+    if [[  "${small_version//./}" -ge 290 ]]; then
       # v.2.9.0+  使用 -p
+      LOG_INFO "v3: ${small_version} " 
       ARG_SUPERNODE_PORT="-p ${SUPERNODE_PORT}"
     else
+      LOG_INFO "small_version: ${small_version} " 
       ARG_SUPERNODE_PORT="-l ${SUPERNODE_PORT}"
     fi
   elif [[ -n "$(echo ${MODE^^} | grep -E '^(DHCPC)|(DHCPD)|(STATIC)')" ]]; then
