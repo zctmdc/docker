@@ -4,8 +4,8 @@ touch /n2n/environment
 . /n2n/environment
 
 check_server() {
-    if busybox ping -c 1 -w 3 $SUPERNODE_HOST >/dev/null 2>&1; then
-        SUPERNODE_IP=$(busybox ping -c 1 -w 3 $SUPERNODE_HOST | grep -Eo "([0-9]{1,3}\.){3}[0-9]{1,3}" | head -n 1)
+    if busybox ping -4 -c 1 -w 3 $SUPERNODE_HOST >/dev/null 2>&1; then
+        SUPERNODE_IP=$(busybox ping -4 -c 1 -w 3 $SUPERNODE_HOST | grep -Eo "([0-9]{1,3}\.){3}[0-9]{1,3}" | head -n 1)
         echo "SUPERNODE_IP 获取成功: PING - ${SUPERNODE_IP}"
     elif nslookup $SUPERNODE_HOST 223.5.5.5 >/dev/null 2>&1; then
         SUPERNODE_IP=$(nslookup -type=a $SUPERNODE_HOST 223.5.5.5 | grep -v 223.5.5.5 | grep ddress | awk '{print $2}')

@@ -19,8 +19,8 @@ LOG_INFO "EDGE_ENCRYPTION=${EDGE_ENCRYPTION}"
 LOG_INFO "N2N_ARGS=${N2N_ARGS}"
 
 check_server() {
-  if busybox ping -c 1 -w 3 ${SUPERNODE_HOST} >/dev/null 2>&1; then
-    SUPERNODE_IP=$(busybox ping -c 1 -w 3 ${SUPERNODE_HOST} | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' | head -n 1)
+  if busybox ping -4 -c 1 -w 3 ${SUPERNODE_HOST} >/dev/null 2>&1; then
+    SUPERNODE_IP=$(busybox ping -4 -c 1 -w 3 ${SUPERNODE_HOST} | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' | head -n 1)
     LOG_INFO "SUPERNODE_IP 获取成功: ${SUPERNODE_IP} - ping"
   elif nslookup ${SUPERNODE_HOST} 223.5.5.5 >/dev/null 2>&1; then
     SUPERNODE_IP=$(busybox nslookup -type=a ${SUPERNODE_HOST} 223.5.5.5 | grep -v 223.5.5.5 | grep ddress | grep -Eo '([0-9]{1,3}\.){3}[0-9]{1,3}' | head -n 1)
