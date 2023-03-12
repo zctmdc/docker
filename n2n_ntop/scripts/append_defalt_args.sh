@@ -28,8 +28,8 @@ elif [[ "$(echo ${MODE} | grep -E '^(DHCPD)|(DHCPC)|(STATIC)$')" ]]; then
         echo "append_defalt_args:  -br"
         ;;
     "v2")
-        N2N_ARGS="${N2N_ARGS} -EfrA"
-        echo "append_defalt_args:  -EfrA"
+        N2N_ARGS="${N2N_ARGS} -Efr"
+        echo "append_defalt_args:  -Efr"
         ;;
     "v2s")
         N2N_ARGS="${N2N_ARGS} -L auto -bfr"
