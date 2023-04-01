@@ -35,15 +35,15 @@ fi
 if [ -z "$( cat $CONF_FILE | grep 'Envs.SUBDOMAIN_HOST') " ];then
     # Changed pass WEB
     FLAG_EDIT_CONF_PASS_WEB='Changed_Pass_WEB'
-else
-    cp $CONF_FILE $CONF_FILE_BAK
 fi
 
 if [ -n "$( cat $CONF_FILE | grep $FLAG_CONF_ADD )" ];then
     # Change pass CONF_ADD
     FLAG_EDIT_CONF_PASS_ADD='Changed_Pass_ADD'
 fi
-
+if [ -z "${FLAG_EDIT_CONF_PASS_WEB}" ]  && [ -z "${FLAG_EDIT_CONF_PASS_ADD}" ]; then
+    cp $CONF_FILE $CONF_FILE_BAK
+fi
 if [ -f $CONF_FILE_ADD ]; then
     FLAG_EXIST_CONF_FILE_ADD="TRUE"
     if [ -z "${FLAG_EDIT_CONF_PASS_WEB}" ]  && [ -f $CONF_FILE_ADD_BAK ] && [ -n "$(grep -v -f $CONF_FILE_ADD $CONF_FILE_ADD_BAK)" ] ; then
