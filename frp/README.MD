@@ -107,10 +107,12 @@ CONF_FRPC_BAK=/opt/frp/conf/frpc_bak.ini
 
 以下情况除外
 
-- 从网页修改过配置文件 [通过frpc远程配置](###通过frpc远程配置) 
+- 从网页修改过配置文件 [通过frpc远程配置](###通过frpc远程配置)
+
   即：配置文件不存在 `Envs.SUBDOMAIN_HOST` `/etc/frp/`
 
 - 已附加配置文件
+
   即：配置文件中存在 `###DOCER_CONF_ADD###`
 
 ### 附加配置文件
@@ -124,7 +126,8 @@ see: [docker-entrypoint.sh](https://github.com/zctmdc/docker/blob/alpha/frp/scri
 
 以下情况除外
 
-- 从网页修改过配置文件 [通过frpc远程配置](###通过frpc远程配置) 
+- 从网页修改过配置文件 [通过frpc远程配置](###通过frpc远程配置)
+
   即：配置文件不存在 `Envs.SUBDOMAIN_HOST` `/etc/frp/`
 
 ```ini
