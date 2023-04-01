@@ -17,6 +17,8 @@ RUN chmod +x /usr/bin/frpc /usr/bin/frps
 
 WORKDIR /opt/frp/
 
+RUN mkdir -p /opt/frp/conf/
+
 COPY ./config/*  /etc/frp/
 COPY ./scripts/*  /opt/frp/
 
