@@ -107,7 +107,7 @@ CONF_FRPC_BAK=/opt/frp/conf/frpc_bak.ini
 
 ### 附加配置文件
 
-see: [docker-entrypoint.sh](https://github.com/zctmdc/docker/blob/alpha/frp/scripts/docker-entrypoint.sh#L45)
+see: [docker-entrypoint.sh](https://github.com/zctmdc/docker/blob/alpha/frp/scripts/docker-entrypoint.sh#47)
 
 - 注意，检测到**附加配置文件**时，将会对 `/etc/frp/` 进行修改！
 - 在容器 **启动** 时，如果检测到 **附加配置文件** ，将进行一次备份 **附加配置文件** `/opt/frp/conf/`
