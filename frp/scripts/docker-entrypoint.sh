@@ -46,7 +46,8 @@ if [ -z "${FLAG_EDIT_CONF_PASS_WEB}" ]  && [ -z "${FLAG_EDIT_CONF_PASS_ADD}" ]; 
 fi
 if [ -f $CONF_FILE_ADD ]; then
     FLAG_EXIST_CONF_FILE_ADD="TRUE"
-    if [ -z "${FLAG_EDIT_CONF_PASS_WEB}" ]  && [ -f $CONF_FILE_ADD_BAK ] && [ -n "$(grep -v -f $CONF_FILE_ADD $CONF_FILE_ADD_BAK)" ] ; then
+    # if [ -z "${FLAG_EDIT_CONF_PASS_WEB}" ]  && [ -f $CONF_FILE_ADD_BAK ] && [ -n "$(diff -q $CONF_FILE_ADD $CONF_FILE_ADD_BAK)" ] ; then
+    if [ -z "${FLAG_EDIT_CONF_PASS_WEB}" ]  && [ -f $CONF_FILE_ADD_BAK ] && [ -n "$(grep -vwf $CONF_FILE_ADD $CONF_FILE_ADD_BAK)" ] ; then
         # Changed_CONF_FILE_ADD
         FLAG_EDIT_CONF_ADD="TRUE"
         cp $CONF_FILE_BAK $CONF_FILE
