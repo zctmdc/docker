@@ -1,10 +1,10 @@
-name: manual-scan-all-to-build-n2n
+name: manual-scan-all-to-build
 
 on:
   workflow_dispatch:
     inputs:
       build-releases-version:
-        description: "Build all releases versions? v3|v2s|v2|v1"
+        description: "Build all releases versions? v2s|v2|v1"
         required: true
         type: boolean
         default: false
@@ -15,18 +15,52 @@ on:
         default: false
 
 jobs:
-  echo-input:
+  scan-all:
     runs-on: ubuntu-latest
+    env:
+      APP_NAME: n2n_lucktu
+      DOCKER_CONTEXT_PATH: .
+    permissions:
+      contents: read
+      packages: write
+    outputs:
+      version_b_s_rcs: ${{ steps.build_version.outputs.version_b_s_rcs }}
+      force_push: ${{ steps.build_version.outputs.force_push }}
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Check build_version
+        id: build_version
+        run: |
+          PROJECT_ROOT_DIR=$(pwd)
+          echo "scan-all - PROJECT_ROOT_DIR: ${PROJECT_ROOT_DIR}"
+          cd n2n
+          chmod +x *.sh
+          . init_logger.sh
+          . init_path.sh
+          parse_do.sh
+          echo "version_b_s_rcs=${version_b_s_rcs}" >> $GITHUB_OUTPUT
+          echo "force_push=${force_push}" >> $GITHUB_OUTPUT
+
+  build-all:
+    needs: [scan-all]
     permissions:
       contents: read
       packages: write
       id-token: write
-    steps:
-      - run:
-          echo "force-push - ${{ inputs.force-push }}"
-          echo "build-releases-versio - ${{ inputs.build-releases-versio }}"
+    strategy:
+      fail-fast: false
+      max-parallel: 1
+      matrix: ${{ fromJSON(needs.scan-all.outputs.version_b_s_rcs) }}
 
-  build-all-releases-version:
+    uses: ./.github/workflows/docker-publish.yml
+    with:
+      version_b_s_rc: ${{ matrix.version_b_s_rc }}
+      force_push: ${{ needs.scan-all.outputs.force_push == 'true' }}
+    secrets: inherit
+
+  build-releases-version:
     permissions:
       contents: read
       packages: write
@@ -36,10 +70,9 @@ jobs:
       fail-fast: false
       max-parallel: 1
       matrix:
-        version_b_s_rc: [v1, v2, v2s, v3]
-
-    uses: ./.github/workflows/docker-publish-n2n.yml
+        version_b_s_rc: [v1, v2, v2s]
+    uses: ./.github/workflows/docker-publish.yml
     with:
       version_b_s_rc: ${{ matrix.version_b_s_rc }}
-      force_push: ${{ inputs.force-push }}
+      force_push: ${{ inputs.force_push == 'true' }}
     secrets: inherit

@@ -1,4 +1,5 @@
 #!/bin/bash
+
 set -e
 touch /n2n/environment
 . /n2n/environment
@@ -16,7 +17,7 @@ check_server() {
     fi
 }
 check_edge() {
-    MODE=$(echo $MODE | tr '[a-z]' '[A-Z]')
+    MODE=${MODE^^}
     case $MODE in
     SUPERNODE)
         check_ip=127.0.0.1

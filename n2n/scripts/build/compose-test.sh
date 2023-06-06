@@ -30,6 +30,7 @@ export APP_NAME="${APP_NAME}"
 export test_tag="${test_tag}"
 export TEST_PLATFORM="${test_platform}"
 export build_docker_file="${build_docker_file}"
+
 TOTLA_WAIT_TIME=$((60 * 10))
 
 pull() {
