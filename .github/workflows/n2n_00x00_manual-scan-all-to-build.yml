@@ -1,0 +1,69 @@
+name: n2n-manual-scan-all-to-build
+
+on:
+    workflow_dispatch:
+        inputs:
+            FORCE_PUSH:
+                description: "force push to registry"
+                required: true
+                type: boolean
+                default: false
+            NED_FIXLIB_VERSIONS_B_S_rC:
+                description: "ned fixlib versions_b_s_rc"
+                required: true
+                type: string
+                default: "v2_2.3.0, v2s_2.1.0_r111, v1"
+
+jobs:
+    scan-all:
+        runs-on: ubuntu-latest
+        env:
+            DOCKER_APP_NAME: n2n
+            DOCKER_CONTEXT_PATH: n2n
+        permissions:
+            contents: read
+            packages: write
+        outputs:
+            MATRIX_JSON: ${{ steps.build-version.outputs.MATRIX_JSON }}
+            FORCE_PUSH: ${{ steps.build-version.outputs.FORCE_PUSH }}
+
+        steps:
+            - name: Checkout repository
+              uses: actions/checkout@v3
+            - name: Check build-version
+              id: build-version
+              run: |
+                  cd n2n/scripts/build
+                  chmod +x *.sh
+                  source 0x0_init_logger.sh.sh
+
+                  LOG_INFO 'scan_all_save Starting'
+                  1x1_n2n-scan-all.sh
+                  LOG_INFO 'scan_all_save Successful'
+                  echo "MATRIX_JSON=$(cat dict_build_obj.json)" >>  $GITHUB_OUTPUT
+
+                  force_push=${{ inputs.FORCE_PUSH }}
+                  LOG_INFO  FORCE_PUSH: ${force_push}
+                  echo "FORCE_PUSH=${FORCE_PUSH}" >> $GITHUB_OUTPUT
+
+    build-all:
+        needs: [scan-all]
+        permissions:
+            contents: read
+            packages: write
+            id-token: write
+        strategy:
+            fail-fast: false
+            max-parallel: 1
+            matrix: ${{ fromJSON(needs.scan-all.outputs.MATRIX_JSON) }}
+        uses: ./.github/workflows/n2n_00x01_call-build-all-pre.yml
+        secrets: inherit
+        with:
+            VERSION_BIG: ${{ matrix.version_big }}
+            VERSION_SMALL: ${{ matrix.fix_version_small }}
+            VERSION_COMMIT: ${{ matrix.fix_version_commit }}
+            VERSION_B_S_rC: ${{ matrix.version_b_s_rc }}
+            STR_OS_ARCHS: ${{ matrix.str_os_archs }}
+            STR_DOWNLOAD_URLS: ${{ matrix.str_download_urls }}
+            FORCE_PUSH: ${{ needs.scan-all.outputs.FORCE_PUSH == 'true' }}
+            NED_FIXLIB_VERSIONS_B_S_rC: ${{ inputs.NED_FIXLIB_VERSIONS_B_S_rC }}

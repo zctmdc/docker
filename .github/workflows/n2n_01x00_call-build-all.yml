@@ -1,0 +1,190 @@
+name: n2n-build-all
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+on:
+    workflow_call:
+        inputs:
+            VERSION_BIG:
+                description: "version_big                 e.g. v3 | v2"
+                required: true
+                type: string
+            VERSION_SMALL:
+                description: "version_small               e.g. 3.1.1 | 2.1.0"
+                required: false
+                type: string
+            VERSION_COMMIT:
+                description: "version_commit              e.g. 1255 | 124"
+                required: false
+                type: string
+            VERSION_B_S_rC:
+                description: "version_b_s_rc              e.g. v3 | v3_3.1.1_r1255"
+                required: true
+                type: string
+            STR_OS_ARCHS:
+                description: "str_os_archs                e.g. linux/amd64"
+                required: true
+                type: string
+            STR_DOWNLOAD_URLS:
+                description: "str_download_urls           e.g. https://raw.githubusercontent.com/lucktu/n2n/master/Linux/n2n_v3_linux_x64_v3.1.1_r1255_static_by_heiye.tar.gz"
+                required: true
+                type: string
+            DOCKER_CONTEXT_PATH:
+                description: "docker_context_path         e.g. n2n | frp"
+                required: true
+                type: string
+                default: "n2n"
+            DOCKER_APP_NAME:
+                description: "docker_app_name             e.g. n2n | frp"
+                required: true
+                type: string
+                default: "n2n"
+            DOCKER_TAG_PREFIX:
+                description: "docker_tag_prefix           e.g. sh- | conf"
+                required: false
+                type: string
+            DOCKER_TAG_SUFFIX:
+                description: "docker_tag_suffix           e.g. -dev | -conf"
+                required: false
+                type: string
+            DOCKER_BUILD_DOCKERFILE:
+                description: "docker_build_dockerfile     e.g. Dockerfile.run | Dockerfile.build.debian-stable"
+                required: false
+                type: string
+            DOCKER_BUILD_PLATFORMS:
+                description: "docker_build_platforms      e.g. linux/amd64 | linux/amd64,linux/arm64"
+                required: false
+                type: string
+            NED_FIXLIB_VERSIONS_B_S_rC:
+                description: "ned fixlib versions_b_s_rc  e.g. v2_2.3.0, v2s_2.1.0_r111, v1"
+                required: true
+                type: string
+                default: "v2_2.3.0, v2s_2.1.0_r111, v1"
+            FORCE_PUSH:
+                default: false
+                description: "force push to registry"
+                required: true
+                type: boolean
+jobs:
+    build-all:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+            # This is used to complete the identity challenge
+            # with sigstore/fulcio when running outside of PRs.
+            id-token: write
+        steps:
+            - name: Checkout repository
+              # depends on this library
+              uses: actions/checkout@v3
+
+            - name: init docker tags
+              id: init-docker-tags
+              run: |
+                  LOG_INFO() {
+                    echo -e $(caller) "\033[0;32m[    INFO] $@ \033[0m"
+                  }
+                  docker_tag_prefix="${{ inputs.DOCKER_TAG_PREFIX }}"
+                  LOG_INFO "DOCKER_TAG_PREFIX: ${docker_tag_prefix}"
+
+                  docker_tag_suffix="${{ inputs.DOCKER_TAG_SUFFIX }}"
+                  LOG_INFO "DOCKER_TAG_SUFFIX: ${docker_tag_suffix}"
+
+                  docker_tag="${{ inputs.VERSION_B_S_rC }}"
+                  if [[ ${docker_tag_prefix} != '' ]]; then
+                    docker_tag=${docker_tag_prefix}-${docker_tag}
+                  fi
+                  if [[ ${docker_tag_suffix} != '' ]]; then
+                    docker_tag=${docker_tag}-${docker_tag_suffix}
+                  fi
+
+                  LOG_INFO "DOCKER_TEST_TAG: ${docker_tag}"
+                  echo DOCKER_TEST_TAG=${docker_tag} >> $GITHUB_OUTPUT
+
+            - name: Check init-version
+              id: check-init-version
+              uses: ./.github/workflows/n2n_02x00_call-init-version.yml
+              with:
+                  VERSION_BIG: ${{ inputs.VERSION_BIG }}
+                  VERSION_SMALL: ${{ inputs.VERSION_SMALL }}
+                  VERSION_COMMIT: ${{ inputs.VERSION_COMMIT }}
+                  VERSION_B_S_rC: ${{ inputs.VERSION_B_S_rC }}
+                  STR_OS_ARCHS: ${{ inputs.STR_OS_ARCHS }}
+                  STR_DOWNLOAD_URLS: ${{ inputs.STR_DOWNLOAD_URLS }}
+                  FORCE_PUSH: ${{ inputs.FORCE_PUSH == 'true' }}
+                  NED_FIXLIB_VERSIONS_B_S_rC: ${{ inputs.NED_FIXLIB_VERSIONS_B_S_rC }}
+                  DOCKER_BUILD_DOCKERFILE: ${{ inputs.DOCKER_BUILD_DOCKERFILE }}
+            - name: Check outputs check-init-version
+              run: |
+                  LOG_INFO() {
+                    echo -e $(caller) "\033[0;32m[    INFO] $@ \033[0m"
+                  }
+                  LOG_INFO "ONLY_BIGVERSION: ${{ steps.check-init-version.outputs.ONLY_BIGVERSION }}"
+                  LOG_INFO "IS_LATEST_VERSION: ${{ steps.check-init-version.outputs.IS_LATEST_VERSION }}"
+                  LOG_INFO "NEED_FIX: ${{ steps.check-init-version.outputs.NEED_FIX }}"
+                  LOG_INFO "BUILD_DOCKERFILE: ${{ steps.check-init-version.outputs.BUILD_DOCKERFILE }}"
+                  LOG_INFO "DOCKER_BUILD_CACHE_TAG: ${{ steps.check-init-version.outputs.DOCKER_BUILD_CACHE_TAG }}"
+
+            - name: Check pushed
+              id: check-pushed
+              uses: ./.github/workflows/n2n_02x01_call-check-pushed.yml
+              with:
+                  DOCKER_APP_NAME: ${{ inputs.DOCKER_APP_NAME }}
+                  DOCKER_TEST_TAG: ${{ steps.init-docker-tags.outputs.DOCKER_TEST_TAG }}
+                  FORCE_PUSH: ${{ inputs.FORCE_PUSH }}
+
+            - name: Check outputs check-pushed
+              run: |
+                  LOG_INFO() {
+                    echo -e $(caller) "\033[0;32m[    INFO] $@ \033[0m"
+                  }
+
+                  LOG_INFO "LAST_PULLED_DATE: ${{ steps.check-pushed.outputs.LAST_PULLED_DATE }}"
+                  LOG_INFO "SKIP_BUILD_PUSH: ${{ steps.check-pushed.outputs.SKIP_BUILD_PUSH }}"
+
+            - name: docker-n2n-build-test
+              id: docker-n2n-build-test
+              uses: ./.github/workflows/n2n_02x01_call-docker-build-test-publish.yml
+              with:
+                  VERSION_BIG: ${{ inputs.VERSION_BIG }}
+                  VERSION_SMALL: ${{ inputs.VERSION_SMALL }}
+                  VERSION_COMMIT: ${{ inputs.VERSION_COMMIT }}
+                  VERSION_B_S_rC: ${{ inputs.VERSION_B_S_rC }}
+                  STR_OS_ARCHS: ${{ inputs.STR_OS_ARCHS }}
+                  STR_DOWNLOAD_URLS: ${{ inputs.STR_DOWNLOAD_URLS }}
+                  DOCKER_CONTEXT_PATH: ${{ inputs.DOCKER_APP_NAME }}
+                  DOCKER_APP_NAME: ${{ inputs.DOCKER_APP_NAME }}
+                  DOCKER_TAG_PREFIX: ${{ inputs.DOCKER_TAG_PREFIX }}
+                  DOCKER_TAG_SUFFIX: ${{ inputs.DOCKER_TAG_SUFFIX }}
+                  DOCKER_BUILD_PLATFORMS: ${{ inputs.DOCKER_BUILD_PLATFORMS }}
+                  DOCKER_BUILD_DOCKERFILE: ${{ steps.check-init-version.outputs.DOCKER_BUILD_DOCKERFILE }}
+                  DOCKER_TEST_TAG: ${{ steps.init-docker-tags.outputs.DOCKER_TEST_TAG }}
+                  IS_LATEST_VERSION: ${{ steps.check-init-version.outputs.IS_LATEST_VERSION }}
+                  DOCKER_BUILD_CACHE_TAG: ${{ steps.check-init-version.outputs.DOCKER_BUILD_CACHE_TAG }}
+                  DOCKER_PUSH: ${{ false }}
+
+            - name: docker-n2n-build-test-publish
+              id: docker-n2n-build-test-publish
+              if: ${{ ! steps.check-pushed.outputs.SKIP_BUILD_PUSH }}
+              uses: ./.github/workflows/n2n_02x01_call-docker-build-test-publish.yml
+              with:
+                  VERSION_BIG: ${{ inputs.VERSION_BIG }}
+                  VERSION_SMALL: ${{ inputs.VERSION_SMALL }}
+                  VERSION_COMMIT: ${{ inputs.VERSION_COMMIT }}
+                  VERSION_B_S_rC: ${{ inputs.VERSION_B_S_rC }}
+                  STR_OS_ARCHS: ${{ inputs.STR_OS_ARCHS }}
+                  STR_DOWNLOAD_URLS: ${{ inputs.STR_DOWNLOAD_URLS }}
+                  DOCKER_CONTEXT_PATH: ${{ inputs.DOCKER_APP_NAME }}
+                  DOCKER_APP_NAME: ${{ inputs.DOCKER_APP_NAME }}
+                  DOCKER_TAG_PREFIX: ${{ inputs.DOCKER_TAG_PREFIX }}
+                  DOCKER_TAG_SUFFIX: ${{ inputs.DOCKER_TAG_SUFFIX }}
+                  DOCKER_BUILD_PLATFORMS: ${{ inputs.DOCKER_BUILD_PLATFORMS }}
+                  DOCKER_BUILD_DOCKERFILE: ${{ steps.check-init-version.outputs.DOCKER_BUILD_DOCKERFILE }}
+                  DOCKER_TEST_TAG: ${{ steps.init-docker-tags.outputs.DOCKER_TEST_TAG }}
+                  IS_LATEST_VERSION: ${{ steps.check-init-version.outputs.IS_LATEST_VERSION }}
+                  DOCKER_BUILD_CACHE_TAG: ${{ steps.check-init-version.outputs.DOCKER_BUILD_CACHE_TAG }}
+                  DOCKER_PUSH: ${{ true }}

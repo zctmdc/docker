@@ -1,0 +1,426 @@
+name: n2n-init-version
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+on:
+    workflow_call:
+        inputs:
+            VERSION_BIG:
+                required: true
+                description: "version_big e.g. v3 | v2"
+            VERSION_SMALL:
+                required: false
+                description: "version_small e.g. 3.1.1 | 2.1.0"
+            VERSION_COMMIT:
+                required: false
+                description: "version_commit e.g. 1255 | 124"
+            VERSION_B_S_rC:
+                required: true
+                description: "version_b_s_rc e.g. v3 | v3_3.1.1_r1255"
+            STR_OS_ARCHS:
+                required: true
+                description: "str_os_archs e.g. linux/amd64"
+            STR_DOWNLOAD_URLS:
+                required: true
+                description: "str_download_urls e.g. https://raw.githubusercontent.com/lucktu/n2n/master/Linux/n2n_v3_linux_x64_v3.1.1_r1255_static_by_heiye.tar.gz"
+            FORCE_PUSH:
+                description: "force push to registry"
+                required: true
+                type: boolean
+                default: false
+
+env:
+    # Use docker.io for Docker Hub if empty
+    # REGISTRY: ghcr.io
+    REGISTRY: docker.io
+    DOCKER_CONTEXT_PATH: n2n
+    TEST_PLATFORM: "linux/386"
+    DOCKER_APP_NAME: n2n
+
+jobs:
+    init-version:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+            # This is used to complete the identity challenge
+            # with sigstore/fulcio when running outside of PRs.
+            id-token: write
+        outputs:
+            ONLY_BIGVERSION: ${{ steps.check-big-version-only.outputs.ONLY_BIGVERSION }}
+            IS_LATEST_VERSION: ${{ steps.check-latest-version.outputs.IS_LATEST_VERSION }}
+            NEED_FIX: ${{ steps.check-need-fix.outputs.NEED_FIX }}
+            BUILD_DOCKERFILE: ${{ steps.check-need-fix.outputs.BUILD_DOCKERFILE }}
+            TEST_PLATFORM: ${{ steps.init-test-info.outputs.TEST_PLATFORM }}
+
+        steps:
+            - name: Checkout repository
+              # depends on this library
+              uses: actions/checkout@v3
+
+            - name: Check inputs
+              run: |
+                  cd n2n
+                  PROJECT_ROOT_DIR=$(pwd)
+                  echo "n2n-scan-all - PROJECT_ROOT_DIR: ${PROJECT_ROOT_DIR}"
+                  cd ./scripts/build
+                  chmod +x *.sh
+                  . 0x0_init_logger.sh.sh
+
+                  LOG_INFO "VERSION_BIG: ${{ inputs.VERSION_BIG }}"
+                  LOG_INFO "VERSION_SMALL: ${{ inputs.VERSION_SMALL }}"
+                  LOG_INFO "VERSION_COMMIT: ${{ inputs.VERSION_COMMIT }}"
+                  LOG_INFO "VERSION_B_S_rC: ${{ inputs.VERSION_B_S_rC }}"
+                  LOG_INFO "STR_OS_ARCHS: ${{ inputs.STR_OS_ARCHS }}"
+                  LOG_INFO "STR_DOWNLOAD_URLS: ${{ inputs.STR_DOWNLOAD_URLS }}"
+                  LOG_INFO "FORCE_PUSH: ${{ inputs.FORCE_PUSH }}"
+
+            - name: Check big version only
+              id: check-big-version-only
+              if: inputs.VERSION_B_S_rC == inputs.VERSION_BIG
+              run: |
+                  cd n2n
+                  cd ./scripts/build
+                  chmod +x *.sh
+                  . 0x0_init_logger.sh.sh
+
+                  LOG_INFO "ONLY_BIGVERSION=true"
+                  echo "ONLY_BIGVERSION=true" >> $GITHUB_OUTPUT
+
+            - name: Check latest version
+              id: check-latest-version
+              if: inputs.VERSION_B_S_rC == 'v3'
+              run: |
+                  cd n2n
+                  cd ./scripts/build
+                  chmod +x *.sh
+                  . 0x0_init_logger.sh.sh
+
+                  LOG_INFO "IS_LATEST_VERSION=true"
+                  echo "IS_LATEST_VERSION=true" >> $GITHUB_OUTPUT
+
+            - name: Check need fix
+              id: check-need-fix
+              run: |
+                  cd n2n
+                  PROJECT_ROOT_DIR=$(pwd)
+                  echo "n2n-scan-all - PROJECT_ROOT_DIR: ${PROJECT_ROOT_DIR}"
+                  cd ./scripts/build
+                  chmod +x *.sh
+                  . 0x0_init_logger.sh.sh
+
+                  ned_libfix_versions_b_s_rc="${{ env.NED_LIBFIX_VERSIONS_B_S_rC }}"
+                  l_ned_libfix_versions_b_s_rc=(${ned_libfix_versions_b_s_rc//,/ })
+                  for ned_libfix_versions_b_s_rc in ${l_ned_libfix_versions_b_s_rc[@]};do
+                    if [[ "${{ inputs.version_b_s_rc }}" == "${ned_libfix_versions_b_s_rc}" ]]; then
+                      LOG_WARNING 需要修复 - ${BUILD_VERSION_B_S_rC}
+                      echo "NEED_FIX=true">> $GITHUB_OUTPUT
+
+                      build_dockerfile=Dockerfile.build.debian-8
+                      LOG_WARNING 使用 ${build_dockerfile} - ${{ needs.init-version.outputs.BUILD_VERSION_B_S_rC }}
+                      echo "BUILD_DOCKERFILE=${build_dockerfile}">> $GITHUB_OUTPUT
+                      exit 0
+                    fi
+                  done
+
+            - name: Init test info
+              id: init-test-info
+              run: |
+                  cd n2n
+                  cd ./scripts/build
+                  chmod +x *.sh
+                  . 0x0_init_logger.sh.sh
+
+                  if [[ ${{ inputs.str_os_archs }} =~ ${{ env.TEST_PLATFORM }} ]]; then
+                    echo "TEST_PLATFORM=${{ env.TEST_PLATFORM }}" >> $GITHUB_OUTPUT
+                  else
+                    echo "TEST_PLATFORM=${BUILD_PLATFORMS%%,*}" >> $GITHUB_OUTPUT
+                  fi
+
+    check-push:
+        runs-on: ubuntu-latest
+        needs: [init-version]
+        if: inputs.force_push != 'true'
+        env:
+            DOCKER_TAG_SUFFIX: ""
+        outputs:
+            DOCKER_TAG: ${{ steps.tag_last_pushed.outputs.DOCKER_TAG }}
+            LAST_PULLED_DATE: ${{ steps.tag_last_pushed.outputs.LAST_PULLED_DATE }}
+            SKIP_BUILD_PUSH: ${{ steps.tag_last_pushed.outputs.SKIP_BUILD_PUSH }}
+        permissions:
+            contents: read
+            packages: write
+
+        steps:
+            - name: Checkout repository
+              # depends on this library
+              uses: actions/checkout@v3
+
+            - name: init docker tags
+              id: init-docker-tags
+              run: |
+                  cd n2n
+                  PROJECT_ROOT_DIR=$(pwd)
+                  echo "n2n-scan-all - PROJECT_ROOT_DIR: ${PROJECT_ROOT_DIR}"
+                  cd ./scripts/build
+                  chmod +x *.sh
+                  . 0x0_init_logger.sh.sh
+                  if [[ ${{ env.DOCKER_TAG_SUFFIX }} == '' ]]; then
+                    docker_tag=${{ needs.init-version.outputs.BUILD_VERSION_B_S_rC }}
+                  else
+                    docker_tag=${{ needs.init-version.outputs.BUILD_VERSION_B_S_rC }}-${{ env.DOCKER_TAG_SUFFIX }}
+                  fi
+                  echo DOCKER_TAG=${docker_tag} >> $GITHUB_OUTPUT
+
+            - name: get tag_last_pushed
+              id: get_tag_last_pushed
+              uses: sergeysova/jq-action@v2
+              with:
+                  cmd: curl -k -sS https://hub.docker.com/v2/repositories/${{ secrets.REGISTRY_USERNAME }}/$${{env.DOCKER_APP_NAME}}/tags/${{ steps.init-docker-tags.outputs.DOCKER_TAG }} | jq '.tag_last_pushed'
+
+            - name: Check tag_last_pushed
+              id: tag_last_pushed
+              run: |
+                  cd n2n
+                  PROJECT_ROOT_DIR=$(pwd)
+                  echo "n2n-scan-all - PROJECT_ROOT_DIR: ${PROJECT_ROOT_DIR}"
+                  cd ./scripts/build
+                  chmod +x *.sh
+                  . 0x0_init_logger.sh.sh
+
+                  # e.g. "2022-10-30T19:29:49.877019Z"
+                  last_pulled_date=${{ steps.get_tag_last_pushed.outputs.value }}
+                  echo "LAST_PULLED_DATE=${last_pulled_date}" >> $GITHUB_OUTPUT
+                  LOG_INFO "check tag - ${{ needs.init-version.outputs.BUILD_VERSION_B_S_rC }}"
+                  LOG_INFO "last_pulled_date - ${last_pulled_date}"
+                  if [[ "true" == "${{ inputs.force_push }}" ]]; then
+                      LOG_WARNING "强制 编译/推送"
+                      exit 0
+                  elif [[ "${last_pulled_date,,}" != "null" ]]; then
+                      echo "SKIP_BUILD_PUSH=true" >> $GITHUB_OUTPUT
+                      LOG_INFO "跳过 编译/推送"
+                      exit 0
+                  else
+                      LOG_INFO "准备 编译/推送"
+                  fi
+
+    build-psuh-n2n:
+        needs: [init-version, check-push]
+        if: needs.check-push.outputs.SKIP_BUILD_PUSH != 'true'
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+            # This is used to complete the identity challenge
+            # with sigstore/fulcio when running outside of PRs.
+            id-token: write
+        steps:
+            - name: Checkout repository on build-psuh
+              uses: actions/checkout@v3
+
+            - name: Set up QEMU
+              uses: docker/setup-qemu-action@v2
+
+            # Install the cosign tool except on PR
+            # https://github.com/sigstore/cosign-installer
+            - name: Install cosign
+              if: github.event_name != 'pull_request'
+              uses: sigstore/cosign-installer@v3.0.5
+              with:
+                  cosign-release: "v2.0.2" # optional
+
+            # Workaround: https://github.com/docker/build-push-action/issues/461
+            - name: Setup Docker buildx
+              uses: docker/setup-buildx-action@v2
+
+            # Login against a Docker registry except on PR
+            # https://github.com/docker/login-action
+            - name: Log into registry ${{ env.REGISTRY }}
+              if: github.event_name != 'pull_request'
+              uses: docker/login-action@v2
+              with:
+                  registry: ${{ env.REGISTRY }}
+                  username: ${{ secrets.REGISTRY_USERNAME }}
+                  password: ${{ secrets.REGISTRY_TOKEN }}
+
+            # Extract metadata (tags, labels) for Docker
+            # https://github.com/docker/metadata-action
+            - name: Extract Docker metadata
+              id: meta
+              uses: docker/metadata-action@v4
+              with:
+                  images: ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.DOCKER_APP_NAME }}
+                  tags: |
+                      type=raw,value=latest, enable=${{ needs.check-latest-version.outputs.IS_LATEST_VERSION == 'true' }}
+                      type=raw,value=${{ inputs.version_big }}, enable=${{ inputs.version_b_s_rc == inputs.version_big }}
+                      type=raw,value=releases-${{ inputs.version_big }}, enable=${{ inputs.version_b_s_rc == inputs.version_big }}
+                      type=raw,value=${{ inputs.version_b_s_rc }}, enable=${{ inputs.version_b_s_rc != inputs.version_big }}
+                      type=raw,value=${{ format( 'v.{1}_r{2}', inputs.version_small, inputs.version_commit }} ) }}, enable=${{ inputs.version_b_s_rc != inputs.version_big }}
+                  labels: |
+                      org.opencontainers.image.version=${{ needs.init-version.outputs.BUILD_VERSION_B_S_rC }}
+
+            - name: Build and load to Docker
+              uses: docker/build-push-action@v3
+              if: needs.init-version.outputs.NEED_FIX != 'true'
+              with:
+                  context: $${{ env.DOCKER_CONTEXT_PATH }}
+                  platforms: ${{ needs.init-version.outputs.TEST_PLATFORM }}
+                  load: true
+                  no-cache: true
+                  tags: ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test
+                  build-args: |
+                      VERSION_BIG=${{ inputs.version_big }}
+                      VERSION_SMALL=${{ inputs.version_small }}
+                      VERSION_COMMIT=${{ inputs.version_commit }}
+                      VERSION_B_S_rC=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
+                      STR_DOWNLOAD_URLS=${{ inputs.str_download_urls }}
+
+            - name: Test n2n
+              id: n2n-test
+              run: |
+                  cd n2n
+                  PROJECT_ROOT_DIR=$(pwd)
+                  echo "n2n-scan-all - PROJECT_ROOT_DIR: ${PROJECT_ROOT_DIR}"
+                  cd ./scripts/build
+                  chmod +x *.sh
+                  . 0x0_init_logger.sh.sh
+
+                  if [[ "${{ needs.init-version.outputs.NEED_FIX }}" == "true" ]]; then
+                    LOG_WARNING 需要修复 - ${{ needs.init-version.outputs.BUILD_VERSION_B_S_rC }}
+                    build_dockerfile=Dockerfile.build.debian-8
+                    LOG_WARNING 使用 ${build_dockerfile} - ${{ needs.init-version.outputs.BUILD_VERSION_B_S_rC }}
+                    echo "build_dockerfile=${build_dockerfile}">> $GITHUB_OUTPUT
+                    exit 0
+                  fi
+                  LOG_WARNING "Test start: ${{ needs.init-version.outputs.BUILD_VERSION_B_S_rC }}"
+                  platforms=${{ needs.init-version.outputs.TEST_PLATFORM }}
+                  l_platforms=(${platforms//,/ })
+                  for test_platform in ${l_platforms[@]};do
+                    LOG_WARNING "Test for platform: ${test_platform}"
+                    edge_result="$(docker run --rm \
+                      --platform ${test_platform} \
+                      ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test \
+                      edge -h 2>&1 | xargs -I {} echo {})"
+                    if [[ -n "$(echo ${edge_result} | grep -E '(libcrypto.so.1.0.0)|(/lib/ld-linux.so.3)')" ]]; then
+                      LOG_ERROR 出错了: ${edge_result}
+                    build_dockerfile=Dockerfile.build.debian-8
+                    LOG_WARNING 使用 ${build_dockerfile} - ${{ needs.init-version.outputs.BUILD_VERSION_B_S_rC }}
+                    echo "build_dockerfile=${build_dockerfile}">> $GITHUB_OUTPUT
+                      exit 0
+                    fi
+                    if [[ -z "$(echo ${edge_result,,} | grep welcome)" ]]; then
+                      LOG_ERROR 出错了: ${edge_result}
+                      exit 1
+                    fi
+                    docker run --rm \
+                      --platform ${test_platform} \
+                      ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test \
+                      edge -h
+                    LOG_WARNING "Test pass - edge"
+                    docker run --rm \
+                      --platform ${test_platform} \
+                      ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test \
+                      ls /usr/local/sbin/supernode
+                    # supernode will not pass
+                    docker run --rm \
+                      --platform ${test_platform} \
+                      ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test \
+                      supernode -h 2>&1 | echo || echo -e "\n# check supernode ignore errors"
+                    # LOG_WARNING "Test done - supernode"
+                  done
+                  LOG_WARNING "Test done: ${{ needs.init-version.outputs.BUILD_VERSION_B_S_rC }}"
+                  build_dockerfile=Dockerfile.build.debian-stable
+                  LOG_WARNING 使用 ${build_dockerfile} - ${{ needs.init-version.outputs.BUILD_VERSION_B_S_rC }}
+                  echo "build_dockerfile=${build_dockerfile}">> $GITHUB_OUTPUT
+                  exit 0
+
+            # Build and push Docker image with Buildx (don't push on PR)
+            # https://github.com/docker/build-push-action
+            - name: Build and push Docker image
+              id: build-and-push
+              uses: docker/build-push-action@v3
+              with:
+                  context: $${{ env.DOCKER_CONTEXT_PATH }}
+                  file: ${{steps.n2n-test.outputs.build_dockerfile}}
+                  platforms: ${{ needs.init-version.outputs.BUILD_PLATFORMS }}
+                  push: ${{ github.event_name != 'pull_request' }}
+                  tags: ${{ steps.meta.outputs.tags }}
+                  labels: ${{ steps.meta.outputs.labels }}
+                  # no-cache: true
+                  cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:buildcache
+                  cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:buildcache,mode=max
+                  build-args: |
+                      VERSION_BIG=${{ inputs.version_big }}
+                      VERSION_SMALL=${{ inputs.version_small }}
+                      VERSION_COMMIT=${{ inputs.version_commit }}
+                      VERSION_B_S_rC=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
+                      STR_DOWNLOAD_URLS=${{ inputs.str_download_urls }}
+
+            - name: Test n2n
+              id: n2n-test
+              run: |
+                  cd n2n
+                  PROJECT_ROOT_DIR=$(pwd)
+                  echo "n2n-scan-all - PROJECT_ROOT_DIR: ${PROJECT_ROOT_DIR}"
+                  cd ./scripts/build
+                  chmod +x *.sh
+                  . 0x0_init_logger.sh.sh
+
+                  LOG_WARNING "Test start: ${{ needs.init-version.outputs.BUILD_VERSION_B_S_rC }}"
+                  flag_test_pass="true"
+                  platforms=${{ needs.init-version.outputs.BUILD_PLATFORMS }}
+                  l_platforms=(${platforms//,/ })
+                  for test_platform in ${l_platforms[@]};do
+                    LOG_WARNING "Test for platform: ${test_platform}"
+                    edge_result="$(docker run --rm \
+                      --platform ${test_platform} \
+                      ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:${{ needs.check-push.outputs.DOCKER_TAG }} \
+                      edge -h 2>&1 | xargs -I {} echo {})"
+                    if [[ -z "$(echo ${edge_result,,} | grep welcome)" ]]; then
+                      LOG_ERROR 出错了: ${test_platform} - ${edge_result}
+                      flag_test_pass="false"
+                      continue
+                    fi
+                    docker run --rm \
+                      --platform ${test_platform} \
+                      ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:${{ needs.check-push.outputs.DOCKER_TAG }} \
+                      ls /usr/local/sbin/edge
+                    docker run --rm \
+                      --platform ${test_platform} \
+                      ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:${{ needs.check-push.outputs.DOCKER_TAG }} \
+                      edge -h 2>&1 | xargs -I {} echo {}
+                    LOG_WARNING "Test pass - edge"
+                    docker run --rm \
+                      --platform ${test_platform} \
+                      ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:${{ needs.check-push.outputs.DOCKER_TAG }} \
+                      ls /usr/local/sbin/supernode
+                    # supernode will not pass
+                    docker run --rm \
+                      --platform ${test_platform} \
+                      ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:${{ needs.check-push.outputs.DOCKER_TAG }} \
+                      supernode -h 2>&1 | xargs -I {} echo {} || echo
+                    # LOG_WARNING "Test done - supernode"
+                  done
+                  if [[ "${flag_test_pass}" != "true" ]]; then
+                    LOG_ERROR "Test faild: ${{ needs.init-version.outputs.BUILD_VERSION_B_S_rC }}"
+                    exit 1
+                  fi
+                  LOG_WARNING "Test done: ${{ needs.init-version.outputs.BUILD_VERSION_B_S_rC }}"
+                  echo "build_dockerfile=Dockerfile">> $GITHUB_OUTPUT
+                  exit 0
+
+            # Sign the resulting Docker image digest except on PRs.
+            # This will only write to the public Rekor transparency log when the Docker
+            # repository is public to avoid leaking data.  If you would like to publish
+            # transparency data even for private images, pass --force to cosign below.
+            # https://github.com/sigstore/cosign
+            - name: Sign the published Docker image
+              if: github.event_name != 'pull_request'
+              env:
+                  COSIGN_EXPERIMENTAL: "true"
+              # This step uses the identity token to provision an ephemeral certificate
+              # against the sigstore community Fulcio instance.
+              run: echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}

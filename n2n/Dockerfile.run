@@ -1,0 +1,45 @@
+ARG VERSION_B_S_rC=latest
+FROM zctmdc/n2n:${VERSION_B_S_rC}  
+ARG DEBIAN_FRONTEND=noninteractive  
+RUN apt-get -qq update  
+RUN apt-get -qq -y install \
+  apt-utils tzdata \
+  && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+  && echo "Asia/Shanghai" > /etc/timezone \
+  && dpkg-reconfigure -f noninteractive tzdata  
+ENV TZ Asia/Shanghai
+##################-----##################
+
+##################-----##################
+RUN apt-get clean && rm -rf /var/lib/apt/lists/* 
+
+ENV MODE ""
+
+ENV EDGE_IP dhcp:0.0.0.0
+ENV EDGE_NETMASK 255.255.255.0
+ENV EDGE_COMMUNITY n2n
+ENV EDGE_KEY test
+ENV EDGE_ENCRYPTION -A3
+ENV EDGE_TUN ""
+
+ENV N2N_ARGS ""
+# v1:-br v2:-EfrA v2s--bfr -L auto v3:-Efr -e auto
+ENV USE_DEFALT_ARGS "TRUE"
+
+ENV EDGE_MAC ""
+ENV GET_MAC_FROM_WAN "FALSE"
+
+WORKDIR /n2n/
+VOLUME [ "/n2n/conf/" ]
+
+ARG DEFAULT_SUPERNODE_HOST=127.0.0.1
+ARG DEFAULT_SUPERNODE_PORT=10090
+ENV SUPERNODE_HOST ${DEFAULT_SUPERNODE_HOST}
+ENV SUPERNODE_PORT ${DEFAULT_SUPERNODE_PORT}
+# WATCH DOG 使用 /n2n/n2n_healthcheck.sh 匹配
+ENV HEALTHCHECK_IP ""
+ENV WATCH_DOG 'TRUE'
+COPY ./scripts/run/*.sh /n2n/
+RUN chmod a+x /n2n/*
+ENTRYPOINT ["/n2n/docker-entrypoint.sh"]
+HEALTHCHECK --interval=1m --timeout=30s CMD /n2n/n2n_healthcheck.sh

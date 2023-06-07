@@ -32,12 +32,12 @@ elif [ "$(echo ${MODE} | tr 'a-z' 'A-Z')" = "RUN_FRPC" ]; then
     CONF_FILE_ADD_BAK=$CONF_FRPC_ADD_BAK
 fi
 
-if [ -z "$( cat $CONF_FILE | grep 'Envs.SUBDOMAIN_HOST') " ];then
+if [ -z "$( cat $CONF_FILE | grep 'Envs.SUBDOMAIN_HOST') " ]; then
     # Changed pass WEB
     FLAG_EDIT_CONF_PASS_WEB='Changed_Pass_WEB'
 fi
 
-if [ -n "$( cat $CONF_FILE | grep $FLAG_CONF_ADD )" ];then
+if [ -n "$( cat $CONF_FILE | grep $FLAG_CONF_ADD )" ]; then
     # Change pass CONF_ADD
     FLAG_EDIT_CONF_PASS_ADD='Changed_Pass_ADD'
 fi
