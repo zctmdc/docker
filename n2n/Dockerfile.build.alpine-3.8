@@ -21,26 +21,21 @@ RUN apt-get -qq -y install \
 
 # 安装RAR
 WORKDIR /tmp/scripts/
-COPY ./scripts/init_logger.sh ./scripts/install_rar.sh /tmp/scripts/
+COPY ./scripts/build/init_logger.sh ./scripts/install_rar.sh /tmp/scripts/
 RUN chmod +x /tmp/scripts/*.sh
 RUN /tmp/scripts/install_rar.sh
 
 ARG KERNEL=linux
 # 用于自定义机型编译,未自动识别时请赋值
 ARG MACHINE
-ARG BIG_VERSION
-ARG SMALL_VERSION
-ARG COMMIT
+ARG VERSION_BIG
+ARG VERSION_SMALL
+ARG VERSION_COMMIT
 ARG VERSION_B_S_rC
-ARG MANUAL_BUILD
+ARG STR_DOWNLOAD_URLS
 
 # 选择对应版本文件
 WORKDIR /tmp/n2n/scripts/
-# COPY . /tmp/n2n/
-# RUN chmod +x /tmp/n2n/scripts/*.sh
-# RUN /tmp/n2n/scripts/build-docker.sh
-
-# RUN mkdir -p /tmp/down/ && cp /tmp/n2n/result/build_src/* /tmp/down/ && ls /tmp/down/
 
 COPY ./result/build_src/ /tmp/down/
 COPY ./scripts/ /tmp/n2n/scripts/

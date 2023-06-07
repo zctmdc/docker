@@ -1,0 +1,210 @@
+name: n2n-build-test
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+on:
+
+  workflow_call:
+    inputs:
+
+      VERSION_BIG:
+        description: "version_big         e.g. v3 | v2"
+        required: true
+        type: string
+      VERSION_SMALL:
+        description: "version_small       e.g. 3.1.1 | 2.1.0"
+        required: false
+        type: string
+      VERSION_COMMIT:
+        description: "version_commit      e.g. 1255 | 124"
+        required: false
+        type: string
+      VERSION_B_S_rC:
+        description: "VERSION_B_S_rC      e.g. v3 | v3_3.1.1_r1255"
+        required: true
+        type: string
+      STR_OS_ARCHS:
+        description: "str_os_archs        e.g. linux/amd64"
+        required: true
+        type: string
+      STR_DOWNLOAD_URLS:
+        description: "str_download_urls   e.g. https://raw.githubusercontent.com/lucktu/n2n/master/Linux/n2n_v3_linux_x64_v3.1.1_r1255_static_by_heiye.tar.gz"
+        required: true
+        type: string
+      DOCKER_CONTEXT_PATH:
+        description: "docker_context_path e.g. n2n | frp"
+        required: true
+        type: string
+      DOCKER_BUILD_DOCKERFILE:
+        description: "docker_build_dockerfile e.g. Dockerfile | Dockerfile.build.debian-stable"
+        required: true
+        type: string
+      DOCKER_APP_NAME:
+        description: "docker app name e.g. n2n | frp"
+        required: true
+        type: string
+      IS_LATEST_VERSION:
+        description: "docker tag is latest"
+        required: true
+        type: boolean
+      DOCKER_BUILD_PLATFORMS: 
+        description: "docker_test_tag       e.g. v3 | test"
+        required: true
+        type: string
+      DOCKER_BUILD_CACHE_TAG:
+        description: "docker_build_cache_tag       e.g. buildcache | buildcache-fix"
+        required: true
+        type: string
+      DOCKER_PUSH:
+        default: false
+        description: "docker push to registry"
+        required: true
+        type: boolean
+env:
+  # Use docker.io for Docker Hub if empty
+  # REGISTRY: ghcr.io
+  REGISTRY: docker.io
+
+jobs:
+
+  docker-build-psuh:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      # This is used to complete the identity challenge
+      # with sigstore/fulcio when running outside of PRs.
+      id-token: write
+    steps:
+      - name: Checkout repository on build-psuh
+        uses: actions/checkout@v3
+
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@v2
+
+      # Install the cosign tool except on PR
+      # https://github.com/sigstore/cosign-installer
+      - name: Install cosign
+        if: inputs.DOCKER_PUSH
+        uses: sigstore/cosign-installer@v3.0.5
+        with:
+          cosign-release: 'v2.0.2' # optional
+
+      # Workaround: https://github.com/docker/build-push-action/issues/461
+      - name: Setup Docker buildx
+        uses: docker/setup-buildx-action@v2
+
+      # Login against a Docker registry except on PR
+      # https://github.com/docker/login-action
+      - name: Log into registry ${{ env.REGISTRY }}
+        if: inputs.DOCKER_PUSH
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_TOKEN }}
+
+      # Extract metadata (tags, labels) for Docker
+      # https://github.com/docker/metadata-action
+      - name: Extract Docker metadata
+        id: meta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ inputs.DOCKER_APP_NAME }}
+          tags: |
+            type=raw,value=latest, enable=${{ inputs.IS_LATEST_VERSION == 'true' }}
+            type=raw,value=${{ inputs.VERSION_BIG }}, enable=${{ inputs.VERSION_B_S_rC == inputs.VERSION_BIG }}
+            type=raw,value=releases-${{ inputs.VERSION_BIG }}, enable=${{ inputs.VERSION_B_S_rC == inputs.VERSION_BIG }}
+            type=raw,value=${{ inputs.VERSION_B_S_rC }}, enable=${{ inputs.VERSION_B_S_rC != inputs.VERSION_BIG }}
+            type=raw,value=${{ format( 'v.{1}_r{2}', inputs.VERSION_SMALL, inputs.VERSION_B_S_rC ) }}, enable=${{ inputs.VERSION_B_S_rC != inputs.VERSION_BIG }}
+          labels: |
+            org.opencontainers.image.version=${{ inputs.VERSION_B_S_rC }}
+
+      # Build and push Docker image with Buildx (don't push on PR)
+      # https://github.com/docker/build-push-action
+      - name: Build and push Docker image
+        id: build-and-push
+        uses: docker/build-push-action@v3
+        with:
+          context: $${{ inputs.DOCKER_CONTEXT_PATH }}
+          file: ${{ inputs.DOCKER_BUILD_DOCKERFILE }}
+          platforms: ${{ inputs.DOCKER_BUILD_PLATFORMS }}
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          push: ${{ inputs.DOCKER_PUSH == 'true' }}
+          load: ${{ inputs.DOCKER_PUSH != 'true' }}
+          cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ inputs.DOCKER_APP_NAME }}:${{ inputs.DOCKER_BUILD_CACHE_TAG }}
+          cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ inputs.DOCKER_APP_NAME }}:${{ inputs.DOCKER_BUILD_CACHE_TAG }},mode=max
+          build-args: |
+            VERSION_BIG=${{ inputs.VERSION_BIG }}
+            VERSION_SMALL=${{ inputs.VERSION_SMALL }}
+            VERSION_COMMIT=${{ inputs.VERSION_COMMIT }}
+            VERSION_B_S_rC=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
+            STR_DOWNLOAD_URLS=${{ inputs.STR_DOWNLOAD_URLS }}
+
+
+      - name: Test n2n
+        id: n2n-test
+        run: |
+          cd n2n/scripts/build
+          chmod +x *.sh
+          . 0x0_init_logger.sh.sh
+
+          LOG_WARNING "Test start: ${{ inputs.VERSION_B_S_rC }}"
+          flag_test_pass="true"
+          platforms=${{ inputs.DOCKER_BUILD_PLATFORMS }}
+          l_platforms=(${platforms//,/ })
+          for test_platform in ${l_platforms[@]};do
+            LOG_WARNING "Test for platform: ${test_platform}"
+            edge_result="$(docker run --rm \
+              --platform ${test_platform} \
+              ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ inputs.DOCKER_APP_NAME }}:${{ inputs.DOCKER_BUILD_CACHE_TAG }} \
+              edge -h 2>&1 | xargs -I {} echo {})"
+            if [[ -z "$(echo ${edge_result,,} | grep welcome)" ]];then
+              LOG_ERROR 出错了: ${test_platform} - ${edge_result}
+              flag_test_pass="false"
+              continue
+            fi
+            docker run --rm \
+              --platform ${test_platform} \
+              ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ inputs.DOCKER_APP_NAME }}:${{ inputs.DOCKER_BUILD_CACHE_TAG }} \
+              ls /usr/local/sbin/edge
+            docker run --rm \
+              --platform ${test_platform} \
+              ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ inputs.DOCKER_APP_NAME }}:${{ inputs.DOCKER_BUILD_CACHE_TAG }} \
+              edge -h 2>&1 | xargs -I {} echo {}
+            LOG_WARNING "Test pass - edge"
+            docker run --rm \
+              --platform ${test_platform} \
+              ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ inputs.DOCKER_APP_NAME }}:${{ inputs.DOCKER_BUILD_CACHE_TAG }} \
+              ls /usr/local/sbin/supernode
+            # supernode will not pass
+            docker run --rm \
+              --platform ${test_platform} \
+              ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ inputs.DOCKER_APP_NAME }}:${{ inputs.DOCKER_BUILD_CACHE_TAG }} \
+              supernode -h 2>&1 | xargs -I {} echo {} || echo -e "\n# check supernode ignore errors"
+            # LOG_WARNING "Test done - supernode"
+          done
+          if [[ "${flag_test_pass}" != "true" ]];then
+            LOG_ERROR "Test faild: ${{ inputs.VERSION_B_S_rC }}"
+            exit 1
+          fi
+          LOG_WARNING "Test done: ${{ inputs.VERSION_B_S_rC }}"
+          echo "build_dockerfile=Dockerfile">> $GITHUB_OUTPUT
+          exit 0
+
+      # Sign the resulting Docker image digest except on PRs.
+      # This will only write to the public Rekor transparency log when the Docker
+      # repository is public to avoid leaking data.  If you would like to publish
+      # transparency data even for private images, pass --force to cosign below.
+      # https://github.com/sigstore/cosign
+      - name: Sign the published Docker image
+        if: inputs.DOCKER_PUSH
+        env:
+          COSIGN_EXPERIMENTAL: "true"
+        # This step uses the identity token to provision an ephemeral certificate
+        # against the sigstore community Fulcio instance.
+        run: echo "${{ steps.meta.outputs.tags }}" | xargs -I {} cosign sign {}@${{ steps.build-and-push.outputs.digest }}

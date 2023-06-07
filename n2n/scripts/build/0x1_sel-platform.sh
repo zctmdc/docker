@@ -1,6 +1,10 @@
 #!/bin/bash
 
-source 0x0_init_logger.sh
+source 0x0_init-logger.sh
+
+set -o errexit
+set -o nounset
+set -o pipefail
 
 SEL_PLATFORM() {
     sel_machine=$1
@@ -44,5 +48,5 @@ SEL_PLATFORM() {
         ;;
     esac
 
-    LOG_INFO "dn_machine: ${dn_machine}, filename_machine: ${filename_machine}, platform: ${platform}"
+    LOG_INFO "filename_machine: ${filename_machine}, platform: ${platform}"
 }

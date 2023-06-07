@@ -12,7 +12,6 @@ LOG_ERROR() {
 }
 
 LOG_ERROR_WAIT_EXIT() {
-  LOG_ALL
   echo -e $(caller) "\033[0;31m[   ERROR] $@ \033[0m"
   t=30
   while test $t -gt 0; do
@@ -44,9 +43,9 @@ LOG_RUN() {
 }
 
 LOG_INPTU() {
-  LOG_INFO "input: BIG_VERSION: ${BIG_VERSION}"
-  LOG_INFO "input: SMALL_VERSION: ${SMALL_VERSION}"
-  LOG_INFO "input: COMMIT: ${COMMIT}"
+  LOG_INFO "input: VERSION_BIG: ${VERSION_BIG}"
+  LOG_INFO "input: VERSION_SMALL: ${VERSION_SMALL}"
+  LOG_INFO "input: VERSION_COMMIT: ${VERSION_COMMIT}"
   LOG_INFO "input: VERSION_B_S_rC: ${VERSION_B_S_rC}"
 }
 
