@@ -56,6 +56,9 @@ jobs:
             # with sigstore/fulcio when running outside of PRs.
             id-token: write
         steps:
+            - name: Checkout repository on build-psuh
+              uses: actions/checkout@v3
+
             - name: docker-n2n-build-test
               id: docker-n2n-build-test
               uses: ./.github/workflows/n2n_01x00_call-build-all.yml
