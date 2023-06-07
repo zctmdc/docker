@@ -36,7 +36,7 @@ jobs:
               run: |
                   cd n2n/scripts/build
                   chmod +x *.sh
-                  . 0x0_init_logger.sh
+                  . 0x0_init-logger.sh
                   
                   LOG_INFO 'scan_all_save Starting'
                   1x1_n2n-scan-all.sh
