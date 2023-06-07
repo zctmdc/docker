@@ -3,7 +3,7 @@
 # set -x
 app="${1}"
 if [[ -z "$@" ]]; then
-    . init_logger.sh
+    source init_logger.sh
     if [[ -f /n2n/conf/edge.conf ]]; then
         app="edge"
         conf_file="/n2n/conf/edge.conf"
@@ -22,7 +22,7 @@ if [[ -z "$@" ]]; then
         fi
         conf_file="/tmp/conf_file_env.conf"
         : >${conf_file}
-        . conf_save.sh
+        source conf_save.sh
         LOG_INFO "环境变量到配置文件: ${conf_file}"
         CONF_SAVE ${conf_file}
     fi
@@ -30,9 +30,9 @@ if [[ -z "$@" ]]; then
 fi
 
 if [[ -n "$(echo ${app} | grep -E '^(/usr/local/sbin/)?(edge)|(supernode)$')" && (-n "${2}" || -n ${conf_file}) && -z "$(echo ${@:2} | grep -E '^(-h)|(--help)$')" ]]; then
-    . init_logger.sh
-    . init_version.sh
-    . conf_read.sh
+    source init_logger.sh
+    source init_version.sh
+    source conf_read.sh
     : >/tmp/conf_file_load.conf
     if [[ -n "${conf_file}" ]]; then
         LOG_INFO "检测到配置文件: ${conf_file}"
@@ -79,7 +79,7 @@ if [[ -n "$(echo ${app} | grep -E '^(/usr/local/sbin/)?(edge)|(supernode)$')" &&
     fi
     if [[ "${USE_DEFALT_ARGS^^}" == "TRUE" ]]; then
         LOG_INFO "USE_defalt_args=${USE_DEFALT_ARGS}"
-        . append_defalt_args.sh
+        source append_defalt_args.sh
     fi
 
     LOG_INFO "MODE: ${MODE}"

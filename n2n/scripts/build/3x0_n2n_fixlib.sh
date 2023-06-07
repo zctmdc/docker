@@ -73,7 +73,7 @@ edge_result="$(edge -h 2>&1 | xargs -I {} echo {})"
 
 if [[ -z "$(echo ${edge_result,,} | grep welcome)" && -z "${flag_retry}" ]]; then
     LOG_ERROR 出错了: ${edge_result}
-    . /tmp/n2n-lucktu/scripts/fixlib.sh retry
+    source /tmp/n2n-lucktu/scripts/fixlib.sh retry
 else
     apt-get clean && rm -rf /var/lib/apt/lists/*
     LOG_INFO 修复结束

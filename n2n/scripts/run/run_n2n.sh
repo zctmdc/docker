@@ -38,7 +38,7 @@ check_server() {
 
 check_mac_address() {
   if [[ "${GET_MAC_FROM_WAN^^}" == 'TRUE' ]]; then
-    . init_edge_mac_from_wan.sh
+    source init_edge_mac_from_wan.sh
     INIT_EDGE_MAC_FROM_WAN
   fi
   if [[ -n "${EDGE_MAC}" ]]; then
