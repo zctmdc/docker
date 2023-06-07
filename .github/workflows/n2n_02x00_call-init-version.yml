@@ -37,7 +37,7 @@ on:
                 default: false
                 required: false
                 type: boolean
-            NED_FIXLIB_VERSIONS_B_S_rC:
+            NEED_FIXLIB_VERSIONS_B_S_rC:
                 description: "ned fixlib versions_b_s_rc"
                 required: true
                 type: string
@@ -150,7 +150,7 @@ jobs:
                   LOG_WARNING() {
                     echo -e $(caller) "\033[0;33m[ WARNING] $@ \033[0m"
                   }
-                  ned_libfix_versions_b_s_rc="${{ inputs.NED_FIXLIB_VERSIONS_B_S_rC }}"
+                  ned_libfix_versions_b_s_rc="${{ inputs.NEED_FIXLIB_VERSIONS_B_S_rC }}"
                   l_ned_libfix_versions_b_s_rc=(${ned_libfix_versions_b_s_rc//,/ })
                   for ned_libfix_versions_b_s_rc in ${l_ned_libfix_versions_b_s_rc[@]};do
                     if [[ "${{ inputs.version_b_s_rc }}" == "${ned_libfix_versions_b_s_rc}" ]]; then
@@ -161,7 +161,7 @@ jobs:
                       else
                         build_dockerfile=Dockerfile.build.debian-8
                       fi
-                      LOG_WARNING 使用 ${build_dockerfile} - ${{ inputs.NED_FIXLIB_VERSIONS_B_S_rC }}
+                      LOG_WARNING 使用 ${build_dockerfile} - ${{ inputs.NEED_FIXLIB_VERSIONS_B_S_rC }}
                       echo "DOCKER_BUILD_DOCKERFILE=${build_dockerfile}">> $GITHUB_OUTPUT
                       exit 0
                     fi

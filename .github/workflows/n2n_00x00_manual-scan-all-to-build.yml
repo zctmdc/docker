@@ -8,7 +8,7 @@ on:
                 required: true
                 type: boolean
                 default: false
-            NED_FIXLIB_VERSIONS_B_S_rC:
+            NEED_FIXLIB_VERSIONS_B_S_rC:
                 description: "ned fixlib versions_b_s_rc"
                 required: true
                 type: string
@@ -65,5 +65,5 @@ jobs:
             VERSION_B_S_rC: ${{ matrix.version_b_s_rc }}
             STR_OS_ARCHS: ${{ matrix.str_os_archs }}
             STR_DOWNLOAD_URLS: ${{ matrix.str_download_urls }}
-            FORCE_PUSH: ${{ needs.scan-all.outputs.FORCE_PUSH == 'true' }}
-            NED_FIXLIB_VERSIONS_B_S_rC: ${{ inputs.NED_FIXLIB_VERSIONS_B_S_rC }}
+            FORCE_PUSH: ${{ inputs.FORCE_PUSH == 'true' }}
+            NEED_FIXLIB_VERSIONS_B_S_rC: ${{ inputs.NEED_FIXLIB_VERSIONS_B_S_rC }}

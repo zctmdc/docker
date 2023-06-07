@@ -58,7 +58,7 @@ on:
                 description: "docker_build_platforms      e.g. linux/amd64 | linux/amd64,linux/arm64"
                 required: false
                 type: string
-            NED_FIXLIB_VERSIONS_B_S_rC:
+            NEED_FIXLIB_VERSIONS_B_S_rC:
                 description: "ned fixlib versions_b_s_rc  e.g. v2_2.3.0, v2s_2.1.0_r111, v1"
                 required: true
                 type: string
@@ -116,7 +116,7 @@ jobs:
                   STR_OS_ARCHS: ${{ inputs.STR_OS_ARCHS }}
                   STR_DOWNLOAD_URLS: ${{ inputs.STR_DOWNLOAD_URLS }}
                   FORCE_PUSH: ${{ inputs.FORCE_PUSH == 'true' }}
-                  NED_FIXLIB_VERSIONS_B_S_rC: ${{ inputs.NED_FIXLIB_VERSIONS_B_S_rC }}
+                  NEED_FIXLIB_VERSIONS_B_S_rC: ${{ inputs.NEED_FIXLIB_VERSIONS_B_S_rC }}
                   DOCKER_BUILD_DOCKERFILE: ${{ inputs.DOCKER_BUILD_DOCKERFILE }}
             - name: Check outputs check-init-version
               run: |

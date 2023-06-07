@@ -32,6 +32,16 @@ on:
                 description: "str_download_urls           e.g. https://raw.githubusercontent.com/lucktu/n2n/master/Linux/n2n_v3_linux_x64_v3.1.1_r1255_static_by_heiye.tar.gz"
                 required: true
                 type: string
+            FORCE_PUSH:
+                description: "force push to registry"
+                required: true
+                type: boolean
+                default: false
+            NEED_FIXLIB_VERSIONS_B_S_rC:
+                description: "ned fixlib versions_b_s_rc"
+                required: true
+                type: string
+                default: "v2_2.3.0, v2s_2.1.0_r111, v1"
 env:
     DOCKER_CONTEXT_PATH: n2n
     DOCKER_APP_NAME: n2n
@@ -59,8 +69,8 @@ jobs:
                   DOCKER_CONTEXT_PATH: ${{ env.DOCKER_APP_NAME }}
                   DOCKER_APP_NAME: ${{ env.DOCKER_APP_NAME }}
                   DOCKER_BUILD_PLATFORMS: ${{ inputs.STR_OS_ARCHS }}
-                  NED_FIXLIB_VERSIONS_B_S_rC: "v2_2.3.0, v2s_2.1.0_r111, v1"
-                  FORCE_PUSH: ${{ false }}
+                  NEED_FIXLIB_VERSIONS_B_S_rC: ${{ inputs.NEED_FIXLIB_VERSIONS_B_S_rC }}
+                  FORCE_PUSH: ${{ inputs.FORCE_PUSH }}
 
             - name: docker-n2n-sh-build-test
               id: docker-n2n-sh-build-test
@@ -77,4 +87,4 @@ jobs:
                   DOCKER_TAG_PREFIX: "sh-"
                   DOCKER_BUILD_DOCKERFILE: "Dockerfile.run"
                   DOCKER_BUILD_PLATFORMS: ${{ inputs.STR_OS_ARCHS }}
-                  FORCE_PUSH: ${{ false }}
+                  FORCE_PUSH: ${{ inputs.FORCE_PUSH }}
