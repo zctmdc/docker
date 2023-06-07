@@ -68,7 +68,7 @@ jobs:
                   echo "n2n-scan-all - PROJECT_ROOT_DIR: ${PROJECT_ROOT_DIR}"
                   cd ./scripts/build
                   chmod +x *.sh
-                  . 0x0_init_logger.sh.sh
+                  . 0x0_init_logger.sh
 
                   LOG_INFO "VERSION_BIG: ${{ inputs.VERSION_BIG }}"
                   LOG_INFO "VERSION_SMALL: ${{ inputs.VERSION_SMALL }}"
@@ -85,7 +85,7 @@ jobs:
                   cd n2n
                   cd ./scripts/build
                   chmod +x *.sh
-                  . 0x0_init_logger.sh.sh
+                  . 0x0_init_logger.sh
 
                   LOG_INFO "ONLY_BIGVERSION=true"
                   echo "ONLY_BIGVERSION=true" >> $GITHUB_OUTPUT
@@ -97,7 +97,7 @@ jobs:
                   cd n2n
                   cd ./scripts/build
                   chmod +x *.sh
-                  . 0x0_init_logger.sh.sh
+                  . 0x0_init_logger.sh
 
                   LOG_INFO "IS_LATEST_VERSION=true"
                   echo "IS_LATEST_VERSION=true" >> $GITHUB_OUTPUT
@@ -110,7 +110,7 @@ jobs:
                   echo "n2n-scan-all - PROJECT_ROOT_DIR: ${PROJECT_ROOT_DIR}"
                   cd ./scripts/build
                   chmod +x *.sh
-                  . 0x0_init_logger.sh.sh
+                  . 0x0_init_logger.sh
 
                   ned_libfix_versions_b_s_rc="${{ env.NED_LIBFIX_VERSIONS_B_S_rC }}"
                   l_ned_libfix_versions_b_s_rc=(${ned_libfix_versions_b_s_rc//,/ })
@@ -132,7 +132,7 @@ jobs:
                   cd n2n
                   cd ./scripts/build
                   chmod +x *.sh
-                  . 0x0_init_logger.sh.sh
+                  . 0x0_init_logger.sh
 
                   if [[ ${{ inputs.str_os_archs }} =~ ${{ env.TEST_PLATFORM }} ]]; then
                     echo "TEST_PLATFORM=${{ env.TEST_PLATFORM }}" >> $GITHUB_OUTPUT
@@ -167,7 +167,7 @@ jobs:
                   echo "n2n-scan-all - PROJECT_ROOT_DIR: ${PROJECT_ROOT_DIR}"
                   cd ./scripts/build
                   chmod +x *.sh
-                  . 0x0_init_logger.sh.sh
+                  . 0x0_init_logger.sh
                   if [[ ${{ env.DOCKER_TAG_SUFFIX }} == '' ]]; then
                     docker_tag=${{ needs.init-version.outputs.BUILD_VERSION_B_S_rC }}
                   else
@@ -189,7 +189,7 @@ jobs:
                   echo "n2n-scan-all - PROJECT_ROOT_DIR: ${PROJECT_ROOT_DIR}"
                   cd ./scripts/build
                   chmod +x *.sh
-                  . 0x0_init_logger.sh.sh
+                  . 0x0_init_logger.sh
 
                   # e.g. "2022-10-30T19:29:49.877019Z"
                   last_pulled_date=${{ steps.get_tag_last_pushed.outputs.value }}
@@ -286,7 +286,7 @@ jobs:
                   echo "n2n-scan-all - PROJECT_ROOT_DIR: ${PROJECT_ROOT_DIR}"
                   cd ./scripts/build
                   chmod +x *.sh
-                  . 0x0_init_logger.sh.sh
+                  . 0x0_init_logger.sh
 
                   if [[ "${{ needs.init-version.outputs.NEED_FIX }}" == "true" ]]; then
                     LOG_WARNING 需要修复 - ${{ needs.init-version.outputs.BUILD_VERSION_B_S_rC }}
@@ -367,7 +367,7 @@ jobs:
                   echo "n2n-scan-all - PROJECT_ROOT_DIR: ${PROJECT_ROOT_DIR}"
                   cd ./scripts/build
                   chmod +x *.sh
-                  . 0x0_init_logger.sh.sh
+                  . 0x0_init_logger.sh
 
                   LOG_WARNING "Test start: ${{ needs.init-version.outputs.BUILD_VERSION_B_S_rC }}"
                   flag_test_pass="true"

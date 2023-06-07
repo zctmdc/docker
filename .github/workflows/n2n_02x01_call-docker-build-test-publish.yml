@@ -159,7 +159,7 @@ jobs:
               run: |
                   cd n2n/scripts/build
                   chmod +x *.sh
-                  . 0x0_init_logger.sh.sh
+                  . 0x0_init_logger.sh
 
                   LOG_WARNING "Test start: ${{ inputs.VERSION_B_S_rC }}"
                   flag_test_pass="true"
