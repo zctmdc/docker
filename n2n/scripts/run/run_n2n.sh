@@ -4,6 +4,11 @@
 
 . init_logger.sh
 . init_version.sh
+
+cp /usr/share/zoneinfo/${TZ} /etc/localtime
+echo "${TZ}" > /etc/timezone \
+dpkg-reconfigure -f noninteractive tzdata  
+
 MODE=$(echo "${MODE}" | tr '[a-z]' '[A-Z]')
 LOG_INFO "MODE=${MODE}"
 

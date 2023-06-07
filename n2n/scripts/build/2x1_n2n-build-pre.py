@@ -7,5 +7,4 @@ logging.basicConfig(
     datefmt="%Y-%m-%d  %H:%M:%S %a",
 )
 logger = logging.getLogger(__name__)
-logger.setLevel(LOGGER_LEVER)
-
+logger.setLevel(logging.INFO)

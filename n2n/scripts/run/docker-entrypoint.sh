@@ -91,7 +91,7 @@ if [[ -n "$(echo ${app} | grep -E '^(/usr/local/sbin/)?(edge)|(supernode)$')" &&
     LOG_INFO "SUPERNODE_HOST: ${SUPERNODE_HOST}"
     LOG_INFO "SUPERNODE_PORT: ${SUPERNODE_PORT}"
     LOG_INFO "N2N_ARGS: ${N2N_ARGS}"
-
+    : >/n2n/environment
     echo "MODE='${MODE}'" >>/n2n/environment
     echo "EDGE_TUN='${EDGE_TUN}'" >>/n2n/environment
     echo "EDGE_IP='${EDGE_IP}'" >>/n2n/environment

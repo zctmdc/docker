@@ -1,0 +1,80 @@
+name: n2n-build-all
+
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+on:
+    workflow_call:
+        inputs:
+            VERSION_BIG:
+                description: "version_big                 e.g. v3 | v2"
+                required: true
+                type: string
+            VERSION_SMALL:
+                description: "version_small               e.g. 3.1.1 | 2.1.0"
+                required: false
+                type: string
+            VERSION_COMMIT:
+                description: "version_commit              e.g. 1255 | 124"
+                required: false
+                type: string
+            VERSION_B_S_rC:
+                description: "version_b_s_rc              e.g. v3 | v3_3.1.1_r1255"
+                required: true
+                type: string
+            STR_OS_ARCHS:
+                description: "str_os_archs                e.g. linux/amd64"
+                required: true
+                type: string
+            STR_DOWNLOAD_URLS:
+                description: "str_download_urls           e.g. https://raw.githubusercontent.com/lucktu/n2n/master/Linux/n2n_v3_linux_x64_v3.1.1_r1255_static_by_heiye.tar.gz"
+                required: true
+                type: string
+env:
+    DOCKER_CONTEXT_PATH: n2n
+    DOCKER_APP_NAME: n2n
+
+jobs:
+    build-all:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+            # This is used to complete the identity challenge
+            # with sigstore/fulcio when running outside of PRs.
+            id-token: write
+        steps:
+            - name: docker-n2n-build-test
+              id: docker-n2n-build-test
+              uses: ./.github/workflows/n2n_01x00_call-build-all.yml
+              with:
+                  VERSION_BIG: ${{ inputs.VERSION_BIG }}
+                  VERSION_SMALL: ${{ inputs.VERSION_SMALL }}
+                  VERSION_COMMIT: ${{ inputs.VERSION_COMMIT }}
+                  VERSION_B_S_rC: ${{ inputs.VERSION_B_S_rC }}
+                  STR_OS_ARCHS: ${{ inputs.STR_OS_ARCHS }}
+                  STR_DOWNLOAD_URLS: ${{ inputs.STR_DOWNLOAD_URLS }}
+                  DOCKER_CONTEXT_PATH: ${{ env.DOCKER_APP_NAME }}
+                  DOCKER_APP_NAME: ${{ env.DOCKER_APP_NAME }}
+                  DOCKER_BUILD_PLATFORMS: ${{ inputs.STR_OS_ARCHS }}
+                  NED_FIXLIB_VERSIONS_B_S_rC: "v2_2.3.0, v2s_2.1.0_r111, v1"
+                  FORCE_PUSH: ${{ false }}
+
+            - name: docker-n2n-sh-build-test
+              id: docker-n2n-sh-build-test
+              uses: ./.github/workflows/n2n_01x00_call-build-all.yml
+              with:
+                  VERSION_BIG: ${{ inputs.VERSION_BIG }}
+                  VERSION_SMALL: ${{ inputs.VERSION_SMALL }}
+                  VERSION_COMMIT: ${{ inputs.VERSION_COMMIT }}
+                  VERSION_B_S_rC: ${{ inputs.VERSION_B_S_rC }}
+                  STR_OS_ARCHS: ${{ inputs.STR_OS_ARCHS }}
+                  STR_DOWNLOAD_URLS: ${{ inputs.STR_DOWNLOAD_URLS }}
+                  DOCKER_CONTEXT_PATH: ${{ env.DOCKER_APP_NAME }}
+                  DOCKER_APP_NAME: ${{ env.DOCKER_APP_NAME }}
+                  DOCKER_TAG_PREFIX: "sh-"
+                  DOCKER_BUILD_DOCKERFILE: "Dockerfile.run"
+                  DOCKER_BUILD_PLATFORMS: ${{ inputs.STR_OS_ARCHS }}
+                  FORCE_PUSH: ${{ false }}

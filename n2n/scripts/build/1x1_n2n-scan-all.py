@@ -16,7 +16,14 @@ logger = logging.getLogger(__name__)
 logger.setLevel(LOGGER_LEVER)
 
 
-def get_file_info(pattern_name=None, filename=None):
+def get_file_info(patterns=None, pattern_name=None, filename=None):
+    if type(patterns) is not dict:
+        return None
+    if pattern_name is None:
+        return None
+    if filename is None:
+        return None
+
     results = patterns[pattern_name].search(filename)
     if results:
         result = results.group()
@@ -71,12 +78,14 @@ if __name__ == '__main__':
                 continue
             logger.info(f'N2N filepath: {file_content.path}')
 
-            machine = get_file_info('machine', filename)
-            machine_alias = get_file_info('machine_alias', filename)
-            version_big = get_file_info('version_big', filename)
-            version_small = get_file_info('version_small', filename)
-            fix_version_small = version_small.replace('v.', '').replace(
-                'v', '')
+            machine = get_file_info(patterns, 'machine', filename)
+            machine_alias = get_file_info(patterns, 'machine_alias', filename)
+            version_big = get_file_info(patterns, 'version_big', filename)
+            version_small = get_file_info(patterns, 'version_small', filename)
+            fix_version_small = None
+            if version_small is not None:
+                fix_version_small = version_small.replace('v.', '').replace(
+                    'v', '')
             logger.debug(f'fix_version_small: {fix_version_small}')
             version_commit = get_file_info('version_commit', filename)
             if filename == 'n2n_v1_linux_mipsel_v1.3.2_124.zip':
@@ -95,7 +104,7 @@ if __name__ == '__main__':
             logger.debug('---'*4)
             if machine not in dict_os_arch:
                 continue
-            os_arch = dict_os_arch[machine]
+            os_arch = dict_os_arch[machine] if dict_os_arch is not None and machine is not None else None
             n2n_obj = {'machine': machine, 'machine_alias': machine_alias, 'os_arch': os_arch,
                        'name': file_content.name, 'path': file_content.path, 'download_url': file_content.download_url,
                        'version_big': version_big,

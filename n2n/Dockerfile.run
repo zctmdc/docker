@@ -39,7 +39,7 @@ ENV SUPERNODE_PORT ${DEFAULT_SUPERNODE_PORT}
 # WATCH DOG 使用 /n2n/n2n_healthcheck.sh 匹配
 ENV HEALTHCHECK_IP ""
 ENV WATCH_DOG 'TRUE'
-COPY ./scripts/*.sh /n2n/
+COPY ./scripts/run/*.sh /n2n/
 RUN chmod a+x /n2n/*
 ENTRYPOINT ["/n2n/docker-entrypoint.sh"]
 HEALTHCHECK --interval=1m --timeout=30s CMD /n2n/n2n_healthcheck.sh

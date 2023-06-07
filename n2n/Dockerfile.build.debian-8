@@ -11,7 +11,7 @@ LABEL description="${summary}" \
   org.opencontainers.image.source="https://github.com/zctmdc/docker/tree/alpha/n2n" \
   org.opencontainers.image.authors="zctmdc@outlook.com" \
   org.opencontainers.image.description="${summary}" \
-  org.opencontainers.image.documentation="https://github.com/zctmdc/docker/tree/alpha/n2n/doc/build.md"\
+  org.opencontainers.image.documentation="https://github.com/zctmdc/docker/tree/alpha/n2n/doc/build.md" \
   org.opencontainers.image.licenses="MIT"
 
 ARG DEBIAN_FRONTEND=noninteractive
@@ -21,33 +21,27 @@ RUN apt-get -qq -y install \
 
 # 安装RAR
 WORKDIR /tmp/scripts/
-COPY ./scripts/init_logger.sh ./scripts/install_rar.sh /tmp/scripts/
+COPY ./scripts/build/0x0_init-logger.sh ./scripts/build/2x0_install_rar.sh /tmp/scripts/
 RUN chmod +x /tmp/scripts/*.sh
-RUN /tmp/scripts/install_rar.sh
+RUN /tmp/scripts/2x0_install_rar.sh
 
-ARG KERNEL=linux
-# 用于自定义机型编译,未自动识别时请赋值
-ARG MACHINE
-ARG BIG_VERSION
-ARG SMALL_VERSION
-ARG COMMIT
+ARG VERSION_BIG
+ARG VERSION_SMALL
+ARG VERSION_COMMIT
 ARG VERSION_B_S_rC
-ARG MANUAL_BUILD
+ARG STR_DOWNLOAD_URLS
 
-# 选择对应版本文件
-WORKDIR /tmp/n2n/scripts/
-# COPY . /tmp/n2n/
-# RUN chmod +x /tmp/n2n/scripts/*.sh
-# RUN /tmp/n2n/scripts/build-docker.sh
+COPY ./scripts/build/* /tmp/scripts/
+RUN chmod +x /tmp/scripts/*.sh
 
-# RUN mkdir -p /tmp/down/ && cp /tmp/n2n/result/build_src/* /tmp/down/ && ls /tmp/down/
+ARG DOWNLOAD_PATH=/tmp/n2n
 
-COPY ./result/build_src/ /tmp/down/
-COPY ./scripts/ /tmp/n2n/scripts/
-
+# 下载需要的文件
+RUN /tmp/scripts/2x3_n2n_down.sh
+ARG N2N_DESC_DIR="/tmp/desc"
 # 解压，选择最大的edge文件
-RUN /tmp/n2n/scripts/extract_n2n.sh
-RUN /tmp/n2n/scripts/sel_n2n.sh
+RUN /tmp/scripts/2x4_n2n_extract_all.sh
+RUN /tmp/scripts/2x5_n2n_sel_biggest.sh
 
 FROM debian:8
 
@@ -72,19 +66,29 @@ RUN apt-get -qq -y install \
 RUN touch /var/lib/dhcp/dhcpd.leases
 
 WORKDIR /usr/local/sbin/
+ARG N2N_DESC_DIR="/tmp/desc"
 COPY --from=downloader \
-  /tmp/desc/supernode \
-  /tmp/desc/edge \
+  ${N2N_DESC_DIR}/supernode \
+  ${N2N_DESC_DIR}/edge \
   /usr/local/sbin/
 RUN ls
 
-WORKDIR /tmp/n2n/scripts/
-COPY ./scripts/*.sh /tmp/n2n/scripts/
-RUN chmod +x /tmp/n2n/scripts/*
-RUN /tmp/n2n/scripts/fixlib.sh
+WORKDIR /tmp/scripts/
+COPY ./scripts/build/*.sh /tmp/scripts/
+RUN chmod +x /tmp/scripts/*
+RUN /tmp/scripts/3x0_n2n_fixlib
 RUN rm -rf /tmp/*
 
 WORKDIR /usr/local/sbin/
 
+ARG VERSION_BIG
+ARG VERSION_SMALL
+ARG VERSION_COMMIT
 ARG VERSION_B_S_rC
+ARG STR_DOWNLOAD_URLS
+
+ENV VERSION_BIG=${VERSION_BIG}
+ENV VERSION_SMALL=${VERSION_SMALL}
+ENV VERSION_COMMIT=${VERSION_COMMIT}
 ENV VERSION_B_S_rC=${VERSION_B_S_rC}
+ENV STR_DOWNLOAD_URLS=${STR_DOWNLOAD_URLS}

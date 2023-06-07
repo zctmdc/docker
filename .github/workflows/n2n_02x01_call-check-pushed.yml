@@ -6,86 +6,83 @@ name: n2n-check-push
 # documentation.
 
 on:
+    workflow_call:
+        inputs:
+            DOCKER_APP_NAME:
+                description: "docker app name       e.g. n2n | frp"
+                required: true
+                type: string
+            DOCKER_TAG:
+                description: "version_b_s_rc        e.g. v3 | v3_3.1.1_r1255"
+                required: true
+                type: string
+            FORCE_PUSH:
+                description: "force push to registry"
+                required: true
+                type: boolean
+                default: false
 
-  workflow_call:
-    inputs:
-      DOCKER_APP_NAME:
-        description: "docker app name e.g. n2n | frp"
-        required: true
-        type: string
-      DOCKER_TAG:
-        description: "version_b_s_rc e.g. v3 | v3_3.1.1_r1255"
-        required: true
-        type: string
-      FORCE_PUSH:
-        description: "force push to registry"
-        required: true
-        type: boolean
-        default: false
-        
-    outputs:
-      LAST_PULLED_DATE:
-        description: "last docker pulled date"
-        value: ${{ jobs.check-push.outputs.LAST_PULLED_DATE }}
-      SKIP_BUILD_PUSH:
-        description: "skip docker build push"
-        value: ${{ jobs.check-push.outputs.SKIP_BUILD_PUSH }}
+        outputs:
+            LAST_PULLED_DATE:
+                description: "last docker pulled date"
+                value: ${{ jobs.check-push.outputs.LAST_PULLED_DATE }}
+            SKIP_BUILD_PUSH:
+                description: "skip docker build push"
+                value: ${{ jobs.check-push.outputs.SKIP_BUILD_PUSH }}
 env:
-  # Use docker.io for Docker Hub if empty
-  # REGISTRY: ghcr.io
-  REGISTRY: docker.io
-  DOCKER_CONTEXT_PATH: n2n
-  DOCKER_APP_NAME: n2n
+    # Use docker.io for Docker Hub if empty
+    # REGISTRY: ghcr.io
+    REGISTRY: docker.io
+    DOCKER_CONTEXT_PATH: n2n
+    DOCKER_APP_NAME: n2n
 
 jobs:
+    check-push:
+        runs-on: ubuntu-latest
+        # needs: [init-version]
+        # if: inputs.FORCE_PUSH != 'true'
+        env:
+            DOCKER_TAG_SUFFIX: ""
+        outputs:
+            LAST_PULLED_DATE: ${{ steps.check-tag-last-pushed-date.outputs.LAST_PULLED_DATE }}
+            SKIP_BUILD_PUSH: ${{ steps.check-tag-last-pushed-date.outputs.SKIP_BUILD_PUSH }}
+        permissions:
+            contents: read
+            packages: write
 
-  check-push:
-    runs-on: ubuntu-latest
-    # needs: [init-version]
-    # if: inputs.FORCE_PUSH != 'true'
-    env:
-      DOCKER_TAG_SUFFIX: ''
-    outputs:
-      LAST_PULLED_DATE: ${{ steps.check-tag-last-pushed-date.outputs.LAST_PULLED_DATE }}
-      SKIP_BUILD_PUSH: ${{ steps.check-tag-last-pushed-date.outputs.SKIP_BUILD_PUSH }}
-    permissions:
-      contents: read
-      packages: write
+        steps:
+            - name: Get tag-last-pushed-info
+              id: get-tag-last-pushed-info
+              uses: sergeysova/jq-action@v2
+              with:
+                  cmd: curl -k -sS https://hub.docker.com/v2/repositories/${{ secrets.REGISTRY_USERNAME }}/$${{ inputs.DOCKER_APP_NAME }}/tags/${{ inputs.DOCKER_TAG }} | jq '.get-tag-last-pushed-date'
 
-    steps:
-    
-      - name: Get tag-last-pushed-info
-        id: get-tag-last-pushed-info
-        uses: sergeysova/jq-action@v2
-        with:
-          cmd: curl -k -sS https://hub.docker.com/v2/repositories/${{ secrets.REGISTRY_USERNAME }}/$${{ inputs.DOCKER_APP_NAME }}/tags/${{ inputs.DOCKER_TAG }} | jq '.get-tag-last-pushed-date'
+            - name: Check tag-last-pushed-date
+              id: check-tag-last-pushed-date
+              run: |
+                  LOG_INFO() {
+                    echo -e $(caller) "\033[0;32m[    INFO] $@ \033[0m"
+                  }
+                  LOG_ERROR() {
+                    echo -e $(caller) "\033[0;31m[   ERROR] $@ \033[0m"
+                  }
+                  LOG_WARNING() {
+                    echo -e $(caller) "\033[0;33m[ WARNING] $@ \033[0m"
+                  }
 
-      - name: Check tag-last-pushed-date
-        id: check-tag-last-pushed-date
-        run: |
-          LOG_INFO() {
-            echo -e $(caller) "\033[0;32m[    INFO] $@ \033[0m"
-          }
-          LOG_ERROR() {
-            echo -e $(caller) "\033[0;31m[   ERROR] $@ \033[0m"
-          }
-          LOG_WARNING() {
-            echo -e $(caller) "\033[0;33m[ WARNING] $@ \033[0m"
-          }
+                  # e.g. "2022-10-30T19:29:49.877019Z"
+                  last_pulled_date=${{ steps.get-tag-last-pushed-info.outputs.value }}
+                  echo "LAST_PULLED_DATE=${last_pulled_date}" >> $GITHUB_OUTPUT
+                  LOG_INFO "check tag - ${{ secrets.REGISTRY_USERNAME }}/$${{ inputs.DOCKER_APP_NAME }}:${{ inputs.DOCKER_TAG }}"
+                  LOG_INFO "last_pulled_date - ${last_pulled_date}"
 
-          # e.g. "2022-10-30T19:29:49.877019Z"
-          last_pulled_date=${{ steps.get-tag-last-pushed-info.outputs.value }}
-          echo "LAST_PULLED_DATE=${last_pulled_date}" >> $GITHUB_OUTPUT
-          LOG_INFO "check tag - ${{ secrets.REGISTRY_USERNAME }}/$${{ inputs.DOCKER_APP_NAME }}:${{ inputs.DOCKER_TAG }}"
-          LOG_INFO "last_pulled_date - ${last_pulled_date}"
-
-          if [[ "true" == "${{ inputs.FORCE_PUSH }}" ]]; then
-              LOG_WARNING "强制 编译/推送"
-              exit 0
-          elif [[ "${last_pulled_date,,}" != "null" ]]; then
-              echo "SKIP_BUILD_PUSH=true" >> $GITHUB_OUTPUT
-              LOG_INFO "跳过 编译/推送"
-              exit 0
-          else
-              LOG_INFO "准备 编译/推送"
-          fi
+                  if [[ "true" == "${{ inputs.FORCE_PUSH }}" ]]; then
+                      LOG_WARNING "强制 编译/推送"
+                      exit 0
+                  elif [[ "${last_pulled_date,,}" != "null" ]]; then
+                      echo "SKIP_BUILD_PUSH=true" >> $GITHUB_OUTPUT
+                      LOG_INFO "跳过 编译/推送"
+                      exit 0
+                  else
+                      LOG_INFO "准备 编译/推送"
+                  fi

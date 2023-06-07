@@ -6,207 +6,183 @@ name: n2n-init-version
 # documentation.
 
 on:
+    workflow_call:
+        inputs:
+            VERSION_BIG:
+                description: "version_big               e.g. v3 | v2"
+                required: true
+                type: string
+            VERSION_SMALL:
+                description: "version_small             e.g. 3.1.1 | 2.1.0"
+                required: false
+                type: string
+            VERSION_COMMIT:
+                description: "version_commit            e.g. 1255 | 124"
+                required: false
+                type: string
+            VERSION_B_S_rC:
+                description: "version_b_s_rc            e.g. v3 | v3_3.1.1_r1255"
+                required: true
+                type: string
+            STR_OS_ARCHS:
+                description: "str_os_archs              e.g. linux/amd64"
+                required: true
+                type: string
+            STR_DOWNLOAD_URLS:
+                description: "str_download_urls         e.g. https://raw.githubusercontent.com/lucktu/n2n/master/Linux/n2n_v3_linux_x64_v3.1.1_r1255_static_by_heiye.tar.gz"
+                required: true
+                type: string
+            FORCE_PUSH:
+                description: "force push to registry"
+                default: false
+                required: false
+                type: boolean
+            NED_FIXLIB_VERSIONS_B_S_rC:
+                description: "ned fixlib versions_b_s_rc"
+                required: true
+                type: string
+                default: "v2_2.3.0, v2s_2.1.0_r111, v1"
+            DOCKER_BUILD_DOCKERFILE:
+                description: "docker_build_dockerfile     e.g. Dockerfile | Dockerfile.build.debian-stable"
+                required: true
+                type: string
 
-  workflow_call:
-    inputs:
-      VERSION_BIG:
-        description: "version_big e.g. v3 | v2"
-        required: true
-        type: string
-      VERSION_SMALL:
-        description: "version_small e.g. 3.1.1 | 2.1.0"
-        required: false
-        type: string
-      VERSION_COMMIT:
-        description: "version_commit e.g. 1255 | 124"
-        required: false
-        type: string
-      VERSION_B_S_rC:
-        description: "version_b_s_rc e.g. v3 | v3_3.1.1_r1255"
-        required: true
-        type: string
-      STR_OS_ARCHS:
-        description: "str_os_archs e.g. linux/amd64"
-        required: true
-        type: string
-      STR_DOWNLOAD_URLS:
-        description: "str_download_urls e.g. https://raw.githubusercontent.com/lucktu/n2n/master/Linux/n2n_v3_linux_x64_v3.1.1_r1255_static_by_heiye.tar.gz"
-        required: true
-        type: string
-      FORCE_PUSH:
-        description: "force push to registry"
-        default: false
-        required: false
-        type: boolean
-      NED_FIXLIB_VERSIONS_B_S_rC:
-        description: "ned fixlib versions_b_s_rc"
-        required: true
-        type: string
-        default:  "v2_2.3.0, v2s_2.1.0_r111, v1"
-
-    outputs:
-      ONLY_BIGVERSION:
-        description: "docker build only bigversion"
-        value: ${{ jobs.init-version.outputs.ONLY_BIGVERSION }}
-      IS_LATEST_VERSION:
-        description: "docker build is latest version"
-        value: ${{ jobs.init-version.outputs.IS_LATEST_VERSION }}
-      NEED_FIX:
-        description: "docker build need fix"
-        value: ${{ jobs.init-version.outputs.NEED_FIX }}
-      BUILD_DOCKERFILE:
-        description: "docker build dockerfile"
-        value: ${{ jobs.init-version.outputs.BUILD_DOCKERFILE }}
-      DOCKER_BUILD_CACHE_TAG:
-        description: "docker build-cache tag"
-        value: ${{ jobs.init-version.outputs.DOCKER_BUILD_CACHE_TAG }}
-      TEST_PLATFORMS:
-        description: "docker test platform"
-        value: ${{ jobs.init-version.outputs.TEST_PLATFORMS }}
-env:
-  # Use docker.io for Docker Hub if empty
-  # REGISTRY: ghcr.io
-  REGISTRY: docker.io
-  DOCKER_CONTEXT_PATH: n2n
-  TEST_PLATFORMS: "linux/386"
-  DOCKER_APP_NAME: n2n
+        outputs:
+            ONLY_BIGVERSION:
+                description: "docker build only bigversion"
+                value: ${{ jobs.init-version.outputs.ONLY_BIGVERSION }}
+            IS_LATEST_VERSION:
+                description: "docker build is latest version"
+                value: ${{ jobs.init-version.outputs.IS_LATEST_VERSION }}
+            NEED_FIX:
+                description: "docker build need fix"
+                value: ${{ jobs.init-version.outputs.NEED_FIX }}
+            DOCKER_BUILD_DOCKERFILE:
+                description: "docker build dockerfile"
+                value: ${{ jobs.init-version.outputs.DOCKER_BUILD_DOCKERFILE }}
+            DOCKER_BUILD_CACHE_TAG:
+                description: "docker build-cache tag"
+                value: ${{ jobs.init-version.outputs.DOCKER_BUILD_CACHE_TAG }}
 
 jobs:
+    init-version:
+        runs-on: ubuntu-latest
+        permissions:
+            contents: read
+            packages: write
+            # This is used to complete the identity challenge
+            # with sigstore/fulcio when running outside of PRs.
+            id-token: write
+        outputs:
+            ONLY_BIGVERSION: ${{ steps.check-big-version-only.outputs.ONLY_BIGVERSION }}
+            IS_LATEST_VERSION: ${{ steps.check-latest-version.outputs.IS_LATEST_VERSION }}
+            NEED_FIX: ${{ steps.check-need-fix.outputs.NEED_FIX }}
+            DOCKER_BUILD_DOCKERFILE: ${{ steps.check-need-fix.outputs.DOCKER_BUILD_DOCKERFILE }}
+            DOCKER_BUILD_CACHE_TAG: ${{ steps.init-build-cache-tag.outputs.DOCKER_BUILD_CACHE_TAG }}
 
-  init-version:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-      # This is used to complete the identity challenge
-      # with sigstore/fulcio when running outside of PRs.
-      id-token: write
-    outputs:
-      ONLY_BIGVERSION: ${{ steps.check-big-version-only.outputs.ONLY_BIGVERSION }}
-      IS_LATEST_VERSION: ${{ steps.check-latest-version.outputs.IS_LATEST_VERSION }}
-      NEED_FIX: ${{ steps.check-need-fix.outputs.NEED_FIX }}
-      BUILD_DOCKERFILE: ${{ steps.check-need-fix.outputs.BUILD_DOCKERFILE }}
-      DOCKER_BUILD_CACHE_TAG: ${{ steps.init-build-cache-tag.outputs.DOCKER_BUILD_CACHE_TAG }}
-      TEST_PLATFORMS: ${{ steps.init-test-info.outputs.TEST_PLATFORMS }}
+        steps:
+            - name: Checkout repository
+              # depends on this library
+              uses: actions/checkout@v3
 
-    steps:
-      - name: Checkout repository
-        # depends on this library
-        uses: actions/checkout@v3
+            - name: Check inputs
+              run: |
+                  LOG_INFO() {
+                    echo -e $(caller) "\033[0;32m[    INFO] $@ \033[0m"
+                  }
+                  LOG_ERROR() {
+                    echo -e $(caller) "\033[0;31m[   ERROR] $@ \033[0m"
+                  }
+                  LOG_WARNING() {
+                    echo -e $(caller) "\033[0;33m[ WARNING] $@ \033[0m"
+                  }
 
-      - name: Check inputs
-        run: |
-          LOG_INFO() {
-            echo -e $(caller) "\033[0;32m[    INFO] $@ \033[0m"
-          }
-          LOG_ERROR() {
-            echo -e $(caller) "\033[0;31m[   ERROR] $@ \033[0m"
-          }
-          LOG_WARNING() {
-            echo -e $(caller) "\033[0;33m[ WARNING] $@ \033[0m"
-          }
+                  LOG_INFO "VERSION_BIG: ${{ inputs.VERSION_BIG }}"
+                  LOG_INFO "VERSION_SMALL: ${{ inputs.VERSION_SMALL }}"
+                  LOG_INFO "VERSION_COMMIT: ${{ inputs.VERSION_COMMIT }}"
+                  LOG_INFO "VERSION_B_S_rC: ${{ inputs.VERSION_B_S_rC }}"
+                  LOG_INFO "STR_OS_ARCHS: ${{ inputs.STR_OS_ARCHS }}"
+                  LOG_INFO "STR_DOWNLOAD_URLS: ${{ inputs.STR_DOWNLOAD_URLS }}"
+                  LOG_INFO "FORCE_PUSH: ${{ inputs.FORCE_PUSH }}"
 
-          LOG_INFO "VERSION_BIG: ${{ inputs.VERSION_BIG }}"
-          LOG_INFO "VERSION_SMALL: ${{ inputs.VERSION_SMALL }}"
-          LOG_INFO "VERSION_COMMIT: ${{ inputs.VERSION_COMMIT }}"
-          LOG_INFO "VERSION_B_S_rC: ${{ inputs.VERSION_B_S_rC }}"
-          LOG_INFO "STR_OS_ARCHS: ${{ inputs.STR_OS_ARCHS }}"
-          LOG_INFO "STR_DOWNLOAD_URLS: ${{ inputs.STR_DOWNLOAD_URLS }}"
-          LOG_INFO "FORCE_PUSH: ${{ inputs.FORCE_PUSH }}"
+            - name: Check big version only
+              id: check-big-version-only
+              if: inputs.VERSION_B_S_rC == inputs.VERSION_BIG
+              run: |
+                  LOG_INFO() {
+                    echo -e $(caller) "\033[0;32m[    INFO] $@ \033[0m"
+                  }
+                  LOG_ERROR() {
+                    echo -e $(caller) "\033[0;31m[   ERROR] $@ \033[0m"
+                  }
+                  LOG_WARNING() {
+                    echo -e $(caller) "\033[0;33m[ WARNING] $@ \033[0m"
+                  }
 
+                  LOG_INFO "ONLY_BIGVERSION=true"
+                  echo "ONLY_BIGVERSION=true" >> $GITHUB_OUTPUT
 
-      - name: Check big version only
-        id: check-big-version-only
-        if: inputs.VERSION_B_S_rC == inputs.VERSION_BIG
-        run: |
-          LOG_INFO() {
-            echo -e $(caller) "\033[0;32m[    INFO] $@ \033[0m"
-          }
-          LOG_ERROR() {
-            echo -e $(caller) "\033[0;31m[   ERROR] $@ \033[0m"
-          }
-          LOG_WARNING() {
-            echo -e $(caller) "\033[0;33m[ WARNING] $@ \033[0m"
-          }
+            - name: Check latest version
+              id: check-latest-version
+              if: inputs.VERSION_B_S_rC == 'v3'
+              run: |
+                  LOG_INFO() {
+                    echo -e $(caller) "\033[0;32m[    INFO] $@ \033[0m"
+                  }
+                  LOG_ERROR() {
+                    echo -e $(caller) "\033[0;31m[   ERROR] $@ \033[0m"
+                  }
+                  LOG_WARNING() {
+                    echo -e $(caller) "\033[0;33m[ WARNING] $@ \033[0m"
+                  }
+                  LOG_INFO "IS_LATEST_VERSION=true"
+                  echo "IS_LATEST_VERSION=true" >> $GITHUB_OUTPUT
 
-          LOG_INFO "ONLY_BIGVERSION=true"
-          echo "ONLY_BIGVERSION=true" >> $GITHUB_OUTPUT
+            - name: Check need fix
+              id: check-need-fix
+              run: |
+                  LOG_INFO() {
+                    echo -e $(caller) "\033[0;32m[    INFO] $@ \033[0m"
+                  }
+                  LOG_ERROR() {
+                    echo -e $(caller) "\033[0;31m[   ERROR] $@ \033[0m"
+                  }
+                  LOG_WARNING() {
+                    echo -e $(caller) "\033[0;33m[ WARNING] $@ \033[0m"
+                  }
+                  ned_libfix_versions_b_s_rc="${{ inputs.NED_FIXLIB_VERSIONS_B_S_rC }}"
+                  l_ned_libfix_versions_b_s_rc=(${ned_libfix_versions_b_s_rc//,/ })
+                  for ned_libfix_versions_b_s_rc in ${l_ned_libfix_versions_b_s_rc[@]};do
+                    if [[ "${{ inputs.version_b_s_rc }}" == "${ned_libfix_versions_b_s_rc}" ]]; then
+                      LOG_WARNING 需要修复 - ${BUILD_VERSION_B_S_rC}
+                      echo "NEED_FIX=true">> $GITHUB_OUTPUT
+                      if [[ -n "${{ inputs.DOCKER_BUILD_DOCKERFILE }}" ]]; then
+                        build_dockerfile=${{ inputs.DOCKER_BUILD_DOCKERFILE }}
+                      else
+                        build_dockerfile=Dockerfile.build.debian-8
+                      fi
+                      LOG_WARNING 使用 ${build_dockerfile} - ${{ inputs.NED_FIXLIB_VERSIONS_B_S_rC }}
+                      echo "DOCKER_BUILD_DOCKERFILE=${build_dockerfile}">> $GITHUB_OUTPUT
+                      exit 0
+                    fi
+                  done
 
-      - name: Check latest version
-        id: check-latest-version
-        if: inputs.VERSION_B_S_rC == 'v3'
-        run: |
-          LOG_INFO() {
-            echo -e $(caller) "\033[0;32m[    INFO] $@ \033[0m"
-          }
-          LOG_ERROR() {
-            echo -e $(caller) "\033[0;31m[   ERROR] $@ \033[0m"
-          }
-          LOG_WARNING() {
-            echo -e $(caller) "\033[0;33m[ WARNING] $@ \033[0m"
-          }
-          LOG_INFO "IS_LATEST_VERSION=true"
-          echo "IS_LATEST_VERSION=true" >> $GITHUB_OUTPUT
-
-      - name: Check need fix
-        id: check-need-fix
-        run: |
-          LOG_INFO() {
-            echo -e $(caller) "\033[0;32m[    INFO] $@ \033[0m"
-          }
-          LOG_ERROR() {
-            echo -e $(caller) "\033[0;31m[   ERROR] $@ \033[0m"
-          }
-          LOG_WARNING() {
-            echo -e $(caller) "\033[0;33m[ WARNING] $@ \033[0m"
-          }
-          ned_libfix_versions_b_s_rc="${{ inputs.NED_FIXLIB_VERSIONS_B_S_rC }}"
-          l_ned_libfix_versions_b_s_rc=(${ned_libfix_versions_b_s_rc//,/ })
-          for ned_libfix_versions_b_s_rc in ${l_ned_libfix_versions_b_s_rc[@]};do
-            if [[ "${{ inputs.version_b_s_rc }}" == "${ned_libfix_versions_b_s_rc}" ]];then
-              LOG_WARNING 需要修复 - ${BUILD_VERSION_B_S_rC}
-              echo "NEED_FIX=true">> $GITHUB_OUTPUT
-
-              build_dockerfile=Dockerfile.build.debian-8
-              LOG_WARNING 使用 ${build_dockerfile} - ${{ inputs.NED_FIXLIB_VERSIONS_B_S_rC }}
-              echo "BUILD_DOCKERFILE=${build_dockerfile}">> $GITHUB_OUTPUT
-              exit 0
-            fi
-          done
-
-      - name: Init build cache tag
-        id: init-build-cache-tag
-        run: |
-          LOG_INFO() {
-            echo -e $(caller) "\033[0;32m[    INFO] $@ \033[0m"
-          }
-          LOG_ERROR() {
-            echo -e $(caller) "\033[0;31m[   ERROR] $@ \033[0m"
-          }
-          LOG_WARNING() {
-            echo -e $(caller) "\033[0;33m[ WARNING] $@ \033[0m"
-          }
-          if [[ "${{ steps.check-need-fix.outputs.NEED_FIX }}" == "true" ]];then
-            echo "DOCKER_BUILD_CACHE_TAG=build-cache-fix" >> $GITHUB_OUTPUT
-          else
-            echo "DOCKER_BUILD_CACHE_TAG=build-cache" >> $GITHUB_OUTPUT
-          fi
-
-      - name: Init test info
-        id: init-test-info
-        run: |
-          LOG_INFO() {
-            echo -e $(caller) "\033[0;32m[    INFO] $@ \033[0m"
-          }
-          LOG_ERROR() {
-            echo -e $(caller) "\033[0;31m[   ERROR] $@ \033[0m"
-          }
-          LOG_WARNING() {
-            echo -e $(caller) "\033[0;33m[ WARNING] $@ \033[0m"
-          }
-          if [[ ${{ inputs.str_os_archs }} =~ ${{ env.TEST_PLATFORMS }} ]];then
-            echo "TEST_PLATFORMS=${{ env.TEST_PLATFORMS }}" >> $GITHUB_OUTPUT
-          else
-            echo "TEST_PLATFORMS=${BUILD_PLATFORMS%%,*}" >> $GITHUB_OUTPUT
-          fi
-
+            - name: Init build cache tag
+              id: init-build-cache-tag
+              run: |
+                  LOG_INFO() {
+                    echo -e $(caller) "\033[0;32m[    INFO] $@ \033[0m"
+                  }
+                  LOG_ERROR() {
+                    echo -e $(caller) "\033[0;31m[   ERROR] $@ \033[0m"
+                  }
+                  LOG_WARNING() {
+                    echo -e $(caller) "\033[0;33m[ WARNING] $@ \033[0m"
+                  }
+                  if [[ -n "${{ inputs.DOCKER_BUILD_DOCKERFILE }}" ]]; then
+                    echo "DOCKER_BUILD_CACHE_TAG=build-cache-${{ inputs.DOCKER_BUILD_DOCKERFILE }}" >> $GITHUB_OUTPUT
+                  elif [[ "${{ steps.check-need-fix.outputs.NEED_FIX }}" == "true" ]]; then
+                    echo "DOCKER_BUILD_CACHE_TAG=build-cache-fix" >> $GITHUB_OUTPUT
+                  else
+                    echo "DOCKER_BUILD_CACHE_TAG=build-cache" >> $GITHUB_OUTPUT
+                  fi
