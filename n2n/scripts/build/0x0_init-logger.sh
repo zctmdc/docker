@@ -1,5 +1,11 @@
 #!/bin/bash
 
+WAIT_DEBUG=${WAIT_DEBUG:-}
+VERSION_BIG=${VERSION_BIG:-}
+VERSION_SMALL=${VERSION_SMALL:-}
+VERSION_COMMIT=${VERSION_COMMIT:-}
+VERSION_B_S_rC=${VERSION_B_S_rC:-}
+
 LOG_INFO() {
   echo -e $(caller) "\033[0;32m[    INFO] $@ \033[0m"
 }
