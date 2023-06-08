@@ -8,12 +8,17 @@ set -o nounset
 set -o pipefail
 
 mkdir -p "${DOWNLOAD_PATH}"
-s_download_urls="${STR_DOWNLOAD_URLS}"
-LOG_INFO "s_download_urls: ${s_download_urls}"
+# s_download_urls="${STR_DOWNLOAD_URLS}"
+# LOG_INFO "s_download_urls: ${s_download_urls}"
 
-l_download_urls=(${s_download_urls//,/ })
-for download_url in ${l_download_urls[@]}; do
+# l_download_urls=(${s_download_urls//,/ })
+# for download_url in ${l_download_urls[@]}; do
+cat /tmp/down_urls.txt | while read download_url
+do
     LOG_INFO "download_url: ${download_url}"
+    if [ -n "${download_url}" ]; then
+        continue
+    fi
     dl_filename=${download_url##*/}
     LOG_INFO "dl_filename: ${dl_filename}"
     dl_machine=${dl_filename##*linux_}

@@ -29,7 +29,8 @@ ARG VERSION_BIG
 ARG VERSION_SMALL
 ARG VERSION_COMMIT
 ARG VERSION_B_S_rC
-ARG STR_DOWNLOAD_URLS
+# ARG STR_DOWNLOAD_URLS
+
 
 COPY ./scripts/build/* /tmp/scripts/
 RUN chmod +x /tmp/scripts/*.sh
@@ -37,6 +38,7 @@ RUN chmod +x /tmp/scripts/*.sh
 ARG DOWNLOAD_PATH=/tmp/n2n
 
 # 下载需要的文件
+COPY ./tmp/down_urls.txt /tmp/down_urls.txt
 RUN /tmp/scripts/2x3_n2n_down.sh
 ARG N2N_DESC_DIR="/tmp/desc"
 # 解压，选择最大的edge文件

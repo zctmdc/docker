@@ -163,7 +163,11 @@ jobs:
                     fi
                   done
                   echo "NEED_FIX=false">> $GITHUB_OUTPUT
-                  build_dockerfile=${{ inputs.DOCKER_BUILD_DOCKERFILE_OK }}
+                  if [[ -n "${{ inputs.DOCKER_BUILD_DOCKERFILE }}" ]]; then
+                    build_dockerfile=${{ inputs.DOCKER_BUILD_DOCKERFILE }}
+                  else
+                    build_dockerfile=${{ inputs.DOCKER_BUILD_DOCKERFILE_FIX }}
+                  fi
                   LOG_INFO 使用 ${build_dockerfile} - ${build_dockerfile}
                   echo "DOCKER_BUILD_DOCKERFILE=${build_dockerfile}">> $GITHUB_OUTPUT
 

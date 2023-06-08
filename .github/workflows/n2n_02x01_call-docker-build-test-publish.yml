@@ -100,12 +100,19 @@ jobs:
             # with sigstore/fulcio when running outside of PRs.
             id-token: write
         steps:
-            - name: check DOCKER_PUSH
-              run: |
-                  echo "${{ inputs.DOCKER_PUSH }} - ${{ inputs.DOCKER_PUSH == 'true' }} - ${{ inputs.DOCKER_PUSH == true }}"
-
             - name: Checkout repository on build-psuh
               uses: actions/checkout@v3
+
+            - name: init DOCKER_BUILD
+              run: |
+                  echo "DOCKER_PUSH          : ${{ inputs.DOCKER_PUSH }}"
+                  echo "DOCKER_PUSH == true  : ${{ inputs.DOCKER_PUSH == true }}"
+                  echo "DOCKER_PUSH == 'true': ${{ inputs.DOCKER_PUSH == 'true' }}"
+                  str_download_urls=${{ inputs.STR_DOWNLOAD_URLS }}
+                  echo -e "${str_download_urls//,/'\n'}" >> /n2n/tmp/down_urls.txt
+                  echo -e "" >> /n2n/tmp/down_urls.txt
+                  echo '# cat /n2n/tmp/down_urls.txt #'
+                  cat /n2n/tmp/down_urls.txt
 
             - name: Set up QEMU
               uses: docker/setup-qemu-action@v2
@@ -171,7 +178,7 @@ jobs:
                       VERSION_SMALL=${{ inputs.VERSION_SMALL }}
                       VERSION_COMMIT=${{ inputs.VERSION_COMMIT }}
                       VERSION_B_S_rC=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
-                      STR_DOWNLOAD_URLS=${{ inputs.STR_DOWNLOAD_URLS }}
+                    #   STR_DOWNLOAD_URLS=${{ inputs.STR_DOWNLOAD_URLS }}
 
             - name: Test n2n
               id: n2n-test
