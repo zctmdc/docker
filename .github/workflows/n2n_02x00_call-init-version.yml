@@ -166,7 +166,7 @@ jobs:
                   if [[ -n "${{ inputs.DOCKER_BUILD_DOCKERFILE }}" ]]; then
                     build_dockerfile=${{ inputs.DOCKER_BUILD_DOCKERFILE }}
                   else
-                    build_dockerfile=${{ inputs.DOCKER_BUILD_DOCKERFILE_FIX }}
+                    build_dockerfile=${{ inputs.DOCKER_BUILD_DOCKERFILE_OK }}
                   fi
                   LOG_INFO 使用 ${build_dockerfile} - ${build_dockerfile}
                   echo "DOCKER_BUILD_DOCKERFILE=${build_dockerfile}">> $GITHUB_OUTPUT

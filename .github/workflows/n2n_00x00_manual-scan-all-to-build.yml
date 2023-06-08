@@ -20,7 +20,7 @@ on:
                 type: string
             DOCKER_BUILD_DOCKERFILE_FIX:
                 description: "docker_build_dockerfile_fix e.g. Dockerfile.build.debian-8 | Dockerfile.build.ubuntu-18.04"
-                default: "Dockerfile.build.debian-8"
+                default: "Dockerfile.build.alpine-3.8"
                 required: true
                 type: string
             DOCKER_BUILD_DOCKERFILE_OK:
