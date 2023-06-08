@@ -65,14 +65,14 @@ on:
                 description: "docker push to registry"
                 required: true
                 type: boolean
-            DOCKER_TAG_PREFIX: 
-              description: "docker_tag_prefix"
-              required: false
-              type: string
-            DOCKER_TAG_SUFFIX: 
-              description: "docker_tag_suffix"
-              required: false
-              type: string
+            DOCKER_TAG_PREFIX:
+                description: "docker_tag_prefix"
+                required: false
+                type: string
+            DOCKER_TAG_SUFFIX:
+                description: "docker_tag_suffix"
+                required: false
+                type: string
 env:
     # Use docker.io for Docker Hub if empty
     # REGISTRY: ghcr.io
@@ -80,7 +80,6 @@ env:
 
 jobs:
     docker-build-psuh:
-        
         name: docker-build-psuh - ${{ inputs.DOCKER_TEST_TAG }} - ${{ inputs.DOCKER_PUSH }}
         runs-on: ubuntu-latest
         permissions:
@@ -126,8 +125,8 @@ jobs:
               with:
                   images: ${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ inputs.DOCKER_APP_NAME }}
                   flavor: |
-                    prefix=${{ inputs.DOCKER_TAG_PREFIX }}, onlatest=true
-                    suffix=${{ inputs.DOCKER_TAG_SUFFIX }}, onlatest=true
+                      prefix=${{ inputs.DOCKER_TAG_PREFIX }}, onlatest=true
+                      suffix=${{ inputs.DOCKER_TAG_SUFFIX }}, onlatest=true
                   tags: |
                       type=raw,value=latest, enable=${{ inputs.IS_LATEST_VERSION == 'true' }}
                       type=raw,value=${{ inputs.VERSION_BIG }}, enable=${{ inputs.VERSION_B_S_rC == inputs.VERSION_BIG }}
@@ -148,7 +147,7 @@ jobs:
                   platforms: ${{ inputs.DOCKER_BUILD_PLATFORMS }}
                   tags: ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}
-                  push: inputs.DOCKER_PUSH == 'true'
+                  push: ${{ inputs.DOCKER_PUSH == 'true' }}
                   load: ${{ inputs.DOCKER_PUSH != 'true' }}
                   cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ inputs.DOCKER_APP_NAME }}:${{ inputs.DOCKER_BUILD_CACHE_TAG }}
                   cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ inputs.DOCKER_APP_NAME }}:${{ inputs.DOCKER_BUILD_CACHE_TAG }},mode=max
