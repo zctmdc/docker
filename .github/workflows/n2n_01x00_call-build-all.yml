@@ -110,10 +110,10 @@ jobs:
 
                   docker_tag="${{ inputs.VERSION_B_S_rC }}"
                   if [[ ${docker_tag_prefix} != '' ]]; then
-                      docker_tag=${docker_tag_prefix}-${docker_tag}
+                      docker_tag=${docker_tag_prefix}${docker_tag}
                   fi
                   if [[ ${docker_tag_suffix} != '' ]]; then
-                      docker_tag=${docker_tag}-${docker_tag_suffix}
+                      docker_tag=${docker_tag}${docker_tag_suffix}
                   fi
 
                   LOG_INFO "DOCKER_TEST_TAG: ${docker_tag}"
@@ -213,7 +213,7 @@ jobs:
                   LOG_INFO 'DOCKER_TEST_TAG: ${{ needs.init-docker-tag.outputs.DOCKER_TEST_TAG }}'
                   LOG_INFO 'IS_LATEST_VERSION: ${{ needs.check-init-version.outputs.IS_LATEST_VERSION }}'
                   LOG_INFO 'DOCKER_BUILD_CACHE_TAG: ${{ needs.check-init-version.outputs.DOCKER_BUILD_CACHE_TAG }}'
-                  LOG_INFO 'BUILD_PUSH: ${{ needs.check-pushed.outputs.BUILD_PUSH }}'
+                  LOG_INFO 'BUILD_PUSH: ${{ needs.check-pushed.outputs.BUILD_PUSH }} - ${{ needs.check-pushed.outputs.BUILD_PUSH == 'true'}} - ${{ needs.check-pushed.outputs.BUILD_PUSH == true}}'
 
     docker-n2n-build-test:
         needs: [check-init-version, init-docker-tag]
