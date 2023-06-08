@@ -51,7 +51,7 @@ if __name__ == '__main__':
     dict_os_arch = {
         'x64': "linux/amd64",
         'x86': "linux/386",
-        'arm64': "linux/arm64/v8",
+        'arm64': "linux/arm64",
         'arm': "linux/arm/v7"
     }
     n2n_obj = {'machine': '', 'machine_alias': '', 'os_arch': '', 'path': '', 'name': '',
@@ -212,7 +212,7 @@ if __name__ == '__main__':
     #                 "x86"
     #             ],
     #             "os_archs": [
-    #                 "linux/arm64/v8",
+    #                 "linux/arm64",
     #                 "linux/arm/v7",
     #                 "linux/amd64",
     #                 "linux/386"
@@ -238,7 +238,7 @@ if __name__ == '__main__':
     #                 "https://raw.githubusercontent.com/lucktu/n2n/master/Linux/n2n_v3_linux_x64_v3.1.1_r1255_static_by_heiye.tar.gz",
     #                 ...
     #             ],
-    #             "str_os_archs": "linux/arm64/v8,linux/arm/v7,linux/amd64,linux/386",
+    #             "str_os_archs": "linux/arm64,linux/arm/v7,linux/amd64,linux/386",
     #             "str_download_urls": "https://raw.githubusercontent.com/lucktu/n2n/master/Linux/n2n_v3_linux_arm64(aarch64)_v3.1.1_r1255_static_by_heiye.tar.gz,https://raw.githubusercontent.com/lucktu/n2n/master/Linux/n2n_v3_linux_arm_v3.1.1_r1255_static_by_heiye.tar.gz,https://raw.githubusercontent.com/lucktu/n2n/master/Linux/n2n_v3_linux_x64_v3.1.1_r1255_Bstatic_by_heiye.tar.gz,https://raw.githubusercontent.com/lucktu/n2n/master/Linux/n2n_v3_linux_x64_v3.1.1_r1255_static_by_heiye.tar.gz,https://raw.githubusercontent.com/lucktu/n2n/master/Linux/n2n_v3_linux_x86_v3.1.1_r1255_Bstatic_by_heiye.tar.gz,https://raw.githubusercontent.com/lucktu/n2n/master/Linux/n2n_v3_linux_x86_v3.1.1_r1255_static_by_heiye.tar.gz"
     #         },
     #         ...
