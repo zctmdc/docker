@@ -55,6 +55,7 @@ jobs:
             # with sigstore/fulcio when running outside of PRs.
             id-token: write
         uses: ./.github/workflows/n2n_01x00_call-build-all.yml
+        secrets: inherit
         with:
             VERSION_BIG: ${{ inputs.VERSION_BIG }}
             VERSION_SMALL: ${{ inputs.VERSION_SMALL }}
@@ -77,6 +78,7 @@ jobs:
             # with sigstore/fulcio when running outside of PRs.
             id-token: write
         uses: ./.github/workflows/n2n_01x00_call-build-all.yml
+        secrets: inherit
         with:
             VERSION_BIG: ${{ inputs.VERSION_BIG }}
             VERSION_SMALL: ${{ inputs.VERSION_SMALL }}
