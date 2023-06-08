@@ -109,10 +109,11 @@ jobs:
                   echo "DOCKER_PUSH == true  : ${{ inputs.DOCKER_PUSH == true }}"
                   echo "DOCKER_PUSH == 'true': ${{ inputs.DOCKER_PUSH == 'true' }}"
                   str_download_urls=${{ inputs.STR_DOWNLOAD_URLS }}
-                  echo -e "${str_download_urls//,/'\n'}" >> /n2n/tmp/down_urls.txt
-                  echo -e "" >> /n2n/tmp/down_urls.txt
-                  echo '# cat /n2n/tmp/down_urls.txt #'
-                  cat /n2n/tmp/down_urls.txt
+                  mkdir -p ./n2n/tmp/
+                  echo -e "${str_download_urls//,/'\n'}" >> ./n2n/tmp/down_urls.txt
+                  echo -e "" >> ./n2n/tmp/down_urls.txt
+                  echo '# cat ./n2n/tmp/down_urls.txt #'
+                  cat ./n2n/tmp/down_urls.txt
 
             - name: Set up QEMU
               uses: docker/setup-qemu-action@v2
