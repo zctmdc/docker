@@ -214,6 +214,7 @@ jobs:
                   LOG_INFO 'IS_LATEST_VERSION: ${{ needs.check-init-version.outputs.IS_LATEST_VERSION }}'
                   LOG_INFO 'DOCKER_BUILD_CACHE_TAG: ${{ needs.check-init-version.outputs.DOCKER_BUILD_CACHE_TAG }}'
                   LOG_INFO 'BUILD_PUSH: ${{ needs.check-pushed.outputs.BUILD_PUSH }}'
+                  LOG_INFO "NEED_FIX: ${{ needs.check-init-version.outputs.NEED_FIX }}"
 
     docker-n2n-build-test:
         needs: [check-init-version, init-docker-tag]
