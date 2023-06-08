@@ -193,7 +193,7 @@ jobs:
             # with sigstore/fulcio when running outside of PRs.
             id-token: write
         steps:
-            - name: Check outputs check-pushed
+            - name: Check outputs - all
               run: |
                   LOG_INFO() {
                       echo -e $(caller) "\033[0;32m[    INFO] $@ \033[0m"
@@ -233,7 +233,7 @@ jobs:
             DOCKER_BUILD_PLATFORMS: ${{ inputs.DOCKER_BUILD_PLATFORMS }}
             DOCKER_BUILD_DOCKERFILE: ${{ needs.check-init-version.outputs.DOCKER_BUILD_DOCKERFILE }}
             DOCKER_TEST_TAG: ${{ needs.init-docker-tag.outputs.DOCKER_TEST_TAG }}
-            IS_LATEST_VERSION: ${{ needs.check-init-version.outputs.IS_LATEST_VERSION }}
+            IS_LATEST_VERSION: ${{ needs.check-init-version.outputs.IS_LATEST_VERSION == 'true' }}
             DOCKER_BUILD_CACHE_TAG: ${{ needs.check-init-version.outputs.DOCKER_BUILD_CACHE_TAG }}
             DOCKER_PUSH: ${{ false }}
 
@@ -262,6 +262,6 @@ jobs:
             DOCKER_BUILD_PLATFORMS: ${{ inputs.DOCKER_BUILD_PLATFORMS }}
             DOCKER_BUILD_DOCKERFILE: ${{ needs.check-init-version.outputs.DOCKER_BUILD_DOCKERFILE }}
             DOCKER_TEST_TAG: ${{ needs.init-docker-tag.outputs.DOCKER_TEST_TAG }}
-            IS_LATEST_VERSION: ${{ needs.check-init-version.outputs.IS_LATEST_VERSION }}
+            IS_LATEST_VERSION: ${{ needs.check-init-version.outputs.IS_LATEST_VERSION == 'true' }}
             DOCKER_BUILD_CACHE_TAG: ${{ needs.check-init-version.outputs.DOCKER_BUILD_CACHE_TAG }}
             DOCKER_PUSH: ${{ true }}
