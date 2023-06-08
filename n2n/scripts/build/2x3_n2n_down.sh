@@ -16,7 +16,7 @@ mkdir -p "${DOWNLOAD_PATH}"
 cat /tmp/down_urls.txt | while read download_url
 do
     LOG_INFO "download_url: ${download_url}"
-    if [ -n "${download_url}" ]; then
+    if [ -z "${download_url}" ]; then
         continue
     fi
     dl_filename=${download_url##*/}
