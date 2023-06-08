@@ -97,7 +97,7 @@ jobs:
             # Install the cosign tool except on PR
             # https://github.com/sigstore/cosign-installer
             - name: Install cosign
-              if: inputs.DOCKER_PUSH
+              if: ${{ inputs.DOCKER_PUSH == 'true' }}
               uses: sigstore/cosign-installer@v3.0.5
               with:
                   cosign-release: "v2.0.2" # optional
@@ -109,7 +109,7 @@ jobs:
             # Login against a Docker registry except on PR
             # https://github.com/docker/login-action
             - name: Log into registry ${{ env.REGISTRY }}
-              # if: inputs.DOCKER_PUSH
+              # if: ${{ inputs.DOCKER_PUSH == 'true' }}
               uses: docker/login-action@v2
               with:
                   registry: ${{ env.REGISTRY }}
@@ -213,7 +213,7 @@ jobs:
             # transparency data even for private images, pass --force to cosign below.
             # https://github.com/sigstore/cosign
             - name: Sign the published Docker image
-              if: inputs.DOCKER_PUSH
+              if: ${{ inputs.DOCKER_PUSH == 'true' }}
               env:
                   COSIGN_EXPERIMENTAL: "true"
               # This step uses the identity token to provision an ephemeral certificate

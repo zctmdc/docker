@@ -245,7 +245,7 @@ jobs:
                 check-pushed,
                 docker-n2n-build-test,
             ]
-        if: ${{ needs.check-pushed.outputs.BUILD_PUSH }}
+        if: ${{ needs.check-pushed.outputs.BUILD_PUSH == 'true' }}
         uses: ./.github/workflows/n2n_02x01_call-docker-build-test-publish.yml
         secrets: inherit
         with:
