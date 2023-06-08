@@ -5,6 +5,7 @@ from github import Github
 import re
 import logging
 import json
+import os
 
 LOGGER_LEVER = logging.DEBUG
 
@@ -55,8 +56,12 @@ if __name__ == '__main__':
     dict_version_b_s_rc = {}
     dict_version_bigs = {}
     # dict_path_bigs = {}
-
-    g = Github()
+    my_token = os.environ.get('my_token')
+    g = None
+    if my_token:
+        g = Github(my_token)
+    else:
+        g = Github()
     repo = g.get_repo("lucktu/n2n")
     base_path = 'Linux'
     contents = repo.get_contents(base_path)
