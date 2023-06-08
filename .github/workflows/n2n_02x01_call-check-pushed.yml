@@ -12,7 +12,7 @@ on:
                 description: "docker app name       e.g. n2n | frp"
                 required: true
                 type: string
-            DOCKER_TAG:
+            DOCKER_TEST_TAG:
                 description: "version_b_s_rc        e.g. v3 | v3_3.1.1_r1255"
                 required: true
                 type: string
@@ -55,7 +55,7 @@ jobs:
               id: get-tag-last-pushed-info
               uses: sergeysova/jq-action@v2
               with:
-                  cmd: curl -k -sS https://hub.docker.com/v2/repositories/${{ secrets.REGISTRY_USERNAME }}/$${{ inputs.DOCKER_APP_NAME }}/tags/${{ inputs.DOCKER_TAG }} | jq '.get-tag-last-pushed-date'
+                  cmd: curl -k -sS https://hub.docker.com/v2/repositories/${{ secrets.REGISTRY_USERNAME }}/$${{ inputs.DOCKER_APP_NAME }}/tags/${{ inputs.DOCKER_TEST_TAG }} | jq '.get-tag-last-pushed-date'
 
             - name: Check tag-last-pushed-date
               id: check-tag-last-pushed-date
@@ -73,7 +73,7 @@ jobs:
                   # e.g. "2022-10-30T19:29:49.877019Z"
                   last_pulled_date=${{ steps.get-tag-last-pushed-info.outputs.value }}
                   echo "LAST_PULLED_DATE=${last_pulled_date}" >> $GITHUB_OUTPUT
-                  LOG_INFO "check tag - ${{ secrets.REGISTRY_USERNAME }}/$${{ inputs.DOCKER_APP_NAME }}:${{ inputs.DOCKER_TAG }}"
+                  LOG_INFO "check tag - ${{ secrets.REGISTRY_USERNAME }}/$${{ inputs.DOCKER_APP_NAME }}:${{ inputs.DOCKER_TEST_TAG }}"
                   LOG_INFO "last_pulled_date - ${last_pulled_date}"
 
                   if [[ "true" == "${{ inputs.FORCE_PUSH }}" ]]; then

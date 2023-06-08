@@ -69,6 +69,7 @@ jobs:
             DOCKER_APP_NAME: "n2n"
 
     docker-n2n-sh-build-test:
+        needs: ["docker-n2n-build-test"]
         permissions:
             contents: read
             packages: write
