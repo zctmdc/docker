@@ -131,7 +131,7 @@ jobs:
                       type=raw,value=${{ inputs.VERSION_BIG }}, enable=${{ inputs.VERSION_B_S_rC == inputs.VERSION_BIG }}
                       type=raw,value=releases-${{ inputs.VERSION_BIG }}, enable=${{ inputs.VERSION_B_S_rC == inputs.VERSION_BIG }}
                       type=raw,value=${{ inputs.VERSION_B_S_rC }}, enable=${{ inputs.VERSION_B_S_rC != inputs.VERSION_BIG }}
-                      type=raw,value=${{ format( 'v.{1}_r{2}', inputs.VERSION_SMALL, inputs.VERSION_B_S_rC ) }}, enable=${{ inputs.VERSION_B_S_rC != inputs.VERSION_BIG }}
+                      type=raw,value=${{ format( 'v\.{1}_r{2}', inputs.VERSION_SMALL, inputs.VERSION_B_S_rC ) }}, enable=${{ inputs.VERSION_B_S_rC != inputs.VERSION_BIG }}
                   labels: |
                       org.opencontainers.image.version=${{ inputs.VERSION_B_S_rC }}
 
