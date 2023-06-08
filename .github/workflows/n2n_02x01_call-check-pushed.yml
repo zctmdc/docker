@@ -53,9 +53,10 @@ jobs:
         steps:
             - name: Get tag-last-pushed-info
               id: get-tag-last-pushed-info
-              uses: sergeysova/jq-action@v2
-              with:
-                  cmd: curl -k -sS https://hub.docker.com/v2/repositories/${{ secrets.REGISTRY_USERNAME }}/${{ inputs.DOCKER_APP_NAME }}/tags/${{ inputs.DOCKER_TEST_TAG }} | jq '.get-tag-last-pushed-date'
+              run: |
+                  result="$(curl -k -sS https://hub.docker.com/v2/repositories/${{ secrets.REGISTRY_USERNAME }}/${{ inputs.DOCKER_APP_NAME }}/tags/${{ inputs.DOCKER_TEST_TAG }})"
+
+                  echo "${result}" >> $GITHUB_OUTPUT
 
             - name: Check tag-last-pushed-date
               id: check-tag-last-pushed-date
@@ -69,9 +70,15 @@ jobs:
                   LOG_WARNING() {
                     echo -e $(caller) "\033[0;33m[ WARNING] $@ \033[0m"
                   }
-
+                  result=${{ fromJSON(steps.get-tag-last-pushed-info.outputs.result) }}
+                  LOG_INFO "result: ${result}"
+                  if [[ -n "${{ fromJSON(steps.get-tag-last-pushed-info.outputs.result).errinfo }}" ]]; then
+                    LOG_WARNING '获取失败: ${{ fromJSON(steps.get-tag-last-pushed-info.outputs.result) }}'
+                    LOG_INFO "准备 编译/推送"
+                    exit 0
+                  fi
                   # e.g. "2022-10-30T19:29:49.877019Z"
-                  last_pulled_date=${{ steps.get-tag-last-pushed-info.outputs.value }}
+                  last_pulled_date=${{ fromJSON(steps.get-tag-last-pushed-info.outputs.result).last_updated }}
                   echo "LAST_PULLED_DATE=${last_pulled_date}" >> $GITHUB_OUTPUT
                   LOG_INFO "check tag - ${{ secrets.REGISTRY_USERNAME }}/$${{ inputs.DOCKER_APP_NAME }}:${{ inputs.DOCKER_TEST_TAG }}"
                   LOG_INFO "last_pulled_date - ${last_pulled_date}"
