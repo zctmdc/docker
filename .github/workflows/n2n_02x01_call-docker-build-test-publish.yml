@@ -142,7 +142,7 @@ jobs:
               uses: docker/build-push-action@v3
               with:
                   context: ${{ inputs.DOCKER_CONTEXT_PATH }}
-                  file: ${{ inputs.DOCKER_BUILD_DOCKERFILE }}
+                  file: ${{ inputs.DOCKER_CONTEXT_PATH }}/${{ inputs.DOCKER_BUILD_DOCKERFILE }}
                   platforms: ${{ inputs.DOCKER_BUILD_PLATFORMS }}
                   tags: ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}
