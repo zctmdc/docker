@@ -26,15 +26,9 @@ on:
             LAST_PULLED_DATE:
                 description: "last docker pulled date"
                 value: ${{ jobs.check-push.outputs.LAST_PULLED_DATE }}
-            SKIP_BUILD_PUSH:
+            BUILD_PUSH:
                 description: "skip docker build push"
-                value: ${{ jobs.check-push.outputs.SKIP_BUILD_PUSH }}
-env:
-    # Use docker.io for Docker Hub if empty
-    # REGISTRY: ghcr.io
-    REGISTRY: docker.io
-    DOCKER_CONTEXT_PATH: n2n
-    DOCKER_APP_NAME: n2n
+                value: ${{ jobs.check-push.outputs.BUILD_PUSH }}
 
 jobs:
     check-push:
@@ -45,7 +39,7 @@ jobs:
             DOCKER_TAG_SUFFIX: ""
         outputs:
             LAST_PULLED_DATE: ${{ steps.check-tag-last-pushed-date.outputs.LAST_PULLED_DATE }}
-            SKIP_BUILD_PUSH: ${{ steps.check-tag-last-pushed-date.outputs.SKIP_BUILD_PUSH }}
+            BUILD_PUSH: ${{ steps.check-tag-last-pushed-date.outputs.BUILD_PUSH }}
         permissions:
             contents: read
             packages: write
@@ -70,26 +64,30 @@ jobs:
                   LOG_WARNING() {
                     echo -e $(caller) "\033[0;33m[ WARNING] $@ \033[0m"
                   }
-                  result=${{ fromJSON(steps.get-tag-last-pushed-info.outputs.result) }}
+                  result=${{ steps.get-tag-last-pushed-info.outputs.result }}
                   LOG_INFO "result: ${result}"
-                  if [[ -n "${{ fromJSON(steps.get-tag-last-pushed-info.outputs.result).errinfo }}" ]]; then
-                    LOG_WARNING '获取失败: ${{ fromJSON(steps.get-tag-last-pushed-info.outputs.result) }}'
+                  if [[ -n "${{ steps.get-tag-last-pushed-info.outputs.result.errinfo }}" ]]; then
+                    LOG_WARNING '获取失败: ${{ steps.get-tag-last-pushed-info.outputs.result }}'
                     LOG_INFO "准备 编译/推送"
+                    echo "BUILD_PUSH=true" >> $GITHUB_OUTPUT
                     exit 0
                   fi
                   # e.g. "2022-10-30T19:29:49.877019Z"
-                  last_pulled_date=${{ fromJSON(steps.get-tag-last-pushed-info.outputs.result).last_updated }}
+                  last_pulled_date=${{ steps.get-tag-last-pushed-info.outputs.result.last_updated }}
                   echo "LAST_PULLED_DATE=${last_pulled_date}" >> $GITHUB_OUTPUT
                   LOG_INFO "check tag - ${{ secrets.REGISTRY_USERNAME }}/$${{ inputs.DOCKER_APP_NAME }}:${{ inputs.DOCKER_TEST_TAG }}"
                   LOG_INFO "last_pulled_date - ${last_pulled_date}"
 
                   if [[ "true" == "${{ inputs.FORCE_PUSH }}" ]]; then
                       LOG_WARNING "强制 编译/推送"
+                      echo "BUILD_PUSH=true" >> $GITHUB_OUTPUT
                       exit 0
                   elif [[ "${last_pulled_date,,}" != "null" ]]; then
-                      echo "SKIP_BUILD_PUSH=true" >> $GITHUB_OUTPUT
+                      echo "BUILD_PUSH=false" >> $GITHUB_OUTPUT
                       LOG_INFO "跳过 编译/推送"
                       exit 0
                   else
+                      echo "BUILD_PUSH=true" >> $GITHUB_OUTPUT
                       LOG_INFO "准备 编译/推送"
+                      exit 0
                   fi

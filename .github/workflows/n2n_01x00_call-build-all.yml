@@ -162,7 +162,7 @@ jobs:
                       echo -e $(caller) "\033[0;32m[    INFO] $@ \033[0m"
                   }
                   LOG_INFO "LAST_PULLED_DATE: ${{ needs.check-pushed.outputs.LAST_PULLED_DATE }}"
-                  LOG_INFO "SKIP_BUILD_PUSH: ${{ needs.check-pushed.outputs.SKIP_BUILD_PUSH }}"
+                  LOG_INFO "BUILD_PUSH: ${{ needs.check-pushed.outputs.BUILD_PUSH }}"
 
     docker-n2n-build-test:
         needs: [check-init-version, init-docker-tag]
@@ -187,8 +187,14 @@ jobs:
             DOCKER_PUSH: ${{ false }}
 
     docker-n2n-build-test-publish:
-        needs: [check-init-version, init-docker-tag, check-pushed]
-        if: ${{ ! needs.check-pushed.outputs.SKIP_BUILD_PUSH }}
+        needs:
+            [
+                check-init-version,
+                init-docker-tag,
+                check-pushed,
+                docker-n2n-build-test,
+            ]
+        if: ${{ needs.check-pushed.outputs.BUILD_PUSH }}
         uses: ./.github/workflows/n2n_02x01_call-docker-build-test-publish.yml
         secrets: inherit
         with:
