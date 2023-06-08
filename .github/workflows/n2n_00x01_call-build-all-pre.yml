@@ -47,47 +47,45 @@ env:
     DOCKER_APP_NAME: n2n
 
 jobs:
-    build-all:
-        runs-on: ubuntu-latest
+    docker-n2n-build-test:
         permissions:
             contents: read
             packages: write
             # This is used to complete the identity challenge
             # with sigstore/fulcio when running outside of PRs.
             id-token: write
-        steps:
-            - name: Checkout repository on build-psuh
-              uses: actions/checkout@v3
+        uses: ./.github/workflows/n2n_01x00_call-build-all.yml
+        with:
+            VERSION_BIG: ${{ inputs.VERSION_BIG }}
+            VERSION_SMALL: ${{ inputs.VERSION_SMALL }}
+            VERSION_COMMIT: ${{ inputs.VERSION_COMMIT }}
+            VERSION_B_S_rC: ${{ inputs.VERSION_B_S_rC }}
+            STR_OS_ARCHS: ${{ inputs.STR_OS_ARCHS }}
+            STR_DOWNLOAD_URLS: ${{ inputs.STR_DOWNLOAD_URLS }}
+            DOCKER_BUILD_PLATFORMS: ${{ inputs.STR_OS_ARCHS }}
+            NEED_FIXLIB_VERSIONS_B_S_rC: ${{ inputs.NEED_FIXLIB_VERSIONS_B_S_rC }}
+            FORCE_PUSH: ${{ inputs.FORCE_PUSH }}
+            DOCKER_CONTEXT_PATH: "n2n"
+            DOCKER_APP_NAME: "n2n"
 
-            - name: docker-n2n-build-test
-              id: docker-n2n-build-test
-              uses: ./.github/workflows/n2n_01x00_call-build-all.yml
-              with:
-                  VERSION_BIG: ${{ inputs.VERSION_BIG }}
-                  VERSION_SMALL: ${{ inputs.VERSION_SMALL }}
-                  VERSION_COMMIT: ${{ inputs.VERSION_COMMIT }}
-                  VERSION_B_S_rC: ${{ inputs.VERSION_B_S_rC }}
-                  STR_OS_ARCHS: ${{ inputs.STR_OS_ARCHS }}
-                  STR_DOWNLOAD_URLS: ${{ inputs.STR_DOWNLOAD_URLS }}
-                  DOCKER_CONTEXT_PATH: ${{ env.DOCKER_APP_NAME }}
-                  DOCKER_APP_NAME: ${{ env.DOCKER_APP_NAME }}
-                  DOCKER_BUILD_PLATFORMS: ${{ inputs.STR_OS_ARCHS }}
-                  NEED_FIXLIB_VERSIONS_B_S_rC: ${{ inputs.NEED_FIXLIB_VERSIONS_B_S_rC }}
-                  FORCE_PUSH: ${{ inputs.FORCE_PUSH }}
-
-            - name: docker-n2n-sh-build-test
-              id: docker-n2n-sh-build-test
-              uses: ./.github/workflows/n2n_01x00_call-build-all.yml
-              with:
-                  VERSION_BIG: ${{ inputs.VERSION_BIG }}
-                  VERSION_SMALL: ${{ inputs.VERSION_SMALL }}
-                  VERSION_COMMIT: ${{ inputs.VERSION_COMMIT }}
-                  VERSION_B_S_rC: ${{ inputs.VERSION_B_S_rC }}
-                  STR_OS_ARCHS: ${{ inputs.STR_OS_ARCHS }}
-                  STR_DOWNLOAD_URLS: ${{ inputs.STR_DOWNLOAD_URLS }}
-                  DOCKER_CONTEXT_PATH: ${{ env.DOCKER_APP_NAME }}
-                  DOCKER_APP_NAME: ${{ env.DOCKER_APP_NAME }}
-                  DOCKER_TAG_PREFIX: "sh-"
-                  DOCKER_BUILD_DOCKERFILE: "Dockerfile.run"
-                  DOCKER_BUILD_PLATFORMS: ${{ inputs.STR_OS_ARCHS }}
-                  FORCE_PUSH: ${{ inputs.FORCE_PUSH }}
+    docker-n2n-sh-build-test:
+        permissions:
+            contents: read
+            packages: write
+            # This is used to complete the identity challenge
+            # with sigstore/fulcio when running outside of PRs.
+            id-token: write
+        uses: ./.github/workflows/n2n_01x00_call-build-all.yml
+        with:
+            VERSION_BIG: ${{ inputs.VERSION_BIG }}
+            VERSION_SMALL: ${{ inputs.VERSION_SMALL }}
+            VERSION_COMMIT: ${{ inputs.VERSION_COMMIT }}
+            VERSION_B_S_rC: ${{ inputs.VERSION_B_S_rC }}
+            STR_OS_ARCHS: ${{ inputs.STR_OS_ARCHS }}
+            STR_DOWNLOAD_URLS: ${{ inputs.STR_DOWNLOAD_URLS }}
+            DOCKER_BUILD_PLATFORMS: ${{ inputs.STR_OS_ARCHS }}
+            FORCE_PUSH: ${{ inputs.FORCE_PUSH }}
+            DOCKER_CONTEXT_PATH: "n2n"
+            DOCKER_APP_NAME: "n2n"
+            DOCKER_TAG_PREFIX: "sh-"
+            DOCKER_BUILD_DOCKERFILE: "Dockerfile.run"

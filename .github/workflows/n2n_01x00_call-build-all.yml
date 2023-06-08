@@ -60,7 +60,7 @@ on:
                 type: string
             NEED_FIXLIB_VERSIONS_B_S_rC:
                 description: "ned fixlib versions_b_s_rc  e.g. v2_2.3.0, v2s_2.1.0_r111, v1"
-                required: true
+                required: false
                 type: string
                 default: "v2_2.3.0, v2s_2.1.0_r111, v1"
             FORCE_PUSH:
