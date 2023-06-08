@@ -76,7 +76,7 @@ RUN ls
 WORKDIR /tmp/scripts/
 COPY ./scripts/build/*.sh /tmp/scripts/
 RUN chmod +x /tmp/scripts/*
-RUN /tmp/scripts/3x0_n2n_fixlib
+RUN /tmp/scripts/3x0_n2n_fixlib.sh
 RUN rm -rf /tmp/*
 
 WORKDIR /usr/local/sbin/
