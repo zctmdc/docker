@@ -9,11 +9,22 @@ on:
                 type: boolean
                 default: false
             NEED_FIXLIB_VERSIONS_B_S_rC:
-                description: "ned fixlib versions_b_s_rc"
+                description: "ned fixlib versions_b_s_rc    e.g. 'v2_2.3.0, v2s_2.1.0_r111, v1'"
                 required: true
                 type: string
                 default: "v2_2.3.0, v2s_2.1.0_r111, v1"
-
+            DEFIN_LATEST_VERSION:
+                description: "defin_latest_version          e.g. v3 | v4"
+                required: true
+                type: string
+            DOCKER_BUILD_DOCKERFILE_FIX:
+                description: "docker_build_dockerfile_fix   e.g. Dockerfile.build.debian-8 | Dockerfile.build.ubuntu-18.04"
+                required: true
+                type: string
+            DOCKER_BUILD_DOCKERFILE_OK:
+                description: "docker_build_dockerfile_ok    e.g. Dockerfile.build.debian-stable"
+                required: true
+                type: string
 jobs:
     scan-all:
         runs-on: ubuntu-latest
@@ -37,7 +48,7 @@ jobs:
                   cd n2n/scripts/build
                   chmod +x *.sh
                   source 0x0_init-logger.sh
-                  
+
                   LOG_INFO 'scan_all_save Starting'
                   bash 1x1_n2n-scan-all.sh
                   LOG_INFO 'scan_all_save Successful'
@@ -68,3 +79,6 @@ jobs:
             STR_DOWNLOAD_URLS: ${{ matrix.str_download_urls }}
             FORCE_PUSH: ${{ inputs.FORCE_PUSH == 'true' }}
             NEED_FIXLIB_VERSIONS_B_S_rC: ${{ inputs.NEED_FIXLIB_VERSIONS_B_S_rC }}
+            DEFIN_LATEST_VERSION: ${{ inputs.DEFIN_LATEST_VERSION }}
+            DOCKER_BUILD_DOCKERFILE_OK: ${{ inputs.DOCKER_BUILD_DOCKERFILE_OK }}
+            DOCKER_BUILD_DOCKERFILE_FIX: ${{ inputs.DOCKER_BUILD_DOCKERFILE_FIX }}

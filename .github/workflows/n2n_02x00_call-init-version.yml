@@ -43,10 +43,22 @@ on:
                 type: string
                 default: "v2_2.3.0, v2s_2.1.0_r111, v1"
             DOCKER_BUILD_DOCKERFILE:
-                description: "docker_build_dockerfile     e.g. Dockerfile | Dockerfile.build.debian-stable"
+                description: "docker_build_dockerfile     e.g. Dockerfile.run"
                 required: true
                 type: string
-
+            DEFIN_LATEST_VERSION:
+                description: "defin_latest_version        e.g. v3 | v4"
+                required: true
+                type: string
+            DOCKER_BUILD_DOCKERFILE_FIX:
+                description: "docker_build_dockerfile_fix e.g. Dockerfile.build.debian-8 | Dockerfile.build.ubuntu-18.04"
+                required: true
+                type: string
+            DOCKER_BUILD_DOCKERFILE_OK:
+                description: "docker_build_dockerfile_ok  e.g. Dockerfile.build.debian-stable"
+                required: true
+                type: string
+            
         outputs:
             ONLY_BIGVERSION:
                 description: "docker build only bigversion"
@@ -81,22 +93,11 @@ jobs:
             DOCKER_BUILD_CACHE_TAG: ${{ steps.init-build-cache-tag.outputs.DOCKER_BUILD_CACHE_TAG }}
 
         steps:
-            - name: Checkout repository
-              # depends on this library
-              uses: actions/checkout@v3
-
             - name: Check inputs
               run: |
                   LOG_INFO() {
                     echo -e $(caller) "\033[0;32m[    INFO] $@ \033[0m"
                   }
-                  LOG_ERROR() {
-                    echo -e $(caller) "\033[0;31m[   ERROR] $@ \033[0m"
-                  }
-                  LOG_WARNING() {
-                    echo -e $(caller) "\033[0;33m[ WARNING] $@ \033[0m"
-                  }
-
                   LOG_INFO "VERSION_BIG: ${{ inputs.VERSION_BIG }}"
                   LOG_INFO "VERSION_SMALL: ${{ inputs.VERSION_SMALL }}"
                   LOG_INFO "VERSION_COMMIT: ${{ inputs.VERSION_COMMIT }}"
@@ -107,45 +108,37 @@ jobs:
 
             - name: Check big version only
               id: check-big-version-only
-              if: inputs.VERSION_B_S_rC == inputs.VERSION_BIG
               run: |
                   LOG_INFO() {
                     echo -e $(caller) "\033[0;32m[    INFO] $@ \033[0m"
                   }
-                  LOG_ERROR() {
-                    echo -e $(caller) "\033[0;31m[   ERROR] $@ \033[0m"
-                  }
-                  LOG_WARNING() {
-                    echo -e $(caller) "\033[0;33m[ WARNING] $@ \033[0m"
-                  }
-
-                  LOG_INFO "ONLY_BIGVERSION=true"
-                  echo "ONLY_BIGVERSION=true" >> $GITHUB_OUTPUT
+                  if [[ '${{ inputs.VERSION_B_S_rC }}' == '${{ inputs.VERSION_BIG }}' ]]; then
+                    only_bigversion=true
+                  else
+                    only_bigversion=false
+                  fi
+                  LOG_INFO "ONLY_BIGVERSION=${only_bigversion}"
+                  echo "ONLY_BIGVERSION=${only_bigversion}" >> $GITHUB_OUTPUT
 
             - name: Check latest version
               id: check-latest-version
-              if: inputs.VERSION_B_S_rC == 'v3'
               run: |
                   LOG_INFO() {
                     echo -e $(caller) "\033[0;32m[    INFO] $@ \033[0m"
                   }
-                  LOG_ERROR() {
-                    echo -e $(caller) "\033[0;31m[   ERROR] $@ \033[0m"
-                  }
-                  LOG_WARNING() {
-                    echo -e $(caller) "\033[0;33m[ WARNING] $@ \033[0m"
-                  }
-                  LOG_INFO "IS_LATEST_VERSION=true"
-                  echo "IS_LATEST_VERSION=true" >> $GITHUB_OUTPUT
+                  if [[ '${{ inputs.VERSION_B_S_rC }}' == '${{ inputs.DEFIN_LATEST_VERSION }}' ]]; then
+                    is_latest_version=true
+                  else
+                    is_latest_version=false
+                  fi
+                  LOG_INFO "IS_LATEST_VERSION=${is_latest_version}"
+                  echo "IS_LATEST_VERSION=${is_latest_version}" >> $GITHUB_OUTPUT
 
             - name: Check need fix
               id: check-need-fix
               run: |
                   LOG_INFO() {
                     echo -e $(caller) "\033[0;32m[    INFO] $@ \033[0m"
-                  }
-                  LOG_ERROR() {
-                    echo -e $(caller) "\033[0;31m[   ERROR] $@ \033[0m"
                   }
                   LOG_WARNING() {
                     echo -e $(caller) "\033[0;33m[ WARNING] $@ \033[0m"
@@ -159,13 +152,17 @@ jobs:
                       if [[ -n "${{ inputs.DOCKER_BUILD_DOCKERFILE }}" ]]; then
                         build_dockerfile=${{ inputs.DOCKER_BUILD_DOCKERFILE }}
                       else
-                        build_dockerfile=Dockerfile.build.debian-8
+                        build_dockerfile=${{ inputs.DOCKER_BUILD_DOCKERFILE_FIX }}
                       fi
-                      LOG_WARNING 使用 ${build_dockerfile} - ${{ inputs.NEED_FIXLIB_VERSIONS_B_S_rC }}
+                      LOG_INFO 使用 ${build_dockerfile} - ${build_dockerfile}
                       echo "DOCKER_BUILD_DOCKERFILE=${build_dockerfile}">> $GITHUB_OUTPUT
                       exit 0
                     fi
                   done
+                  echo "NEED_FIX=false">> $GITHUB_OUTPUT
+                  build_dockerfile=${{ inputs.DOCKER_BUILD_DOCKERFILE_OK }}
+                  LOG_INFO 使用 ${build_dockerfile} - ${build_dockerfile}
+                  echo "DOCKER_BUILD_DOCKERFILE=${build_dockerfile}">> $GITHUB_OUTPUT
 
             - name: Init build cache tag
               id: init-build-cache-tag
@@ -173,16 +170,12 @@ jobs:
                   LOG_INFO() {
                     echo -e $(caller) "\033[0;32m[    INFO] $@ \033[0m"
                   }
-                  LOG_ERROR() {
-                    echo -e $(caller) "\033[0;31m[   ERROR] $@ \033[0m"
-                  }
-                  LOG_WARNING() {
-                    echo -e $(caller) "\033[0;33m[ WARNING] $@ \033[0m"
-                  }
                   if [[ -n "${{ inputs.DOCKER_BUILD_DOCKERFILE }}" ]]; then
-                    echo "DOCKER_BUILD_CACHE_TAG=build-cache-${{ inputs.DOCKER_BUILD_DOCKERFILE }}" >> $GITHUB_OUTPUT
+                    docker_build_cache_tag="build-cache-${{ inputs.DOCKER_BUILD_DOCKERFILE }}"
                   elif [[ "${{ steps.check-need-fix.outputs.NEED_FIX }}" == "true" ]]; then
-                    echo "DOCKER_BUILD_CACHE_TAG=build-cache-fix" >> $GITHUB_OUTPUT
+                    docker_build_cache_tag="build-cache-fix"
                   else
-                    echo "DOCKER_BUILD_CACHE_TAG=build-cache" >> $GITHUB_OUTPUT
+                    docker_build_cache_tag="build-cache"
                   fi
+                  LOG_INFO "DOCKER_BUILD_CACHE_TAG: ${docker_build_cache_tag}"
+                  echo "DOCKER_BUILD_CACHE_TAG=${docker_build_cache_tag}" >> $GITHUB_OUTPUT

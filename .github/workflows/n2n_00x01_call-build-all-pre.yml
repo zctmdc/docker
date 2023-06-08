@@ -42,6 +42,19 @@ on:
                 required: true
                 type: string
                 default: "v2_2.3.0, v2s_2.1.0_r111, v1"
+            DEFIN_LATEST_VERSION:
+                description: "defin_latest_version        e.g. v3 | v4"
+                required: true
+                type: string
+            DOCKER_BUILD_DOCKERFILE_FIX:
+                description: "docker_build_dockerfile_fix e.g. Dockerfile.build.debian-8 | Dockerfile.build.ubuntu-18.04"
+                required: true
+                type: string
+            DOCKER_BUILD_DOCKERFILE_OK:
+                description: "docker_build_dockerfile_ok  e.g. Dockerfile.build.debian-stable"
+                required: true
+                type: string
+
 env:
     DOCKER_CONTEXT_PATH: n2n
     DOCKER_APP_NAME: n2n
@@ -68,6 +81,9 @@ jobs:
             FORCE_PUSH: ${{ inputs.FORCE_PUSH }}
             DOCKER_CONTEXT_PATH: "n2n"
             DOCKER_APP_NAME: "n2n"
+            DEFIN_LATEST_VERSION: ${{ inputs.DEFIN_LATEST_VERSION }}
+            DOCKER_BUILD_DOCKERFILE_OK: ${{ inputs.DOCKER_BUILD_DOCKERFILE_OK }}
+            DOCKER_BUILD_DOCKERFILE_FIX: ${{ inputs.DOCKER_BUILD_DOCKERFILE_FIX }}
 
     docker-n2n-sh-build-test:
         needs: ["docker-n2n-build-test"]
@@ -92,3 +108,6 @@ jobs:
             DOCKER_APP_NAME: "n2n"
             DOCKER_TAG_PREFIX: "sh-"
             DOCKER_BUILD_DOCKERFILE: "Dockerfile.run"
+            DEFIN_LATEST_VERSION: ${{ inputs.DEFIN_LATEST_VERSION }}
+            DOCKER_BUILD_DOCKERFILE_OK: ${{ inputs.DOCKER_BUILD_DOCKERFILE_OK }}
+            DOCKER_BUILD_DOCKERFILE_FIX: ${{ inputs.DOCKER_BUILD_DOCKERFILE_FIX }}

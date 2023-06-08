@@ -68,6 +68,19 @@ on:
                 description: "force push to registry"
                 required: true
                 type: boolean
+            DEFIN_LATEST_VERSION:
+                description: "defin_latest_version        e.g. v3 | v4"
+                required: true
+                type: string
+            DOCKER_BUILD_DOCKERFILE_FIX:
+                description: "docker_build_dockerfile_fix e.g. Dockerfile.build.debian-8 | Dockerfile.build.ubuntu-18.04"
+                required: true
+                type: string
+            DOCKER_BUILD_DOCKERFILE_OK:
+                description: "docker_build_dockerfile_ok  e.g. Dockerfile.build.debian-stable"
+                required: true
+                type: string
+
 jobs:
     init-docker-tag:
         runs-on: ubuntu-latest
@@ -115,6 +128,9 @@ jobs:
             FORCE_PUSH: ${{ inputs.FORCE_PUSH == 'true' }}
             NEED_FIXLIB_VERSIONS_B_S_rC: ${{ inputs.NEED_FIXLIB_VERSIONS_B_S_rC }}
             DOCKER_BUILD_DOCKERFILE: ${{ inputs.DOCKER_BUILD_DOCKERFILE }}
+            DEFIN_LATEST_VERSION: ${{ inputs.DEFIN_LATEST_VERSION }}
+            DOCKER_BUILD_DOCKERFILE_OK: ${{ inputs.DOCKER_BUILD_DOCKERFILE_OK }}
+            DOCKER_BUILD_DOCKERFILE_FIX: ${{ inputs.DOCKER_BUILD_DOCKERFILE_FIX }}
 
     check-output-check-init-version:
         needs: [check-init-version]
