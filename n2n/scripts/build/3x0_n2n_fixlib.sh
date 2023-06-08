@@ -38,7 +38,7 @@ if [[ -n "$(/usr/local/sbin/edge -h 2>&1 | grep libcrypto.so.1.0.0)" ]]; then
     LOG_WARNING 缺少 libssl1.0.0 , 正在修复
     if command_exists apt-get; then
         if is_debian && ! is_debian8; then
-            echo 'deb http://security.debian.org/debian-security jessie/updates main' >/etc/apt/sources.list.d/debian8.list
+            echo 'deb http://archive.debian.org/debian-security jessie/updates main' >/etc/apt/sources.list.d/debian8.list
         fi
         apt-get update
         apt-get install -y libssl1.0.0
@@ -55,7 +55,7 @@ if [[ -n "$(/usr/local/sbin/edge -h 2>&1 | grep libcrypto.so.1.1)" ]]; then
     LOG_WARNING 缺少 libssl1.1 , 正在修复
     if command_exists apt-get; then
         if is_debian8; then
-            echo 'deb http://security.debian.org/debian-security stretch/updates main' >/etc/apt/sources.list.d/debian9.list
+            echo 'deb http://archive.debian.org/debian-security stretch/updates main' >/etc/apt/sources.list.d/debian9.list
         fi
         apt-get update
         apt-get install -y libssl1.1
