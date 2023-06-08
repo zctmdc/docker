@@ -113,7 +113,7 @@ jobs:
             # Install the cosign tool except on PR
             # https://github.com/sigstore/cosign-installer
             - name: Install cosign
-              if: inputs.DOCKER_PUSH
+              if: inputs.DOCKER_PUSH == true
               uses: sigstore/cosign-installer@v3.0.5
               with:
                   cosign-release: "v2.0.2" # optional
@@ -125,7 +125,7 @@ jobs:
             # Login against a Docker registry except on PR
             # https://github.com/docker/login-action
             - name: Log into registry ${{ env.REGISTRY }}
-              # if: inputs.DOCKER_PUSH
+              # if: inputs.DOCKER_PUSH == true
               uses: docker/login-action@v2
               with:
                   registry: ${{ env.REGISTRY }}
@@ -162,8 +162,8 @@ jobs:
                   platforms: ${{ inputs.DOCKER_BUILD_PLATFORMS }}
                   tags: ${{ steps.meta.outputs.tags }}
                   labels: ${{ steps.meta.outputs.labels }}
-                  push: ${{ inputs.DOCKER_PUSH == 'true' }}
-                  load: ${{ inputs.DOCKER_PUSH != 'true' }}
+                  push: ${{ inputs.DOCKER_PUSH == true }}
+                  load: ${{ inputs.DOCKER_PUSH != true }}
                   cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ inputs.DOCKER_APP_NAME }}:${{ inputs.DOCKER_BUILD_CACHE_TAG }}
                   cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ inputs.DOCKER_APP_NAME }}:${{ inputs.DOCKER_BUILD_CACHE_TAG }},mode=max
                   build-args: |
@@ -230,7 +230,7 @@ jobs:
             # transparency data even for private images, pass --force to cosign below.
             # https://github.com/sigstore/cosign
             - name: Sign the published Docker image
-              if: inputs.DOCKER_PUSH
+              if: inputs.DOCKER_PUSH == true
               env:
                   COSIGN_EXPERIMENTAL: "true"
               # This step uses the identity token to provision an ephemeral certificate
