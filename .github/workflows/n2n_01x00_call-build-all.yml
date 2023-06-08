@@ -70,14 +70,17 @@ on:
                 type: boolean
             DEFIN_LATEST_VERSION:
                 description: "defin_latest_version        e.g. v3 | v4"
+                default: "v3"
                 required: true
                 type: string
             DOCKER_BUILD_DOCKERFILE_FIX:
                 description: "docker_build_dockerfile_fix e.g. Dockerfile.build.debian-8 | Dockerfile.build.ubuntu-18.04"
+                default: "Dockerfile.build.debian-8"
                 required: true
                 type: string
             DOCKER_BUILD_DOCKERFILE_OK:
                 description: "docker_build_dockerfile_ok  e.g. Dockerfile.build.debian-stable"
+                default: "Dockerfile.build.debian-stable"
                 required: true
                 type: string
 
