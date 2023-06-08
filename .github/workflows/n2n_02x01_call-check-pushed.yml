@@ -75,7 +75,7 @@ jobs:
                   # e.g. "2022-10-30T19:29:49.877019Z"
                   last_pulled_date=${{ steps.get-tag-last-pushed-info.outputs.result.last_updated }}
                   echo "LAST_PULLED_DATE=${last_pulled_date}" >> $GITHUB_OUTPUT
-                  LOG_INFO "check tag - ${{ secrets.REGISTRY_USERNAME }}/$${{ inputs.DOCKER_APP_NAME }}:${{ inputs.DOCKER_TEST_TAG }}"
+                  LOG_INFO "check tag - ${{ secrets.REGISTRY_USERNAME }}/${{ inputs.DOCKER_APP_NAME }}:${{ inputs.DOCKER_TEST_TAG }}"
                   LOG_INFO "last_pulled_date - ${last_pulled_date}"
 
                   if [[ "true" == "${{ inputs.FORCE_PUSH }}" ]]; then

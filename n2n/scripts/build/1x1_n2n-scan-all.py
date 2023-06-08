@@ -19,10 +19,13 @@ logger.setLevel(LOGGER_LEVER)
 
 def get_file_info(patterns=None, pattern_name=None, filename=None):
     if type(patterns) is not dict:
+        raise Exception(f'get_file_info: patterns must be a dictionary')
         return None
     if pattern_name is None:
+        raise Exception(f'get_file_info: pattern_name must be not None')
         return None
     if filename is None:
+        raise Exception(f'get_file_info: filename must be not None')
         return None
 
     results = patterns[pattern_name].search(filename)
@@ -92,7 +95,8 @@ if __name__ == '__main__':
                 fix_version_small = version_small.replace('v.', '').replace(
                     'v', '')
             logger.debug(f'fix_version_small: {fix_version_small}')
-            version_commit = get_file_info('version_commit', filename)
+            version_commit = get_file_info(
+                patterns, 'version_commit', filename)
             if filename == 'n2n_v1_linux_mipsel_v1.3.2_124.zip':
                 version_commit = r'r124'
                 logger.debug(f'manual version_commit: {version_commit}')

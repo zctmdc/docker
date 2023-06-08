@@ -179,7 +179,7 @@ jobs:
               id: get_tag_last_pushed
               uses: sergeysova/jq-action@v2
               with:
-                  cmd: curl -k -sS https://hub.docker.com/v2/repositories/${{ secrets.REGISTRY_USERNAME }}/$${{env.DOCKER_APP_NAME}}/tags/${{ steps.init-docker-tags.outputs.DOCKER_TAG }} | jq '.tag_last_pushed'
+                  cmd: curl -k -sS https://hub.docker.com/v2/repositories/${{ secrets.REGISTRY_USERNAME }}/${{env.DOCKER_APP_NAME}}/tags/${{ steps.init-docker-tags.outputs.DOCKER_TAG }} | jq '.tag_last_pushed'
 
             - name: Check tag_last_pushed
               id: tag_last_pushed
@@ -343,7 +343,7 @@ jobs:
               id: build-and-push
               uses: docker/build-push-action@v3
               with:
-                  context: $${{ env.DOCKER_CONTEXT_PATH }}
+                  context: ${{ env.DOCKER_CONTEXT_PATH }}
                   file: ${{steps.n2n-test.outputs.build_dockerfile}}
                   platforms: ${{ needs.init-version.outputs.BUILD_PLATFORMS }}
                   push: ${{ github.event_name != 'pull_request' }}

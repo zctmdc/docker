@@ -141,7 +141,7 @@ jobs:
               id: build-and-push
               uses: docker/build-push-action@v3
               with:
-                  context: $${{ inputs.DOCKER_CONTEXT_PATH }}
+                  context: ${{ inputs.DOCKER_CONTEXT_PATH }}
                   file: ${{ inputs.DOCKER_BUILD_DOCKERFILE }}
                   platforms: ${{ inputs.DOCKER_BUILD_PLATFORMS }}
                   tags: ${{ steps.meta.outputs.tags }}
