@@ -73,6 +73,17 @@ on:
                 description: "docker_tag_suffix"
                 required: false
                 type: string
+            DOCKER_BUILD_DOCKERFILE_FIX:
+                description: "docker_build_dockerfile_fix e.g. Dockerfile.build.debian-8 | Dockerfile.build.ubuntu-18.04"
+                default: "Dockerfile.build.debian-8"
+                required: true
+                type: string
+            DOCKER_BUILD_DOCKERFILE_OK:
+                description: "docker_build_dockerfile_ok  e.g. Dockerfile.build.debian-stable"
+                default: "Dockerfile.build.debian-stable"
+                required: true
+                type: string
+
 env:
     # Use docker.io for Docker Hub if empty
     # REGISTRY: ghcr.io
@@ -89,6 +100,10 @@ jobs:
             # with sigstore/fulcio when running outside of PRs.
             id-token: write
         steps:
+            - name: check DOCKER_PUSH
+              run: |
+                  echo "${{ inputs.DOCKER_PUSH }} - ${{ inputs.DOCKER_PUSH == 'true' }} - ${{ inputs.DOCKER_PUSH == true }}"
+
             - name: Checkout repository on build-psuh
               uses: actions/checkout@v3
 
@@ -98,7 +113,7 @@ jobs:
             # Install the cosign tool except on PR
             # https://github.com/sigstore/cosign-installer
             - name: Install cosign
-              if: inputs.DOCKER_PUSH == 'true'
+              if: inputs.DOCKER_PUSH
               uses: sigstore/cosign-installer@v3.0.5
               with:
                   cosign-release: "v2.0.2" # optional
@@ -110,7 +125,7 @@ jobs:
             # Login against a Docker registry except on PR
             # https://github.com/docker/login-action
             - name: Log into registry ${{ env.REGISTRY }}
-              # if: inputs.DOCKER_PUSH == 'true'
+              # if: inputs.DOCKER_PUSH
               uses: docker/login-action@v2
               with:
                   registry: ${{ env.REGISTRY }}
@@ -202,10 +217,11 @@ jobs:
                   done
                   if [[ "${flag_test_pass}" != "true" ]]; then
                     LOG_ERROR "Test faild: ${{ inputs.VERSION_B_S_rC }}"
+                    echo "DOCKER_BUILD_DOCKERFILE=${{ inputs.DOCKER_BUILD_DOCKERFILE_OK }}">> $GITHUB_OUTPUT
                     exit 1
                   fi
                   LOG_WARNING "Test done: ${{ inputs.VERSION_B_S_rC }}"
-                  echo "build_dockerfile=Dockerfile">> $GITHUB_OUTPUT
+                  echo "DOCKER_BUILD_DOCKERFILE=${{ inputs.DOCKER_BUILD_DOCKERFILE_FIX }}">> $GITHUB_OUTPUT
                   exit 0
 
             # Sign the resulting Docker image digest except on PRs.
@@ -214,7 +230,7 @@ jobs:
             # transparency data even for private images, pass --force to cosign below.
             # https://github.com/sigstore/cosign
             - name: Sign the published Docker image
-              if: inputs.DOCKER_PUSH == 'true'
+              if: inputs.DOCKER_PUSH
               env:
                   COSIGN_EXPERIMENTAL: "true"
               # This step uses the identity token to provision an ephemeral certificate

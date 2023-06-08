@@ -236,6 +236,8 @@ jobs:
             IS_LATEST_VERSION: ${{ needs.check-init-version.outputs.IS_LATEST_VERSION == 'true' }}
             DOCKER_BUILD_CACHE_TAG: ${{ needs.check-init-version.outputs.DOCKER_BUILD_CACHE_TAG }}
             DOCKER_PUSH: ${{ false }}
+            DOCKER_BUILD_DOCKERFILE_OK: ${{ inputs.DOCKER_BUILD_DOCKERFILE_OK }}
+            DOCKER_BUILD_DOCKERFILE_FIX: ${{ inputs.DOCKER_BUILD_DOCKERFILE_FIX }}
 
     docker-n2n-build-test-publish:
         needs:
@@ -265,3 +267,5 @@ jobs:
             IS_LATEST_VERSION: ${{ needs.check-init-version.outputs.IS_LATEST_VERSION == 'true' }}
             DOCKER_BUILD_CACHE_TAG: ${{ needs.check-init-version.outputs.DOCKER_BUILD_CACHE_TAG }}
             DOCKER_PUSH: ${{ true }}
+            DOCKER_BUILD_DOCKERFILE_OK: ${{ inputs.DOCKER_BUILD_DOCKERFILE_OK }}
+            DOCKER_BUILD_DOCKERFILE_FIX: ${{ inputs.DOCKER_BUILD_DOCKERFILE_FIX }}
