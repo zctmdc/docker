@@ -55,7 +55,7 @@ jobs:
               id: get-tag-last-pushed-info
               uses: sergeysova/jq-action@v2
               with:
-                  cmd: curl -k -sS https://hub.docker.com/v2/repositories/${{ secrets.REGISTRY_USERNAME }}/$${{ inputs.DOCKER_APP_NAME }}/tags/${{ inputs.DOCKER_TEST_TAG }} | jq '.get-tag-last-pushed-date'
+                  cmd: curl -k -sS https://hub.docker.com/v2/repositories/${{ secrets.REGISTRY_USERNAME }}/${{ inputs.DOCKER_APP_NAME }}/tags/${{ inputs.DOCKER_TEST_TAG }} | jq '.get-tag-last-pushed-date'
 
             - name: Check tag-last-pushed-date
               id: check-tag-last-pushed-date

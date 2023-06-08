@@ -54,7 +54,7 @@ jobs:
             packages: write
             id-token: write
         strategy:
-            fail-fast: false
+            fail-fast: true
             max-parallel: 1
             matrix: ${{ fromJSON(needs.scan-all.outputs.MATRIX_JSON) }}
         uses: ./.github/workflows/n2n_00x01_call-build-all-pre.yml
