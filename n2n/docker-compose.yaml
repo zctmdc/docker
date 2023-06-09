@@ -1,12 +1,15 @@
 version: "3"
+networks:
+  n2n:
+    driver: bridge
+    ipam:
+      driver: default
+      config:
+        - subnet: 10.64.83.0/24
+
 services:
   n2n_supernode:
-    build:
-      context: .
-      dockerfile: Dockerfile
-      args:
-        - VERSION_B_S_rC=latest
-    image: zctmdc/n2n_ntop
+    image: zctmdc/n2n:sh-latest
     container_name: n2n_supernode
     restart: always
     privileged: true
@@ -16,12 +19,15 @@ services:
       - MODE=SUPERNODE
       - SUPERNODE_PORT=10090
       - N2N_ARGS=-v
+    networks:
+      n2n:
+        ipv4_address: 10.64.83.10
 
   n2n_edge_dhcpd:
     depends_on:
       n2n_supernode:
         condition: service_healthy
-    image: zctmdc/n2n_ntop
+    image: zctmdc/n2n:sh-latest
     container_name: n2n_edge_dhcpd
     restart: always
     privileged: true
@@ -31,20 +37,21 @@ services:
       - SUPERNODE_HOST=n2n_supernode
       - SUPERNODE_PORT=10090
       - EDGE_TUN=edge_dhcpd
-      - EDGE_IP=10.31.32.1
+      - EDGE_IP=10.65.83.1
       - EDGE_COMMUNITY=n2n
       - EDGE_KEY=test
       - EDGE_ENCRYPTION=A3
     # volumes:
     #   - ./config/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
-    links:
-      - n2n_supernode
+    networks:
+      n2n:
+
 
   n2n_edge_dhcpc:
     depends_on:
       n2n_edge_dhcpd:
         condition: service_healthy
-    image: zctmdc/n2n_ntop
+    image: zctmdc/n2n:sh-latest
     container_name: n2n_edge_dhcpc
     restart: always
     privileged: true
@@ -57,14 +64,15 @@ services:
       - EDGE_COMMUNITY=n2n
       - EDGE_KEY=test
       - EDGE_ENCRYPTION=A3
-    links:
-      - n2n_supernode
+    networks:
+      n2n:
+
 
   n2n_edge_static:
     depends_on:
       n2n_supernode:
         condition: service_healthy
-    image: zctmdc/n2n_ntop
+    image: zctmdc/n2n:sh-latest
     container_name: n2n_edge_static
     restart: always
     privileged: true
@@ -74,9 +82,87 @@ services:
       - SUPERNODE_HOST=n2n_supernode
       - SUPERNODE_PORT=10090
       - EDGE_TUN=edge_static
-      - EDGE_IP=10.31.32.10
+      - EDGE_IP=10.65.83.10
       - EDGE_COMMUNITY=n2n
       - EDGE_KEY=test
       - EDGE_ENCRYPTION=A3
+    networks:
+      n2n:
+
+
+  test-n2n_edge_conf:
+    depends_on:
+      test-n2n_supernode:
+        condition: service_healthy
+    image: zctmdc/n2n:sh-latest
+    container_name: test_n2n_edge_conf
+    restart: always
+    privileged: true
+    # network_mode: host
+    volumes:
+      - ./test/:/n2n/conf/
     links:
-      - n2n_supernode
+      - test-n2n_supernode
+    networks:
+      n2n:
+
+
+  test-n2n_manual_cmd:
+    depends_on:
+      test-n2n_supernode:
+        condition: service_healthy
+    image: zctmdc/n2n:sh-latest
+    container_name: test_n2n_edge_manual_cmd
+    restart: always
+    privileged: true
+    # network_mode: host
+    links:
+      - test-n2n_supernode
+    command:
+      [
+        "edge",
+        "-d t_edge_m_s",
+        "-a 10.65.83.42",
+        "-c n2n_test",
+        "-l 10.64.83.10:7777",
+        "-k test_n2n",
+        "-A2"
+      ]
+    networks:
+      n2n:
+
+
+  test-n2n_manual_raw:
+    depends_on:
+      test-n2n_edge_dhcpd:
+        condition: service_healthy
+    image: zctmdc/n2n:sh-latest
+    container_name: test_n2n_manual_raw
+    restart: always
+    privileged: true
+    # network_mode: host
+    links:
+      - test-n2n_supernode
+    command:
+      [
+        "/bin/bash",
+        "-c",
+        "edge -d t_edge_m_raw -a dhcp:0.0.0.0 -c n2n_test -l 10.64.83.10:7777  -k test_n2n -Efr -A2 & sleep 5 && dhclient --dad-wait-time 5 t_edge_m_raw && /bin/busybox ping 10.65.83.42"
+      ]
+    networks:
+      n2n:
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "/bin/busybox",
+          "ping",
+          "-c",
+          "1",
+          "-w",
+          "2",
+          "10.65.83.42"
+        ]
+      interval: 30s
+      timeout: 10s
+      retries: 5

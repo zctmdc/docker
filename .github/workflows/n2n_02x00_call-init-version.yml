@@ -52,12 +52,12 @@ on:
                 required: true
                 type: string
             DOCKER_BUILD_DOCKERFILE_FIX:
-                description: "docker_build_dockerfile_fix e.g. Dockerfile.build.debian-8 | Dockerfile.build.ubuntu-18.04"
-                default: "Dockerfile.build.debian-8"
+                description: "docker_build_dockerfile_fix e.g. Dockerfile.build.ubuntu-18.04 | Dockerfile.build.alpine-3.8 | Dockerfile.build.debian-stable"
+                default: "Dockerfile.build.debian-stable"
                 required: true
                 type: string
             DOCKER_BUILD_DOCKERFILE_OK:
-                description: "docker_build_dockerfile_ok  e.g. Dockerfile.build.debian-stable"
+                description: "docker_build_dockerfile_ok  e.g. Dockerfile.build.ubuntu-20.04 | Dockerfile.build.alpine-latest | Dockerfile.build.debian-stable"
                 default: "Dockerfile.build.debian-stable"
                 required: true
                 type: string

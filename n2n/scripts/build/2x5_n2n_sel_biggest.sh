@@ -6,12 +6,19 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
+VERSION_B_S_rC=${VERSION_B_S_rC:-}
+VERSION_SMALL=${VERSION_SMALL:-}
+N2N_DESC_DIR=${N2N_DESC_DIR:-/tmp/desc}
+
 n2n_edge_biggest=$(find ${DOWNLOAD_PATH} -type f | grep edge | grep -v upx | xargs -I {} du -h {} | sort -rh | head -n 1 | awk '{print$2}')
 if [[ -z "${n2n_edge_biggest}" ]]; then
     LOG_ERROR_WAIT_EXIT "n2n_edge_biggest 获取失败"
 fi
 chmod +x ${n2n_edge_biggest}
-down_version="$(${n2n_edge_biggest} -h | grep Welcome | grep -Eo 'v\.?[0-9]\.[0-9]\.[0-9]' | grep -Eo '[0-9]\.[0-9]\.[0-9]')"
+
+source 3x0_n2n_fixlib.sh
+
+down_version="$(${n2n_edge_biggest} -h 2>&1 | grep Welcome | grep -Eo 'v\.?[0-9]\.[0-9]\.[0-9]' | grep -Eo '[0-9]\.[0-9]\.[0-9]')"
 if [[ -n "${VERSION_B_S_rC}" ]]; then
     define_version="$(echo ${VERSION_B_S_rC} | grep -Eo '[0-9]\.[0-9]\.[0-9]')"
 else

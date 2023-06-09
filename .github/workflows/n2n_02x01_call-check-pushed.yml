@@ -49,7 +49,6 @@ jobs:
               id: get-tag-last-pushed-info
               run: |
                   result="$(curl -k -sS https://hub.docker.com/v2/repositories/${{ secrets.REGISTRY_USERNAME }}/${{ inputs.DOCKER_APP_NAME }}/tags/${{ inputs.DOCKER_TEST_TAG }})"
-
                   echo "result=${result}" >> $GITHUB_OUTPUT
 
             - name: Check tag-last-pushed-date
