@@ -16,7 +16,8 @@ if [[ -z "${n2n_edge_biggest}" ]]; then
 fi
 chmod +x ${n2n_edge_biggest}
 
-source 3x0_n2n_fixlib.sh
+# 还未实现指定路径
+# source 3x0_n2n_fixlib.sh
 
 down_version="$(${n2n_edge_biggest} -h 2>&1 | grep Welcome | grep -Eo 'v\.?[0-9]\.[0-9]\.[0-9]' | grep -Eo '[0-9]\.[0-9]\.[0-9]')"
 if [[ -n "${VERSION_B_S_rC}" ]]; then
@@ -24,9 +25,14 @@ if [[ -n "${VERSION_B_S_rC}" ]]; then
 else
     define_version="$(echo ${VERSION_SMALL} | grep -Eo '[0-9]\.[0-9]\.[0-9]')"
 fi
-if [[ "${define_version}" != "${down_version}" || -z "${down_version}" ]]; then
+if [[ "${define_version}" != "${down_version}"  ]]; then
     LOG_ERROR "下载版本不匹配: ${define_version} != ${down_version}"
-    LOG_ERROR "$(${n2n_edge_biggest} -h)"
+    LOG_ERROR "$(${n2n_edge_biggest} -h  2>&1)"
+    # exit 1
+fi
+if [[ -z "${down_version}"  ]]; then
+    LOG_ERROR "需要修复: ${define_version}"
+    LOG_ERROR "$(${n2n_edge_biggest} -h  2>&1)"
     # exit 1
 fi
 
