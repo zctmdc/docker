@@ -52,7 +52,7 @@ on:
                 type: string
             DOCKER_BUILD_DOCKERFILE:
                 description: "docker_build_dockerfile     e.g. Dockerfile.run"
-                required: true
+                required: false
                 type: string
             DOCKER_BUILD_PLATFORMS:
                 description: "docker_build_platforms      e.g. linux/amd64 | linux/amd64,linux/arm64"
@@ -86,6 +86,7 @@ on:
 
 jobs:
     init-docker-tag:
+        name: ${{ inputs.DOCKER_TAG_PREFIX }}${{ inputs.VERSION_B_S_rC }} - init-docker-tag
         runs-on: ubuntu-latest
         permissions:
             contents: read
@@ -120,6 +121,7 @@ jobs:
                   echo DOCKER_TEST_TAG=${docker_tag} >> $GITHUB_OUTPUT
 
     check-init-version:
+        name: ${{ inputs.DOCKER_TAG_PREFIX }}${{ inputs.VERSION_B_S_rC }} - check-init-version
         uses: ./.github/workflows/n2n_02x00_call-init-version.yml
         with:
             VERSION_BIG: ${{ inputs.VERSION_BIG }}
@@ -136,6 +138,7 @@ jobs:
             DOCKER_BUILD_DOCKERFILE_FIX: ${{ inputs.DOCKER_BUILD_DOCKERFILE_FIX }}
 
     check-output-check-init-version:
+        name: ${{ inputs.DOCKER_TAG_PREFIX }}${{ inputs.VERSION_B_S_rC }} - check-output-check-init-version
         needs: [check-init-version]
         runs-on: ubuntu-latest
         permissions:
@@ -157,6 +160,7 @@ jobs:
                   LOG_INFO "DOCKER_BUILD_CACHE_TAG: ${{ needs.check-init-version.outputs.DOCKER_BUILD_CACHE_TAG }}"
 
     check-pushed:
+        name: ${{ inputs.DOCKER_TAG_PREFIX }}${{ inputs.VERSION_B_S_rC }} - check-pushed
         needs: [init-docker-tag]
         uses: ./.github/workflows/n2n_02x01_call-check-pushed.yml
         secrets: inherit
@@ -166,6 +170,7 @@ jobs:
             FORCE_PUSH: ${{ inputs.FORCE_PUSH }}
 
     check-output-check-pushed:
+        name: ${{ inputs.DOCKER_TAG_PREFIX }}${{ inputs.VERSION_B_S_rC }} - docker-output-check-pushed
         needs: [check-pushed]
         runs-on: ubuntu-latest
         permissions:
@@ -184,6 +189,7 @@ jobs:
                   LOG_INFO "BUILD_PUSH: ${{ needs.check-pushed.outputs.BUILD_PUSH }}"
 
     check-all-docker-n2n-build-test-publish:
+        name: ${{ inputs.DOCKER_TAG_PREFIX }}${{ inputs.VERSION_B_S_rC }} - check-all-docker-n2n-build-test-publish
         needs: [check-init-version, init-docker-tag, check-pushed]
         runs-on: ubuntu-latest
         permissions:
@@ -217,6 +223,7 @@ jobs:
                   LOG_INFO "NEED_FIX: ${{ needs.check-init-version.outputs.NEED_FIX }}"
 
     # docker-n2n-build-test:
+    #     name: ${{ inputs.DOCKER_TAG_PREFIX }}${{ inputs.VERSION_B_S_rC }} - docker-n2n-build-test
     #     needs: [check-init-version, init-docker-tag]
     #     uses: ./.github/workflows/n2n_02x01_call-docker-build-test-publish.yml
     #     secrets: inherit
@@ -241,6 +248,7 @@ jobs:
     #         DOCKER_BUILD_DOCKERFILE_FIX: ${{ inputs.DOCKER_BUILD_DOCKERFILE_FIX }}
 
     docker-n2n-build-test-publish:
+        name: ${{ inputs.DOCKER_TAG_PREFIX }}${{ inputs.VERSION_B_S_rC }} - docker-n2n-build-test-publish
         needs:
             [
                 check-init-version,

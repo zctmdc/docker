@@ -44,7 +44,7 @@ on:
                 default: "v2_2.3.0, v2s_2.1.0_r111, v1"
             DOCKER_BUILD_DOCKERFILE:
                 description: "docker_build_dockerfile     e.g. Dockerfile.run"
-                required: true
+                required: false
                 type: string
             DEFIN_LATEST_VERSION:
                 description: "defin_latest_version        e.g. v3 | v4"
@@ -81,6 +81,7 @@ on:
 
 jobs:
     init-version:
+        name: ${{ inputs.VERSION_B_S_rC }} - init-version
         runs-on: ubuntu-latest
         permissions:
             contents: read
@@ -96,7 +97,7 @@ jobs:
             DOCKER_BUILD_CACHE_TAG: ${{ steps.init-build-cache-tag.outputs.DOCKER_BUILD_CACHE_TAG }}
 
         steps:
-            - name: Check inputs
+            - name: ${{ inputs.VERSION_B_S_rC }} - Check inputs
               run: |
                   LOG_INFO() {
                     echo -e $(caller) "\033[0;32m[    INFO] $@ \033[0m"
@@ -109,7 +110,7 @@ jobs:
                   LOG_INFO "STR_DOWNLOAD_URLS: ${{ inputs.STR_DOWNLOAD_URLS }}"
                   LOG_INFO "FORCE_PUSH: ${{ inputs.FORCE_PUSH }}"
 
-            - name: Check big version only
+            - name: ${{ inputs.VERSION_B_S_rC }} - Check big version only
               id: check-big-version-only
               run: |
                   LOG_INFO() {
@@ -123,7 +124,7 @@ jobs:
                   LOG_INFO "ONLY_BIGVERSION=${only_bigversion}"
                   echo "ONLY_BIGVERSION=${only_bigversion}" >> $GITHUB_OUTPUT
 
-            - name: Check latest version
+            - name: ${{ inputs.VERSION_B_S_rC }} - Check latest version
               id: check-latest-version
               run: |
                   LOG_INFO() {
@@ -137,7 +138,7 @@ jobs:
                   LOG_INFO "IS_LATEST_VERSION=${is_latest_version}"
                   echo "IS_LATEST_VERSION=${is_latest_version}" >> $GITHUB_OUTPUT
 
-            - name: Check need fix
+            - name: ${{ inputs.VERSION_B_S_rC }} - Check need fix
               id: check-need-fix
               run: |
                   LOG_INFO() {
@@ -171,7 +172,7 @@ jobs:
                   LOG_INFO 使用 ${build_dockerfile} - ${build_dockerfile}
                   echo "DOCKER_BUILD_DOCKERFILE=${build_dockerfile}">> $GITHUB_OUTPUT
 
-            - name: Init build cache tag
+            - name: ${{ inputs.VERSION_B_S_rC }} - Init build cache tag
               id: init-build-cache-tag
               run: |
                   LOG_INFO() {

@@ -64,6 +64,7 @@ env:
 
 jobs:
     docker-n2n-build-test:
+        name: ${{ inputs.VERSION_B_S_rC }} - docker-n2n-build-test
         permissions:
             contents: read
             packages: write
@@ -89,6 +90,7 @@ jobs:
             DOCKER_BUILD_DOCKERFILE_FIX: ${{ inputs.DOCKER_BUILD_DOCKERFILE_FIX }}
 
     docker-n2n-sh-build-test:
+        name: ${{ inputs.VERSION_B_S_rC }} - sh - docker-n2n-sh-build-test
         needs: ["docker-n2n-build-test"]
         permissions:
             contents: read
