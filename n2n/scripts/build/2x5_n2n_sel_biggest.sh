@@ -2,8 +2,8 @@
 
 source 0x0_init-logger.sh
 
-# set -o errexit
-# set -o nounset
+set -o errexit
+set -o nounset
 # set -o pipefail
 
 VERSION_B_S_rC=${VERSION_B_S_rC:-}
@@ -12,7 +12,7 @@ N2N_DESC_DIR=${N2N_DESC_DIR:-/tmp/desc}
 DOWNLOAD_PATH=${DOWNLOAD_PATH:-/tmp/n2n}
 
 n2n_edge_biggest=$(find ${DOWNLOAD_PATH} -type f | grep edge | grep -v upx | xargs -I {} du -h {} | sort -rh | head -n 1 | awk '{print$2}')
-LOG_INFO 'n2n_edge_biggest: ${n2n_edge_biggest}'
+LOG_INFO "n2n_edge_biggest: ${n2n_edge_biggest}"
 if [[ -z "${n2n_edge_biggest}" ]]; then
     LOG_ERROR_WAIT_EXIT "n2n_edge_biggest 获取失败"
 fi
@@ -22,15 +22,16 @@ chmod +x ${n2n_edge_biggest}
 # source 3x0_n2n_fixlib.sh
 
 down_version="$(${n2n_edge_biggest} -h 2>&1 | grep Welcome | grep -Eo 'v\.?[0-9]\.[0-9]\.[0-9]' | grep -Eo '[0-9]\.[0-9]\.[0-9]')"
-if [[ -z "${down_version}"  ]]; then
-    LOG_ERROR "需要修复: ${define_version}"
-    LOG_ERROR "$(${n2n_edge_biggest} -h  2>&1)"
-    # exit 1
-fi
+
 if [[ -n "${VERSION_B_S_rC}" ]]; then
     define_version="$(echo ${VERSION_B_S_rC} | grep -Eo '[0-9]\.[0-9]\.[0-9]')"
 else
     define_version="$(echo ${VERSION_SMALL} | grep -Eo '[0-9]\.[0-9]\.[0-9]')"
+fi
+if [[ -z "${down_version}"  ]]; then
+    LOG_ERROR "需要修复: ${define_version}"
+    LOG_ERROR "$(${n2n_edge_biggest} -h  2>&1)"
+    # exit 1
 fi
 if [[ "${define_version}" != "${down_version}"  ]]; then
     LOG_ERROR "下载版本不匹配: ${define_version} != ${down_version}"

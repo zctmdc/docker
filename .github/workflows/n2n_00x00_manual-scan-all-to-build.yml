@@ -63,6 +63,7 @@ jobs:
                   echo "FORCE_PUSH=${FORCE_PUSH}" >> $GITHUB_OUTPUT
 
     build-all:
+        name: build-all-${{ matrix.version_b_s_rc }}
         needs: [scan-all]
         permissions:
             contents: read
