@@ -8,4 +8,4 @@ for src_file in $(find ${DOWNLOAD_PATH} -name "*${filename_machine}*" | grep -vE
     LOG_INFO "Try: 解压 - ${src_file}"
     EXTRACT_ALL "${src_file}"
 done
-LOG_WARNING "解压结果：\n$(find ${DOWNLOAD_PATH} -type f | grep edge | grep -v upx | xargs -I {} du -h {} | sort -rh)"
+LOG_WARNING "解压结果：\n$(find ${DOWNLOAD_PATH} -type f | grep edge | grep -v upx | xargs -0 --no-run-if-empty -I {} du -h {} | sort -rh)"

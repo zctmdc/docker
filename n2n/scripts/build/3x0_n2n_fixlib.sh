@@ -222,7 +222,7 @@ if [[ -n "$(/usr/local/sbin/edge -h 2>&1 | grep libcrypto.so.1.1)" ]]; then
     fi
     LOG_WARNING 缺少 libssl1.1 , 修复完毕
 fi
-edge_result="$(edge -h 2>&1 | xargs -I {} echo {})"
+edge_result="$(edge -h 2>&1 | xargs -0 --no-run-if-empty -I {} echo {})"
 
 if [[ -z "$(echo ${edge_result,,} | grep welcome)" && -z "${flag_retry}" ]]; then
     LOG_ERROR 出错了: ${edge_result}

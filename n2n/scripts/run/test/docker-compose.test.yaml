@@ -12,7 +12,7 @@ services:
     # build:
     #   context: .
     #   dockerfile: Dockerfile
-    image: ${REGISTRY_USERNAME}/${APP_NAME}:${BUILD_TAG}
+    image: ${REGISTRY}/${REGISTRY_USERNAME}/${DOCKER_APP_NAME}:${DOCKER_TEST_TAG}
     container_name: test_n2n_supernode
     restart: always
     privileged: true
@@ -29,7 +29,7 @@ services:
     depends_on:
       test-n2n_supernode:
         condition: service_healthy
-    image: ${REGISTRY_USERNAME}/${APP_NAME}:${BUILD_TAG}
+    image: ${REGISTRY}/${REGISTRY_USERNAME}/${DOCKER_APP_NAME}:${DOCKER_TEST_TAG}
     container_name: test_n2n_edge_dhcpd
     restart: always
     privileged: true
@@ -45,7 +45,7 @@ services:
       - EDGE_KEY=test_n2n
       - EDGE_ENCRYPTION=-A2
     # volumes:
-    #   - ./config/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
+    #   - ./conf/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
     links:
       - test-n2n_supernode
     networks:
@@ -56,7 +56,7 @@ services:
     depends_on:
       test-n2n_edge_dhcpd:
         condition: service_healthy
-    image: ${REGISTRY_USERNAME}/${APP_NAME}:${BUILD_TAG}
+    image: ${REGISTRY}/${REGISTRY_USERNAME}/${DOCKER_APP_NAME}:${DOCKER_TEST_TAG}
     container_name: test_n2n_edge_dhcpc
     restart: always
     privileged: true
@@ -80,7 +80,7 @@ services:
     depends_on:
       test-n2n_supernode:
         condition: service_healthy
-    image: ${REGISTRY_USERNAME}/${APP_NAME}:${BUILD_TAG}
+    image: ${REGISTRY}/${REGISTRY_USERNAME}/${DOCKER_APP_NAME}:${DOCKER_TEST_TAG}
     container_name: test_n2n_edge_static
     restart: always
     privileged: true
@@ -105,14 +105,14 @@ services:
     depends_on:
       test-n2n_supernode:
         condition: service_healthy
-    image: ${REGISTRY_USERNAME}/${APP_NAME}:${BUILD_TAG}
+    image: ${REGISTRY}/${REGISTRY_USERNAME}/${DOCKER_APP_NAME}:${DOCKER_TEST_TAG}
     container_name: test_n2n_edge_conf
     restart: always
     privileged: true
     platform: ${TEST_PLATFORM}
     # network_mode: host
     volumes:
-      - ./test/:/n2n/conf/
+      - ./conf/:/n2n/conf/
     links:
       - test-n2n_supernode
     networks:
@@ -123,7 +123,7 @@ services:
     depends_on:
       test-n2n_supernode:
         condition: service_healthy
-    image: ${REGISTRY_USERNAME}/${APP_NAME}:${BUILD_TAG}
+    image: ${REGISTRY}/${REGISTRY_USERNAME}/${DOCKER_APP_NAME}:${DOCKER_TEST_TAG}
     container_name: test_n2n_edge_manual_cmd
     restart: always
     privileged: true
@@ -149,7 +149,7 @@ services:
     depends_on:
       test-n2n_edge_dhcpd:
         condition: service_healthy
-    image: ${REGISTRY_USERNAME}/${APP_NAME}:${BUILD_TAG}
+    image: ${REGISTRY}/${REGISTRY_USERNAME}/${DOCKER_APP_NAME}:${DOCKER_TEST_TAG}
     container_name: test_n2n_manual_raw
     restart: always
     privileged: true

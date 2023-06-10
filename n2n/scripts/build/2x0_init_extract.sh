@@ -35,19 +35,19 @@ EXTRACT() {
         case "${fn_suffix}" in
         *tar)
             LOG_INFO 'try use tar'
-            tar -xvf $extract_file -C ${extract_path} 2>&1 | xargs -I {} echo {} || LOG_WARNING "解压失败 - ${extract_file}"
+            tar -xvf $extract_file -C ${extract_path} 2>&1 | xargs -0 --no-run-if-empty -I {} echo {} || LOG_WARNING "解压失败 - ${extract_file}"
             ;;
         *tar.gz)
             LOG_INFO 'try use tar.gz'
-            tar -zxvf $extract_file -C ${extract_path} 2>&1 | xargs -I {} echo {} || LOG_WARNING "解压失败 - ${extract_file}"
+            tar -zxvf $extract_file -C ${extract_path} 2>&1 | xargs -0 --no-run-if-empty -I {} echo {} || LOG_WARNING "解压失败 - ${extract_file}"
             ;;
         *zip)
             LOG_INFO 'try use zip'
-            unzip -o $extract_file -d ${extract_path} 2>&1 | xargs -I {} echo {} || LOG_WARNING "解压失败 - ${extract_file}"
+            unzip -o $extract_file -d ${extract_path} 2>&1 | xargs -0 --no-run-if-empty -I {} echo {} || LOG_WARNING "解压失败 - ${extract_file}"
             ;;
         *rar)
             LOG_INFO 'try use rar'
-            unrar x $extract_file ${extract_path} 2>&1 | xargs -I {} echo {} || LOG_WARNING "解压失败 - ${extract_file}"
+            unrar x $extract_file ${extract_path} 2>&1 | xargs -0 --no-run-if-empty -I {} echo {} || LOG_WARNING "解压失败 - ${extract_file}"
             ;;
         *)
             LOG_ERROR "不支持文件类型 - ${extract_filename_suffix}"
