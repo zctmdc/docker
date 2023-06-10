@@ -64,7 +64,7 @@ env:
 
 jobs:
     docker-n2n-build-test:
-        name: ${{ inputs.VERSION_B_S_rC }} - docker-n2n-build-test
+        name: docker-n2n-build-test - - 
         permissions:
             contents: read
             packages: write
@@ -88,9 +88,10 @@ jobs:
             DEFIN_LATEST_VERSION: ${{ inputs.DEFIN_LATEST_VERSION }}
             DOCKER_BUILD_DOCKERFILE_OK: ${{ inputs.DOCKER_BUILD_DOCKERFILE_OK }}
             DOCKER_BUILD_DOCKERFILE_FIX: ${{ inputs.DOCKER_BUILD_DOCKERFILE_FIX }}
+            DOCKER_TEST_SCRIPTS_PATH: 'n2n/scripts/build'
 
     docker-n2n-sh-build-test:
-        name: ${{ inputs.VERSION_B_S_rC }} - sh - docker-n2n-sh-build-test
+        name: docker-n2n-sh-build-test - sh - 
         needs: ["docker-n2n-build-test"]
         permissions:
             contents: read
@@ -116,3 +117,4 @@ jobs:
             DEFIN_LATEST_VERSION: ${{ inputs.DEFIN_LATEST_VERSION }}
             DOCKER_BUILD_DOCKERFILE_OK: ${{ inputs.DOCKER_BUILD_DOCKERFILE_OK }}
             DOCKER_BUILD_DOCKERFILE_FIX: ${{ inputs.DOCKER_BUILD_DOCKERFILE_FIX }}
+            DOCKER_TEST_SCRIPTS_PATH: 'n2n/scripts/run'

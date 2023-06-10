@@ -66,11 +66,15 @@ on:
                 required: true
                 type: boolean
             DOCKER_TAG_PREFIX:
-                description: "docker_tag_prefix"
+                description: "docker_tag_prefix           e.g. sh- | conf-"
                 required: false
                 type: string
             DOCKER_TAG_SUFFIX:
-                description: "docker_tag_suffix"
+                description: "docker_tag_suffix           e.g. -dev | -conf"
+                required: false
+                type: string
+            DOCKER_TEST_SCRIPTS_PATH:
+                description: "docker_test_scripts_path    eg. n2n/script/build"
                 required: false
                 type: string
             DOCKER_BUILD_DOCKERFILE_FIX:
@@ -83,6 +87,8 @@ on:
                 default: "Dockerfile.build.debian-stable"
                 required: true
                 type: string
+
+
         outputs:
             DOCKER_BUILD_DOCKERFILE:
                 description: "docker build dockerfile"
@@ -94,7 +100,7 @@ env:
 
 jobs:
     docker-build-psuh:
-        name: ${{ inputs.DOCKER_TEST_TAG }} - ${{ inputs.DOCKER_PUSH }} - docker-build-psuh
+        name: docker-build-psuh - ${{ inputs.DOCKER_PUSH }} - ${{ inputs.DOCKER_TEST_TAG }}
         runs-on: ubuntu-latest
         permissions:
             contents: read
@@ -106,10 +112,10 @@ jobs:
             DOCKER_BUILD_DOCKERFILE: ${{ steps.n2n-test.outputs.DOCKER_BUILD_DOCKERFILE }}
 
         steps:
-            - name: ${{ inputs.DOCKER_TEST_TAG }} - ${{ inputs.DOCKER_PUSH }} - Checkout repository on build-psuh
+            - name: Checkout - ${{ inputs.DOCKER_PUSH }} - ${{ inputs.DOCKER_TEST_TAG }}
               uses: actions/checkout@v3
 
-            - name: init DOCKER_BUILD - ${{ inputs.DOCKER_TEST_TAG }}
+            - name: init DOCKER_BUILD - ${{ inputs.DOCKER_PUSH }} - ${{ inputs.DOCKER_TEST_TAG }}
               run: |
                   echo "DOCKER_PUSH          : ${{ inputs.DOCKER_PUSH }}"
                   echo "DOCKER_PUSH == true  : ${{ inputs.DOCKER_PUSH == true }}"
@@ -121,24 +127,24 @@ jobs:
                   echo '# cat ./n2n/tmp/down_urls.txt #'
                   cat ./n2n/tmp/down_urls.txt
 
-            - name: ${{ inputs.DOCKER_TEST_TAG }} - ${{ inputs.DOCKER_PUSH }} - Set up QEMU
+            - name: Set up QEMU - ${{ inputs.DOCKER_PUSH }} - ${{ inputs.DOCKER_TEST_TAG }}
               uses: docker/setup-qemu-action@v2
 
             # Install the cosign tool except on PR
             # https://github.com/sigstore/cosign-installer
-            - name: Install cosign - ${{ inputs.DOCKER_TEST_TAG }}
+            - name: Install cosign - ${{ inputs.DOCKER_PUSH }} - ${{ inputs.DOCKER_TEST_TAG }}
               if: inputs.DOCKER_PUSH == true
               uses: sigstore/cosign-installer@v3.0.5
               with:
                   cosign-release: "v2.0.2" # optional
 
             # Workaround: https://github.com/docker/build-push-action/issues/461
-            - name: ${{ inputs.DOCKER_TEST_TAG }} - ${{ inputs.DOCKER_PUSH }} - Setup Docker buildx
+            - name: Setup buildx - ${{ inputs.DOCKER_PUSH }} - ${{ inputs.DOCKER_TEST_TAG }}
               uses: docker/setup-buildx-action@v2
 
             # Login against a Docker registry except on PR
             # https://github.com/docker/login-action
-            - name: Log into registry ${{ env.REGISTRY }} - ${{ inputs.DOCKER_TEST_TAG }}
+            - name: Log into registry ${{ env.REGISTRY }} - ${{ inputs.DOCKER_PUSH }} - ${{ inputs.DOCKER_TEST_TAG }}
               # if: inputs.DOCKER_PUSH == true
               uses: docker/login-action@v2
               with:
@@ -148,7 +154,7 @@ jobs:
 
             # Extract metadata (tags, labels) for Docker
             # https://github.com/docker/metadata-action
-            - name: ${{ inputs.DOCKER_TEST_TAG }} - ${{ inputs.DOCKER_PUSH }} - Extract Docker metadata
+            - name: Extract metadata  - ${{ inputs.DOCKER_PUSH }} - ${{ inputs.DOCKER_TEST_TAG }}
               id: meta
               uses: docker/metadata-action@v4
               with:
@@ -167,7 +173,7 @@ jobs:
 
             # Build and push Docker image with Buildx (don't push on PR)
             # https://github.com/docker/build-push-action
-            - name: ${{ inputs.DOCKER_TEST_TAG }} - ${{ inputs.DOCKER_PUSH }} - Build and push Docker image
+            - name: Build and push - ${{ inputs.DOCKER_PUSH }} - ${{ inputs.DOCKER_TEST_TAG }}
               id: build-and-push
               uses: docker/build-push-action@v4
               with:
@@ -187,10 +193,10 @@ jobs:
                       VERSION_B_S_rC=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
                   #   STR_DOWNLOAD_URLS=${{ inputs.STR_DOWNLOAD_URLS }}
 
-            - name: ${{ inputs.DOCKER_TEST_TAG }} - ${{ inputs.DOCKER_PUSH }} - Test n2n
+            - name: Test - ${{ inputs.DOCKER_PUSH }} - ${{ inputs.DOCKER_TEST_TAG }}
               id: n2n-test
               run: |
-                  cd ${{ inputs.DOCKER_CONTEXT_PATH }}
+                  cd ${{ inputs.DOCKER_TEST_SCRIPTS_PATH }}
                   LOG_INFO() {
                     echo -e $(caller) "\033[0;32m[    INFO] $@ \033[0m"
                   }
@@ -246,7 +252,7 @@ jobs:
             # repository is public to avoid leaking data.  If you would like to publish
             # transparency data even for private images, pass --force to cosign below.
             # https://github.com/sigstore/cosign
-            - name: ${{ inputs.DOCKER_TEST_TAG }} - ${{ inputs.DOCKER_PUSH }} - Sign the published Docker image
+            - name: Sign image - ${{ inputs.DOCKER_PUSH }} - ${{ inputs.DOCKER_TEST_TAG }}
               if: inputs.DOCKER_PUSH == true
               env:
                   COSIGN_EXPERIMENTAL: "true"

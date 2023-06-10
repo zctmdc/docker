@@ -32,12 +32,10 @@ on:
 
 jobs:
     check-push:
-        name: ${{ inputs.DOCKER_TEST_TAG }} - "check-push"
+        name: check-push - ${{ inputs.DOCKER_TEST_TAG }}
         runs-on: ubuntu-latest
         # needs: [init-version]
         # if: inputs.FORCE_PUSH != 'true'
-        env:
-            DOCKER_TAG_SUFFIX: ""
         outputs:
             LAST_PULLED_DATE: ${{ steps.check-tag-last-pushed-date.outputs.LAST_PULLED_DATE }}
             BUILD_PUSH: ${{ steps.check-tag-last-pushed-date.outputs.BUILD_PUSH }}
@@ -46,13 +44,13 @@ jobs:
             packages: write
 
         steps:
-            - name: ${{ inputs.DOCKER_TEST_TAG }} - Get tag-last-pushed-info
+            - name: Get tag-info  - ${{ inputs.DOCKER_TEST_TAG }}
               id: get-tag-last-pushed-info
               run: |
                   result="$(curl -k -sS https://hub.docker.com/v2/repositories/${{ secrets.REGISTRY_USERNAME }}/${{ inputs.DOCKER_APP_NAME }}/tags/${{ inputs.DOCKER_TEST_TAG }})"
                   echo "result=${result}" >> $GITHUB_OUTPUT
 
-            - name: ${{ inputs.DOCKER_TEST_TAG }} - Check tag-last-pushed-date
+            - name: Check tag-date - ${{ inputs.DOCKER_TEST_TAG }} 
               id: check-tag-last-pushed-date
               run: |
                   LOG_INFO() {

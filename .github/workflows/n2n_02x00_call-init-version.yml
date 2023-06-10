@@ -97,7 +97,7 @@ jobs:
             DOCKER_BUILD_CACHE_TAG: ${{ steps.init-build-cache-tag.outputs.DOCKER_BUILD_CACHE_TAG }}
 
         steps:
-            - name: ${{ inputs.VERSION_B_S_rC }} - Check inputs
+            - name: Check inputs - ${{ inputs.DOCKER_BUILD_DOCKERFILE }}
               run: |
                   LOG_INFO() {
                     echo -e $(caller) "\033[0;32m[    INFO] $@ \033[0m"
@@ -110,7 +110,7 @@ jobs:
                   LOG_INFO "STR_DOWNLOAD_URLS: ${{ inputs.STR_DOWNLOAD_URLS }}"
                   LOG_INFO "FORCE_PUSH: ${{ inputs.FORCE_PUSH }}"
 
-            - name: ${{ inputs.VERSION_B_S_rC }} - Check big version only
+            - name: Check VBig-only - ${{ inputs.DOCKER_BUILD_DOCKERFILE }}
               id: check-big-version-only
               run: |
                   LOG_INFO() {
@@ -124,7 +124,7 @@ jobs:
                   LOG_INFO "ONLY_BIGVERSION=${only_bigversion}"
                   echo "ONLY_BIGVERSION=${only_bigversion}" >> $GITHUB_OUTPUT
 
-            - name: ${{ inputs.VERSION_B_S_rC }} - Check latest version
+            - name: Check latest version - ${{ inputs.DOCKER_BUILD_DOCKERFILE }}
               id: check-latest-version
               run: |
                   LOG_INFO() {
@@ -138,7 +138,7 @@ jobs:
                   LOG_INFO "IS_LATEST_VERSION=${is_latest_version}"
                   echo "IS_LATEST_VERSION=${is_latest_version}" >> $GITHUB_OUTPUT
 
-            - name: ${{ inputs.VERSION_B_S_rC }} - Check need fix
+            - name: Check need fix - ${{ inputs.DOCKER_BUILD_DOCKERFILE }}
               id: check-need-fix
               run: |
                   LOG_INFO() {
@@ -172,7 +172,7 @@ jobs:
                   LOG_INFO 使用 ${build_dockerfile} - ${build_dockerfile}
                   echo "DOCKER_BUILD_DOCKERFILE=${build_dockerfile}">> $GITHUB_OUTPUT
 
-            - name: ${{ inputs.VERSION_B_S_rC }} - Init build cache tag
+            - name: Init build cache tag - ${{ inputs.DOCKER_BUILD_DOCKERFILE }}
               id: init-build-cache-tag
               run: |
                   LOG_INFO() {
