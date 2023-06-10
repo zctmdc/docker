@@ -98,7 +98,7 @@ docker run \
   -e SUPERNODE_PORT=10090 \
   -e EDGE_ENCRYPTION=A3 \
   -e EDGE_TUN=edge_dhcpd_t1 \
-  zctmdc/n2n
+  zctmdc/n2n:sh-latest
 ```
 
 - 后台模式
@@ -116,7 +116,7 @@ docker run \
   -e SUPERNODE_PORT=10090 \
   -e EDGE_ENCRYPTION=A3 \
   -e EDGE_TUN=edge_dhcpc_t1  \
-  zctmdc/n2n
+  zctmdc/n2n:sh-latest
 ```
 
 - test
@@ -210,7 +210,7 @@ docker run \
   -e MODE="SUPERNODE" \
   -e SUPERNODE_PORT=10090 \
   -p 10090:10090/udp \
-  zctmdc/n2n
+  zctmdc/n2n:sh-latest
 ```
 
 ### DHCPD - DHCP 服务端模式
@@ -229,7 +229,7 @@ docker run \
   -e SUPERNODE_PORT=10090 \
   -e EDGE_ENCRYPTION=A3 \
   -e EDGE_TUN=edge_dhcpd_t2 \
-  zctmdc/n2n
+  zctmdc/n2n:sh-latest
 ```
 
 如果你需要自定义 DHCPD 服务配置文件
@@ -253,7 +253,7 @@ docker run \
   -e SUPERNODE_PORT=10090 \
   -e EDGE_ENCRYPTION=A3 \
   -e EDGE_TUN=edge_dhcpc_t2 \
-  zctmdc/n2n
+  zctmdc/n2n:sh-latest
 ```
 
 ### STATIC - 静态 IP 模式
@@ -272,7 +272,7 @@ docker run \
   -e SUPERNODE_PORT=10090 \
   -e EDGE_ENCRYPTION=A3 \
   -e EDGE_TUN=edge_static_t2 \
-  zctmdc/n2n
+  zctmdc/n2n:sh-latest
 ```
 
 ## 使用 _docker compose_ 配置运行
