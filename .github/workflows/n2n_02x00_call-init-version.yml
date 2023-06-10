@@ -81,7 +81,7 @@ on:
 
 jobs:
     init-version:
-        name: ${{ inputs.VERSION_B_S_rC }} - init-version
+        name: init-version -  ${{ inputs.DOCKER_BUILD_DOCKERFILE }}
         runs-on: ubuntu-latest
         permissions:
             contents: read
