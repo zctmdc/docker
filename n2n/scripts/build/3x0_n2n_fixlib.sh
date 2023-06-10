@@ -226,7 +226,7 @@ edge_result="$(edge -h 2>&1 | xargs -0 --no-run-if-empty -I {} echo {})"
 
 if [[ -z "$(echo ${edge_result,,} | grep welcome)" && -z "${flag_retry}" ]]; then
     LOG_ERROR 出错了: ${edge_result}
-    source /tmp/n2n-lucktu/scripts/fixlib.sh retry
+    source /tmp/scripts/3x0_n2n_fixlib.sh retry
 else
     if command_exists apt-get; then
         apt-get clean && rm -rf /var/lib/apt/lists/*
