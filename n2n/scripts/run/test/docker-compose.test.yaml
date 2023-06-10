@@ -28,7 +28,7 @@ services:
   test-n2n_edge_dhcpd:
     depends_on:
       test-n2n_supernode:
-        condition: service_healthy
+        condition: service_started
     image: ${REGISTRY}/${REGISTRY_USERNAME}/${DOCKER_APP_NAME}:${DOCKER_TEST_TAG}
     container_name: test_n2n_edge_dhcpd
     restart: always
@@ -55,7 +55,7 @@ services:
   test-n2n_edge_dhcpc:
     depends_on:
       test-n2n_edge_dhcpd:
-        condition: service_healthy
+        condition: service_started
     image: ${REGISTRY}/${REGISTRY_USERNAME}/${DOCKER_APP_NAME}:${DOCKER_TEST_TAG}
     container_name: test_n2n_edge_dhcpc
     restart: always
@@ -79,7 +79,7 @@ services:
   test-n2n_edge_static:
     depends_on:
       test-n2n_supernode:
-        condition: service_healthy
+        condition: service_started
     image: ${REGISTRY}/${REGISTRY_USERNAME}/${DOCKER_APP_NAME}:${DOCKER_TEST_TAG}
     container_name: test_n2n_edge_static
     restart: always
@@ -104,7 +104,7 @@ services:
   test-n2n_edge_conf:
     depends_on:
       test-n2n_supernode:
-        condition: service_healthy
+        condition: service_started
     image: ${REGISTRY}/${REGISTRY_USERNAME}/${DOCKER_APP_NAME}:${DOCKER_TEST_TAG}
     container_name: test_n2n_edge_conf
     restart: always
@@ -122,7 +122,7 @@ services:
   test-n2n_manual_cmd:
     depends_on:
       test-n2n_supernode:
-        condition: service_healthy
+        condition: service_started
     image: ${REGISTRY}/${REGISTRY_USERNAME}/${DOCKER_APP_NAME}:${DOCKER_TEST_TAG}
     container_name: test_n2n_edge_manual_cmd
     restart: always
@@ -148,7 +148,7 @@ services:
   test-n2n_manual_raw:
     depends_on:
       test-n2n_edge_dhcpd:
-        condition: service_healthy
+        condition: service_started
     image: ${REGISTRY}/${REGISTRY_USERNAME}/${DOCKER_APP_NAME}:${DOCKER_TEST_TAG}
     container_name: test_n2n_manual_raw
     restart: always
