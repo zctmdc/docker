@@ -114,7 +114,7 @@ jobs:
                   echo "DOCKER_PUSH          : ${{ inputs.DOCKER_PUSH }}"
                   echo "DOCKER_PUSH == true  : ${{ inputs.DOCKER_PUSH == true }}"
                   echo "DOCKER_PUSH == 'true': ${{ inputs.DOCKER_PUSH == 'true' }}"
-                  str_download_urls=${{ inputs.STR_DOWNLOAD_URLS }}
+                  str_download_urls="${{ inputs.STR_DOWNLOAD_URLS }}"
                   mkdir -p ./n2n/tmp/
                   echo -e "${str_download_urls//,/'\n'}" >> ./n2n/tmp/down_urls.txt
                   echo -e "" >> ./n2n/tmp/down_urls.txt
