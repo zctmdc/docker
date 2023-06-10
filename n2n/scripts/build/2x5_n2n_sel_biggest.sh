@@ -11,7 +11,7 @@ VERSION_SMALL=${VERSION_SMALL:-}
 N2N_DESC_DIR=${N2N_DESC_DIR:-/tmp/desc}
 DOWNLOAD_PATH=${DOWNLOAD_PATH:-/tmp/n2n}
 
-n2n_edge_biggest=$(find ${DOWNLOAD_PATH} -type f | grep edge | grep -v upx | xargs -0 --no-run-if-empty -I {} du -h {} | sort -rh | head -n 1 | awk '{print$2}')
+n2n_edge_biggest=$(find ${DOWNLOAD_PATH} -type f | grep edge | grep -v upx | xargs -I {} du -h {} | sort -rh | head -n 1 | awk '{print$2}')
 LOG_INFO "n2n_edge_biggest: ${n2n_edge_biggest}"
 if [[ -z "${n2n_edge_biggest}" ]]; then
     LOG_ERROR_WAIT_EXIT "n2n_edge_biggest 获取失败"
