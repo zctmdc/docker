@@ -33,21 +33,21 @@ EXTRACT() {
     l_fn_suffixs=(${fn_suffixs//,/ })
     for fn_suffix in ${l_fn_suffixs[@]}; do
         case "${fn_suffix}" in
-        tar)
+        *.tar)
             LOG_INFO 'try use tar'
-            tar -xvf $extract_file -C ${extract_path}
+            tar -xvf $extract_file -C ${extract_path} 2>&1 | xargs -I {} echo {} || LOG_WARNING "解压失败 - ${extract_file}"
             ;;
-        tar.gz)
+        *.tar.gz)
             LOG_INFO 'try use tar.gz'
-            tar -zxvf $extract_file -C ${extract_path}
+            tar -zxvf $extract_file -C ${extract_path} 2>&1 | xargs -I {} echo {} || LOG_WARNING "解压失败 - ${extract_file}"
             ;;
-        zip)
+        *.zip)
             LOG_INFO 'try use zip'
-            unzip -o $extract_file -d ${extract_path}
+            unzip -o $extract_file -d ${extract_path} 2>&1 | xargs -I {} echo {} || LOG_WARNING "解压失败 - ${extract_file}"
             ;;
-        rar)
+        *.rar)
             LOG_INFO 'try use rar'
-            unrar x $extract_file ${extract_path}
+            unrar x $extract_file ${extract_path} 2>&1 | xargs -I {} echo {} || LOG_WARNING "解压失败 - ${extract_file}"
             ;;
         *)
             LOG_ERROR "不支持文件类型 - ${extract_filename_suffix}"
@@ -63,6 +63,9 @@ EXTRACT() {
             break
         fi
     done
+    if [[ -z "$(ls ${extract_path})" ]]; then
+        LOG_ERROR_WAIT_EXIT "解压失败 - ${extract_file}"
+    fi
 }
 
 EXTRACT_ALL() {
