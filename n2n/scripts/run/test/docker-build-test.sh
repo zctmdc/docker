@@ -24,9 +24,9 @@ TOTLA_WAIT_TIME=$((60 * 10))
 UP_WAIT_TIME=$((60 * 2))
 
 pull() {
-    if [[ -n "$(docker images --format '{{ .Repository }}:{{ .Tag }}' | grep ${REGISTRY_USERNAME}/${DOCKER_APP_NAME}:${DOCKER_TEST_TAG})" ]]; then
-        return
-    fi
+    # if [[ -n "$(docker images --format '{{ .Repository }}:{{ .Tag }}' | grep ${REGISTRY_USERNAME}/${DOCKER_APP_NAME}:${DOCKER_TEST_TAG})" ]]; then
+    #     return
+    # fi
     LOG_RUN docker compose -f "${DOCKER_TEST_COMPSOE_FILE}" pull
 }
 start() {
