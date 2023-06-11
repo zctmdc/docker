@@ -54,10 +54,10 @@ check_status() {
         LOG_INFO "count_healthy: ${count_healthy} / count_all_runing: ${count_all_runing}"
 
         if [[ "${count_all_runing}" == "${count_healthy}" ]]; then
-            LOG_INFO "已通过:${DOCKER_BUILD_PLATFORMS}${platforms:+ - }${platforms} - ${count_healthy}/${count_all_runing} - ${sumTime}s"
+            LOG_INFO "已通过:${DOCKER_TEST_TAG:+ - }${DOCKER_BUILD_PLATFORMS:+ - }${TEST_PLATFORM} - ${count_healthy}/${count_all_runing} - ${sumTime}s"
             return 0
         else
-            LOG_WARNING "测试中:${DOCKER_BUILD_PLATFORMS}${platforms:+ - }${platforms} - ${count_healthy}/${count_all_runing} - ${sumTime}s\n"
+            LOG_WARNING "测试中:${DOCKER_TEST_TAG:+ - }${DOCKER_BUILD_PLATFORMS:+ - }${TEST_PLATFORM} - ${count_healthy}/${count_all_runing} - ${sumTime}s\n"
         fi
 
         if [[ ${sumTime} -gt ${UP_WAIT_TIME} ]]; then
@@ -82,7 +82,7 @@ main() {
     sleep 10
     check_status
     status_code=$?
-    LOG_INFO "测试结果 status_code: ${status_code}"
+    LOG_INFO "测试结果 status_code: ${status_code} - ${DOCKER_TEST_TAG:+ - }${TEST_PLATFORM}"
     stop
     LOG_INFO "测试结束"
     return ${status_code}
@@ -100,12 +100,12 @@ check_status)
     for test_platform in ${l_platforms[@]}; do
         TEST_PLATFORM="${test_platform}"
         export TEST_PLATFORM="${TEST_PLATFORM}"
-        LOG_WARNING "Test START platform: ${TEST_PLATFORM}"
+        LOG_WARNING "Test START ${DOCKER_TEST_TAG:+ - }platform: ${TEST_PLATFORM}"
         main
         if [[ "${status_code}" != "0" ]]; then
             main_code="${status_code}"
         fi
-        LOG_WARNING "Test DONE  platform: ${TEST_PLATFORM}"
+        LOG_WARNING "Test DONE  ${DOCKER_TEST_TAG:+ - }platform: ${TEST_PLATFORM}"
     done
     if [[ "${status_code}" != "0" ]]; then
         flag_test_pass="false"
