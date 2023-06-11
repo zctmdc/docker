@@ -2,18 +2,18 @@ ARG VERSION_B_S_rC=latest
 ARG DOCKER_APP_NAME=n2n
 ARG REGISTRY_USERNAME=zctmdc
 FROM ${REGISTRY_USERNAME}/${DOCKER_APP_NAME}:build-${VERSION_B_S_rC}  
-ARG DEBIAN_FRONTEND=noninteractive  
-RUN apt-get -qq update  
-RUN apt-get -qq -y install \
-  apt-utils tzdata \
-  && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
-  && echo "Asia/Shanghai" > /etc/timezone \
-  && dpkg-reconfigure -f noninteractive tzdata  
-ENV TZ Asia/Shanghai
-##################-----##################
+# ARG DEBIAN_FRONTEND=noninteractive
+# RUN apt-get -qq update  
+# RUN apt-get -qq -y install \
+#   apt-utils tzdata \
+#   && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
+#   && echo "Asia/Shanghai" > /etc/timezone \
+#   && dpkg-reconfigure -f noninteractive tzdata  
+# ENV TZ Asia/Shanghai
+# ##################-----##################
 
-##################-----##################
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* 
+# ##################-----##################
+# RUN apt-get clean && rm -rf /var/lib/apt/lists/* 
 
 ENV MODE ""
 

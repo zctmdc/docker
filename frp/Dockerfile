@@ -1,26 +1,30 @@
-FROM snowdreamtech/frpc as frpc_src
-FROM snowdreamtech/frps as frps_src
+ARG DOCKER_TAG=latest
+FROM snowdreamtech/frpc:${DOCKER_TAG} as frpc_src
+FROM snowdreamtech/frps:${DOCKER_TAG} as frps_src
 
 FROM alpine
-
 RUN apk add --update --no-cache tzdata curl bash \
   && cp /usr/share/zoneinfo/Asia/Shanghai /etc/localtime \
   && echo "Asia/Shanghai" > /etc/timezone \
   && apk del tzdata
 RUN mkdir -p /usr/share/zoneinfo/Asia/ \
   && ln -s /etc/localtime /usr/share/zoneinfo/Asia/Shanghai
+##################-----##################
+
+##################-----##################
+RUN rm -rf /var/cache/apk/*
 
 COPY --from=frpc_src  /usr/bin/frpc  /usr/bin/frpc
 COPY --from=frps_src  /usr/bin/frps  /usr/bin/frps
 
-RUN chmod +x /usr/bin/frpc /usr/bin/frps
+RUN chmod a+x /usr/bin/frpc /usr/bin/frps
 
 WORKDIR /opt/frp/
+RUN mkdir -p /opt/frp/bak/
+COPY ./config/*  /opt/frp/bak/
+RUN chmod a-w /opt/frp/bak/*
 
-RUN mkdir -p /opt/frp/conf/
-
-COPY ./config/*  /etc/frp/
-COPY ./scripts/*  /opt/frp/
+COPY ./scripts/* /opt/frp/
 
 RUN ln -s /usr/bin/frps /opt/frp/fprs \
   && ln -s /usr/bin/frpc /opt/frp/fprc
@@ -57,6 +61,7 @@ ENV SK=abcdefg
 ENV MODE=RUN_FRPC
 
 VOLUME /etc/frp/
+VOLUME /opt/frp/conf/
 
 ENTRYPOINT ["/opt/frp/docker-entrypoint.sh"]
 HEALTHCHECK --interval=30s --timeout=10s CMD curl -s --head "http://localhost:${ADMIN_PORT}/healthz" || exit 1

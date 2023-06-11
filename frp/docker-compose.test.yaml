@@ -1,53 +1,59 @@
 version: "3"
 volumes:
-  conf-frp:
-services:
-  frps-test:
-    # build:
-    #   context: .
-    #   dockerfile: Dockerfile
-    image: zctmdc/frp:Alpha
-    container_name: frps-test
-    hostname: frps-test
-    environment:
-      - SUBDOMAIN_HOST=frps-test
-    # command: [ "/usr/sbin/frps", "-c", "/etc/frp/frps.ini"]
-    command: [
-        "/bin/bash",
-        "-c",
-        "/usr/sbin/frps -c /etc/frp/frps.ini \
-        & sleep 5 \
-        && /opt/healthcheck/healthcheck.sh",
-      ]
-  frpc-test:
-    image: zctmdc/frp:Alpha
-    container_name: frpc-test
-    hostname: frpc-test
-    environment:
-      - SUBDOMAIN_HOST=frpc-test
-    command: [ "/usr/sbin/frpc", "-c", "/etc/frp/frpc.ini"]
-    depends_on:
-      - frps-test
-    links:
-      - frps-test
-      - frps-test:frpc-test.frps-test
+    conf-frp:
+networks:
+    frp:
+        driver: bridge
+        ipam:
+            driver: default
+            config:
+                - subnet: 10.37.83.0/24
 
-  frp-test:
-    image: zctmdc/frp:Alpha
-    container_name: frp-test
-    hostname: frp-test
-    environment:
-      - SUBDOMAIN_HOST=frps-test
-    # command: [
-    #     "/bin/bash",
-    #     "-c",
-    #     "/usr/sbin/frpc -c /etc/frp/frpc.ini \
-    #     & sleep 5 \
-    #     && /opt/healthcheck/healthcheck.sh",
-    #   ]
-    command: [ "/usr/sbin/frpc", "-c", "/etc/frp/frpc.ini"]
-    depends_on:
-      - frps-test
-    links:
-      - frps-test
-      - frps-test:frp-test.frps-test
+services:
+
+    frps-test:
+        # build:
+        #   context: .
+        #   dockerfile: Dockerfile
+        image: zctmdc/frp:alpha
+        container_name: frps-test
+        hostname: frp.example.org
+        environment:
+            - SUBDOMAIN_HOST=frp.example.org
+            - MODE=RUN_FRPS
+        networks:
+            frp:
+                ipv4_address: 10.37.83.10
+        extra_hosts:
+            - frp.example.org:10.37.83.10
+
+    frpc-test-s:
+        image: zctmdc/frp:alpha
+        container_name: frpc-test-s
+        hostname: frpc-test-s
+        environment:
+            - SUBDOMAIN_HOST=frp.example.org
+            - MODE=RUN_FRPC
+        depends_on:
+            - frps-test
+        networks:
+            frp:
+                ipv4_address: 10.37.83.20
+        extra_hosts:
+            - frp.example.org:10.37.83.10
+
+    frpc-test-c:
+        image: zctmdc/frp:Alpha
+        container_name: frpc-test-c
+        hostname: frp-test
+        environment:
+            - SUBDOMAIN_HOST=frps-test
+        command: [ "RUN_FRPC" ]
+        depends_on:
+            - frps-test
+            - frpc-test-s
+        networks:
+            frp:
+                ipv4_address: 10.37.83.21
+        extra_hosts:
+            - frp.example.org:10.37.83.10

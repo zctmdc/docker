@@ -14,30 +14,30 @@ frp 是一个专注于内网穿透的高性能的反向代理应用，支持 TCP
 
 - docker cli
 
-    ```bash
-    docker run -ti --rm --network host -e SUBDOMAIN_HOST=frp.example.org zctmdc/frp:Alpha RUN_FRPS
-    ```
+  ```bash
+  docker run -ti --rm --network host -e SUBDOMAIN_HOST=frp.example.org zctmdc/frp:Alpha RUN_FRPS
+  ```
 
 - docker-compose
 
-    ```yaml
-    frps-demo:
-        image: zctmdc/frp:alpha
-        container_name: frps-demo
-        restart: unless-stopped
-        environment:
-            - SUBDOMAIN_HOST=frp.example.org
-            - MODE=RUN_FRPS
-        network_mode: host
-        # networks:
-        #     net:
-        # ports:
-        #     - 7000:7000/tcp
-        #     - 7000:7000/udp
-        #     - 7001:7001/tcp
-        #     - 7001:7001/udp
-        #     - 7400:7400/tcp
-    ```
+  ```yaml
+  frps-demo:
+    image: zctmdc/frp:alpha
+    container_name: frps-demo
+    restart: unless-stopped
+    environment:
+      - SUBDOMAIN_HOST=frp.example.org
+      - MODE=RUN_FRPS
+    network_mode: host
+    # networks:
+    #     net:
+    # ports:
+    #     - 7000:7000/tcp
+    #     - 7000:7000/udp
+    #     - 7001:7001/tcp
+    #     - 7001:7001/udp
+    #     - 7400:7400/tcp
+  ```
 
 打开控制台
 在浏览器中输入 [http://localhost:7400](http://localhost:7400)
@@ -48,26 +48,27 @@ frp 是一个专注于内网穿透的高性能的反向代理应用，支持 TCP
 
 - docker cli
 
-    ```bash
-    docker run -ti --rm -e MODE=RUN_FRPC -e SUBDOMAIN_HOST=frp.example.org -p 7500:7400 zctmdc/frp:Alpha
-    ```
+  ```bash
+  docker run -ti --rm -e MODE=RUN_FRPC -e SUBDOMAIN_HOST=frp.example.org -p 7500:7400 zctmdc/frp:Alpha
+  ```
 
 - docker-compose
 
-    ```yaml
-    frpc-demo:
-        image: zctmdc/frp:alpha
-        container_name: frpc-demo
-        restart: unless-stopped
-        environment:
-            - SUBDOMAIN_HOST=frp.example.org
-            - MODE=RUN_FRPC
-        # network_mode: host
-        networks:
-            net:
-        ports:
-            - 7500:7400/tcp
-    ```
+  ```yaml
+  frpc-demo:
+    image: zctmdc/frp:alpha
+    container_name: frpc-demo
+    restart: unless-stopped
+    environment:
+      - SUBDOMAIN_HOST=frp.example.org
+      - MODE=RUN_FRPC
+      - ADMIN_PORT=7400
+    # network_mode: host
+    networks:
+      net:
+    ports:
+      - 7500:7400/tcp
+  ```
 
 在浏览器中输入 [http://localhost:7500](http://localhost:7500)
 或者访问 [http://frp.example.org:7400/static/#/proxies/http](http://frp.example.org:7500/static/#/proxies/http)
@@ -79,68 +80,107 @@ frp 是一个专注于内网穿透的高性能的反向代理应用，支持 TCP
 
 ### 本地配置文件
 
-默认配置文件位置为`/etc/frp/`, 挂载自己的配置**目录**，覆盖默认配置文件。
-
 - 推荐使用 [其他镜像](##其他镜像)
 
-```ini
-CONF_FRPS=/etc/frp/frps.ini
-CONF_FRPC=/etc/frp/frpc.ini
-```
+默认配置文件位置为`/opt/frp/bak/`, 挂载自己的配置**目录**，覆盖默认配置文件。
 
+- see: [docker-entrypoint.sh](https://github.com/zctmdc/docker/blob/alpha/frp/scripts/docker-entrypoint.sh#150)
 
 ```shell
-    -v /you/conf/path/:/etc/frp/
+    -v /you/conf/path/:/opt/frp/bak/
 ```
 
 ```yaml
-    volumes:
-        - /you/conf/path/:/etc/frp/
+volumes:
+  - /you/conf/path/:/opt/frp/bak/
 ```
 
-- 在容器 **启动** 时，将进行一次备份 **默认配置文件** `/etc/frp/`
-
-```ini
-CONF_FRPS_BAK=/opt/frp/conf/frps_bak.ini
-CONF_FRPC_BAK=/opt/frp/conf/frpc_bak.ini
-```
+- 在容器 **启动** 时，将进行一次还原 **默认配置文件** `/opt/frp/bak/` `/etc/frp/`
 
 以下情况除外
 
-- 从网页修改过配置文件 [通过frpc远程配置](###通过frpc远程配置)
+- 从网页修改过配置文件 [通过 frpc 远程配置](###通过frpc远程配置)
 
-  即：配置文件不存在 `Envs.SUBDOMAIN_HOST` `/etc/frp/`
+  即：配置文件不存在字符串 `Envs.SUBDOMAIN_HOST` `/etc/frp/`
 
-- 已附加配置文件
+```bash
+CONF_FRPS=/etc/frp/frps.ini
+CONF_FRPC=/etc/frp/frpc.ini
 
-  即：配置文件中存在 `###DOCER_CONF_ADD###`
+CONF_FRPS_BAK=/opt/frp/bak/frps.ini
+CONF_FRPC_BAK=/opt/frp/bak/frpc.ini
+
+CONF_FILE=$CONF_FRPC
+CONF_FILE_BAK=$CONF_FRPC_BAK
+
+if is_not_edit_pass_web && -f ${CONF_FILE}; then
+    # 还原配置文件
+    cp $CONF_FILE_BAK $CONF_FILE
+    chmod +w $CONF_FILE
+fi
+
+```
 
 ### 附加配置文件
 
-see: [docker-entrypoint.sh](https://github.com/zctmdc/docker/blob/alpha/frp/scripts/docker-entrypoint.sh#47)
+see: [docker-entrypoint.sh](https://github.com/zctmdc/docker/blob/alpha/frp/scripts/docker-entrypoint.sh#156)
+
+```shell
+    -v /you/conf/path/:/opt/frp/conf/
+```
+
+```yaml
+volumes:
+  - /you/conf/path/:/opt/frp/conf/
+```
 
 - 注意，检测到**附加配置文件**时，将会对 `/etc/frp/` 进行修改！
-- 在容器 **启动** 时，如果检测到 **附加配置文件** ，将进行一次备份 **附加配置文件** `/opt/frp/conf/`
-- 如果检测到 **附加配置文件** 和存在的备份不一致，备份的 **默认配置文件** 将会还原 `/etc/frp/` ，**附加配置文件** 覆盖上次备份 `/opt/frp/conf/`
-- 备份结束后， **附加配置文件** 会附加在 **默认配置文件尾部**
+- **附加配置文件** 会附加在 **默认配置文件尾部**
 
 以下情况除外
 
-- 从网页修改过配置文件 [通过frpc远程配置](###通过frpc远程配置)
+- 从网页修改过配置文件 [通过 frpc 远程配置](###通过frpc远程配置)
 
-  即：配置文件不存在 `Envs.SUBDOMAIN_HOST` `/etc/frp/`
+  即：配置文件不存在字符串 `Envs.SUBDOMAIN_HOST` `/etc/frp/`
 
-```ini
-CONF_FRPS_ADD=/opt/frp/conf/add/frps_add.ini
-CONF_FRPC_ADD=/opt/frp/conf/add/frpc_add.ini
-```
+```bash
+CONF_FRPS=/etc/frp/frps.ini
+CONF_FRPC=/etc/frp/frpc.ini
 
-```ini
-CONF_FRPS_ADD_BAK=/opt/frp/conf/frps_add_bak.ini
-CONF_FRPC_ADD_BAK=/opt/frp/conf/frpc_add_bak.ini
+CONF_FRPS_ADD=/opt/frp/conf/frps_add.ini
+CONF_FRPC_ADD=/opt/frp/conf/frpc_add.ini
+
+CONF_ADD_PATH=/opt/frp/conf/add/
+
+CONF_FILE=$CONF_FRPC
+CONF_FILE_ADD=$CONF_FRPC_ADD
+
+if is_not_edit_pass_web && -r ${CONF_FILE_ADD}; then
+    # 拼接配置文件
+    echo '' >>$CONF_FILE
+    echo "$FLAG_CONF_ADD" >>$CONF_FILE
+    echo '' >>$CONF_FILE
+    cat $CONF_FILE_ADD >>$CONF_FILE
+    echo '' >>$CONF_FILE
+fi
+if is_not_edit_pass_web && -r ${CONF_ADD_PATH}; then
+    for src_file in $(find "${CONF_ADD_PATH}" -name '*.ini'); do
+        if [ ! -r "$src_file" ]; then
+            continue
+        fi
+        # 拼接配置文件
+        echo '' >>$CONF_FILE
+        echo "$FLAG_CONF_ADD" >>$CONF_FILE
+        echo '' >>$CONF_FILE
+        cat "$src_file" >>$CONF_FILE
+        echo '' >>$CONF_FILE
+    done
+fi
 ```
 
 ### 在线配置
+
+通过在线修改重启后，你可以在 `/etc/frp` 找到你的备份，请及时清理
 
 #### Pass_FRPC
 
@@ -170,7 +210,7 @@ CONF_FRPC_ADD_BAK=/opt/frp/conf/frpc_add_bak.ini
 
 5. 同 [Pass_FRPC](####Pass_FRPC)
 
-### 通过frpc远程配置
+### 通过 frpc 远程配置
 
 1. 在服务端启动 `frps`，确保所有的客户端可以访问该主机。
 2. 在被访问端启动 `frpc` `remote frpc`
