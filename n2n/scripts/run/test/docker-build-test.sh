@@ -21,6 +21,7 @@ export DOCKER_TEST_COMPSOE_FILE="${DOCKER_TEST_COMPSOE_FILE}"
 flag_test_pass='true'
 
 TOTLA_WAIT_TIME=$((60 * 10))
+UP_WAIT_TIME=$((120))
 
 pull() {
     if [[ -n "$(docker images --format '{{ .Repository }}:{{ .Tag }}' | grep ${REGISTRY_USERNAME}/${DOCKER_APP_NAME}:${DOCKER_TEST_TAG})" ]]; then
@@ -59,9 +60,12 @@ check_status() {
             LOG_WARNING "测试中:${DOCKER_BUILD_PLATFORMS}${platforms:+ - }${platforms} - ${count_healthy}/${count_all_runing} - ${sumTime}s\n"
         fi
 
+        if [[ ${sumTime} -gt ${UP_WAIT_TIME} ]]; then
+            LOG_WARNING "再次启动"
+            start
+        fi
         if [[ ${sumTime} -gt ${TOTLA_WAIT_TIME} ]]; then
             LOG_ERROR "超时退出"
-            return 1
         fi
         sleep 10
     done
@@ -84,7 +88,6 @@ main() {
     return ${status_code}
 }
 
-case $1 in
 check_status)
     LOG_INFO "检查状态中"
     check_status
