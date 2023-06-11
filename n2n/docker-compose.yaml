@@ -9,7 +9,7 @@ networks:
 
 services:
   n2n_supernode:
-    image: zctmdc/n2n:sh-latest
+    image: zctmdc/n2n
     container_name: n2n_supernode
     restart: always
     privileged: true
@@ -27,7 +27,7 @@ services:
     depends_on:
       n2n_supernode:
         condition: service_healthy
-    image: zctmdc/n2n:sh-latest
+    image: zctmdc/n2n
     container_name: n2n_edge_dhcpd
     restart: always
     privileged: true
@@ -51,7 +51,7 @@ services:
     depends_on:
       n2n_edge_dhcpd:
         condition: service_healthy
-    image: zctmdc/n2n:sh-latest
+    image: zctmdc/n2n
     container_name: n2n_edge_dhcpc
     restart: always
     privileged: true
@@ -72,7 +72,7 @@ services:
     depends_on:
       n2n_supernode:
         condition: service_healthy
-    image: zctmdc/n2n:sh-latest
+    image: zctmdc/n2n
     container_name: n2n_edge_static
     restart: always
     privileged: true
@@ -94,7 +94,7 @@ services:
     depends_on:
       test-n2n_supernode:
         condition: service_healthy
-    image: zctmdc/n2n:sh-latest
+    image: zctmdc/n2n
     container_name: test_n2n_edge_conf
     restart: always
     privileged: true
@@ -111,7 +111,7 @@ services:
     depends_on:
       test-n2n_supernode:
         condition: service_healthy
-    image: zctmdc/n2n:sh-latest
+    image: zctmdc/n2n
     container_name: test_n2n_edge_manual_cmd
     restart: always
     privileged: true
@@ -136,7 +136,7 @@ services:
     depends_on:
       test-n2n_edge_dhcpd:
         condition: service_healthy
-    image: zctmdc/n2n:sh-latest
+    image: zctmdc/n2n
     container_name: test_n2n_manual_raw
     restart: always
     privileged: true

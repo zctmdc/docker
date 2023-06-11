@@ -191,7 +191,9 @@ jobs:
                       VERSION_SMALL=${{ inputs.VERSION_SMALL }}
                       VERSION_COMMIT=${{ inputs.VERSION_COMMIT }}
                       VERSION_B_S_rC=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
-                  #   STR_DOWNLOAD_URLS=${{ inputs.STR_DOWNLOAD_URLS }}
+                      #   STR_DOWNLOAD_URLS=${{ inputs.STR_DOWNLOAD_URLS }}
+                      REGISTRY_USERNAME=${{ secrets.REGISTRY_USERNAME }}
+                      DOCKER_APP_NAME=${{ inputs.DOCKER_APP_NAME }}
 
             - name: Test - ${{ inputs.DOCKER_PUSH }} - ${{ inputs.DOCKER_TEST_TAG }}
               id: n2n-test

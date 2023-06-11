@@ -85,6 +85,7 @@ jobs:
             FORCE_PUSH: ${{ inputs.FORCE_PUSH }}
             DOCKER_CONTEXT_PATH: "n2n"
             DOCKER_APP_NAME: "n2n"
+            DOCKER_TAG_PREFIX: "build-"
             DEFIN_LATEST_VERSION: ${{ inputs.DEFIN_LATEST_VERSION }}
             DOCKER_BUILD_DOCKERFILE_OK: ${{ inputs.DOCKER_BUILD_DOCKERFILE_OK }}
             DOCKER_BUILD_DOCKERFILE_FIX: ${{ inputs.DOCKER_BUILD_DOCKERFILE_FIX }}
@@ -112,7 +113,6 @@ jobs:
             FORCE_PUSH: ${{ inputs.FORCE_PUSH }}
             DOCKER_CONTEXT_PATH: "n2n"
             DOCKER_APP_NAME: "n2n"
-            DOCKER_TAG_PREFIX: "sh-"
             DOCKER_BUILD_DOCKERFILE: "Dockerfile.run"
             DEFIN_LATEST_VERSION: ${{ inputs.DEFIN_LATEST_VERSION }}
             DOCKER_BUILD_DOCKERFILE_OK: ${{ inputs.DOCKER_BUILD_DOCKERFILE_OK }}
