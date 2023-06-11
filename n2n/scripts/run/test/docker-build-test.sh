@@ -21,7 +21,7 @@ export DOCKER_TEST_COMPSOE_FILE="${DOCKER_TEST_COMPSOE_FILE}"
 flag_test_pass='true'
 
 TOTLA_WAIT_TIME=$((60 * 10))
-UP_WAIT_TIME=$((120))
+UP_WAIT_TIME=$((60 * 2))
 
 pull() {
     if [[ -n "$(docker images --format '{{ .Repository }}:{{ .Tag }}' | grep ${REGISTRY_USERNAME}/${DOCKER_APP_NAME}:${DOCKER_TEST_TAG})" ]]; then
@@ -88,6 +88,7 @@ main() {
     return ${status_code}
 }
 
+case $1 in
 check_status)
     LOG_INFO "检查状态中"
     check_status
@@ -101,12 +102,12 @@ check_status)
         export TEST_PLATFORM="${TEST_PLATFORM}"
         LOG_WARNING "Test START platform: ${TEST_PLATFORM}"
         main
-        if [[ "${status_code}" != "0" ]];then
+        if [[ "${status_code}" != "0" ]]; then
             main_code="${status_code}"
         fi
         LOG_WARNING "Test DONE  platform: ${TEST_PLATFORM}"
     done
-    if [[ "${status_code}" != "0" ]];then
+    if [[ "${status_code}" != "0" ]]; then
         flag_test_pass="false"
     fi
     ;;
