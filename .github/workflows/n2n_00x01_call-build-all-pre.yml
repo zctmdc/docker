@@ -47,13 +47,13 @@ on:
                 default: "v3"
                 required: true
                 type: string
-            DOCKER_BUILD_DOCKERFILE_FIX:
-                description: "docker_build_dockerfile_fix e.g. Dockerfile.build.ubuntu-18.04 | Dockerfile.build.alpine-3.8 | Dockerfile.build.debian-stable"
+            DOCKER_BUILD_DOCKERFILE_OK:
+                description: "docker_build_dockerfile_ok  e.g. Dockerfile.build.ubuntu-20.04 | Dockerfile.build.alpine-latest | Dockerfile.build.debian-stable"
                 default: "Dockerfile.build.debian-stable"
                 required: true
                 type: string
-            DOCKER_BUILD_DOCKERFILE_OK:
-                description: "docker_build_dockerfile_ok  e.g. Dockerfile.build.ubuntu-20.04 | Dockerfile.build.alpine-latest | Dockerfile.build.debian-stable"
+            DOCKER_BUILD_DOCKERFILE_FIX:
+                description: "docker_build_dockerfile_fix e.g. Dockerfile.build.ubuntu-18.04 | Dockerfile.build.alpine-3.8 | Dockerfile.build.debian-stable"
                 default: "Dockerfile.build.debian-stable"
                 required: true
                 type: string
@@ -64,7 +64,7 @@ env:
 
 jobs:
     docker-n2n-build-test:
-        name: docker-n2n-build-test - - 
+        name: docker-n2n-build-test - -
         permissions:
             contents: read
             packages: write
@@ -89,10 +89,10 @@ jobs:
             DEFIN_LATEST_VERSION: ${{ inputs.DEFIN_LATEST_VERSION }}
             DOCKER_BUILD_DOCKERFILE_OK: ${{ inputs.DOCKER_BUILD_DOCKERFILE_OK }}
             DOCKER_BUILD_DOCKERFILE_FIX: ${{ inputs.DOCKER_BUILD_DOCKERFILE_FIX }}
-            DOCKER_TEST_SCRIPTS_PATH: 'n2n/scripts/build'
+            DOCKER_TEST_SCRIPTS_PATH: "n2n/scripts/build"
 
     docker-n2n-sh-build-test:
-        name: docker-n2n-sh-build-test - sh - 
+        name: docker-n2n-sh-build-test - sh -
         needs: ["docker-n2n-build-test"]
         permissions:
             contents: read
@@ -117,4 +117,4 @@ jobs:
             DEFIN_LATEST_VERSION: ${{ inputs.DEFIN_LATEST_VERSION }}
             DOCKER_BUILD_DOCKERFILE_OK: ${{ inputs.DOCKER_BUILD_DOCKERFILE_OK }}
             DOCKER_BUILD_DOCKERFILE_FIX: ${{ inputs.DOCKER_BUILD_DOCKERFILE_FIX }}
-            DOCKER_TEST_SCRIPTS_PATH: 'n2n/scripts/run'
+            DOCKER_TEST_SCRIPTS_PATH: "n2n/scripts/run"

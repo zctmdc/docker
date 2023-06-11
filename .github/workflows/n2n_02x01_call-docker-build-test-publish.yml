@@ -77,17 +77,16 @@ on:
                 description: "docker_test_scripts_path    eg. n2n/script/build"
                 required: false
                 type: string
-            DOCKER_BUILD_DOCKERFILE_FIX:
-                description: "docker_build_dockerfile_fix e.g. Dockerfile.build.ubuntu-18.04 | Dockerfile.build.alpine-3.8 | Dockerfile.build.debian-stable"
-                default: "Dockerfile.build.debian-stable"
-                required: true
-                type: string
             DOCKER_BUILD_DOCKERFILE_OK:
                 description: "docker_build_dockerfile_ok  e.g. Dockerfile.build.ubuntu-20.04 | Dockerfile.build.alpine-latest | Dockerfile.build.debian-stable"
                 default: "Dockerfile.build.debian-stable"
                 required: true
                 type: string
-
+            DOCKER_BUILD_DOCKERFILE_FIX:
+                description: "docker_build_dockerfile_fix e.g. Dockerfile.build.ubuntu-18.04 | Dockerfile.build.alpine-3.8 | Dockerfile.build.debian-stable"
+                default: "Dockerfile.build.debian-stable"
+                required: true
+                type: string
 
         outputs:
             DOCKER_BUILD_DOCKERFILE:
@@ -224,7 +223,7 @@ jobs:
                   chmod +x test/*.sh
                   LOG_INFO "Test start: ${{ inputs.VERSION_B_S_rC }}"
                   FLAG_TEST_PASS="true"
-                  
+
                   REGISTRY='${{ env.REGISTRY }}'
                   REGISTRY_USERNAME='${{ secrets.REGISTRY_USERNAME }}'
                   DOCKER_APP_NAME='${{ inputs.DOCKER_APP_NAME }}'
@@ -235,7 +234,7 @@ jobs:
                   export DOCKER_APP_NAME="${DOCKER_APP_NAME}"
                   export DOCKER_TEST_TAG="${DOCKER_TEST_TAG}"
                   export DOCKER_BUILD_PLATFORMS="${DOCKER_BUILD_PLATFORMS}"
-                  
+
                   ####################################
                   source test/docker-build-test.sh
                   ####################################
