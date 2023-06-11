@@ -1,7 +1,7 @@
 ARG VERSION_B_S_rC=latest
 ARG DOCKER_APP_NAME=n2n
 ARG REGISTRY_USERNAME=zctmdc
-FROM ${REGISTRY_USERNAME}/${DOCKER_APP_NAME}:${VERSION_B_S_rC}  
+FROM ${REGISTRY_USERNAME}/${DOCKER_APP_NAME}:build-${VERSION_B_S_rC}  
 ARG DEBIAN_FRONTEND=noninteractive  
 RUN apt-get -qq update  
 RUN apt-get -qq -y install \
