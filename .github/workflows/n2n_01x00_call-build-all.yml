@@ -133,7 +133,7 @@ jobs:
             VERSION_B_S_rC: ${{ inputs.VERSION_B_S_rC }}
             STR_OS_ARCHS: ${{ inputs.STR_OS_ARCHS }}
             STR_DOWNLOAD_URLS: ${{ inputs.STR_DOWNLOAD_URLS }}
-            FORCE_PUSH: ${{ inputs.FORCE_PUSH == 'true' }}
+            FORCE_PUSH: ${{ inputs.FORCE_PUSH == true }}
             NEED_FIXLIB_VERSIONS_B_S_rC: ${{ inputs.NEED_FIXLIB_VERSIONS_B_S_rC }}
             DOCKER_BUILD_DOCKERFILE: ${{ inputs.DOCKER_BUILD_DOCKERFILE }}
             DEFIN_LATEST_VERSION: ${{ inputs.DEFIN_LATEST_VERSION }}
