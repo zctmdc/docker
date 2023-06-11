@@ -20,6 +20,7 @@ export DOCKER_BUILD_PLATFORMS="${DOCKER_BUILD_PLATFORMS}"
 export DOCKER_TEST_COMPSOE_FILE="${DOCKER_TEST_COMPSOE_FILE}"
 flag_test_pass='true'
 
+RESTART_WAIT_TIME=$((60 * 10))
 TOTLA_WAIT_TIME=$((60 * 10))
 UP_WAIT_TIME=$((60 * 2))
 
@@ -52,7 +53,13 @@ check_status() {
 
         LOG_INFO "### run_status:\n${run_status}"
         LOG_INFO "count_healthy: ${count_healthy} / count_all_runing: ${count_all_runing}"
-
+        
+        if [[ ${sumTime} -gt ${UP_WAIT_TIME} ]]; then
+            LOG_WARNING "再次启动"
+            start
+            sleep 10
+        fi
+        
         if [[ "${count_all_runing}" == "${count_healthy}" ]]; then
             LOG_INFO "已通过:${DOCKER_TEST_TAG:+ - }${DOCKER_BUILD_PLATFORMS:+ - }${TEST_PLATFORM} - ${count_healthy}/${count_all_runing} - ${sumTime}s"
             return 0
@@ -60,14 +67,20 @@ check_status() {
             LOG_WARNING "测试中:${DOCKER_TEST_TAG:+ - }${DOCKER_BUILD_PLATFORMS:+ - }${TEST_PLATFORM} - ${count_healthy}/${count_all_runing} - ${sumTime}s\n"
         fi
 
-        if [[ ${sumTime} -gt ${UP_WAIT_TIME} ]]; then
-            LOG_WARNING "再次启动"
-            start
-        fi
         if [[ ${sumTime} -gt ${TOTLA_WAIT_TIME} ]]; then
             LOG_ERROR "超时退出"
             return 1
         fi
+        for container_string in $(echo "${run_status}" | grep 'starting)' | awk '{print $4}'); do
+            LOG_ERROR "container_string: $container_string"
+            LOG_RUN docker restart $container_string
+            sleep 5
+        done
+        for container_string in $(echo "${run_status}" | grep 'unhealthy' | awk '{print $4}'); do
+            LOG_ERROR "container_string: $container_string"
+            LOG_RUN docker restart $container_string
+            sleep 5
+        done
         sleep 10
     done
 }
