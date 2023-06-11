@@ -66,6 +66,7 @@ check_status() {
         fi
         if [[ ${sumTime} -gt ${TOTLA_WAIT_TIME} ]]; then
             LOG_ERROR "超时退出"
+            return 1
         fi
         sleep 10
     done
