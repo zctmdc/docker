@@ -90,34 +90,30 @@ services:
       n2n:
 
 
-  test-n2n_edge_conf:
+  n2n_edge_conf:
     depends_on:
-      test-n2n_supernode:
+      n2n_supernode:
         condition: service_healthy
     image: zctmdc/n2n
-    container_name: test_n2n_edge_conf
+    container_name: n2n_edge_conf
     restart: always
     privileged: true
     # network_mode: host
     volumes:
       - ./test/:/n2n/conf/
-    links:
-      - test-n2n_supernode
     networks:
       n2n:
 
 
-  test-n2n_manual_cmd:
+  n2n_edge_manual_cmd:
     depends_on:
-      test-n2n_supernode:
+      n2n_supernode:
         condition: service_healthy
     image: zctmdc/n2n
-    container_name: test_n2n_edge_manual_cmd
+    container_name: n2n_edge_manual_cmd
     restart: always
     privileged: true
     # network_mode: host
-    links:
-      - test-n2n_supernode
     command:
       [
         "edge",
@@ -132,17 +128,15 @@ services:
       n2n:
 
 
-  test-n2n_manual_raw:
+  n2n_edge_manual_raw:
     depends_on:
-      test-n2n_edge_dhcpd:
+      n2n_edge_dhcpd:
         condition: service_healthy
     image: zctmdc/n2n
-    container_name: test_n2n_manual_raw
+    container_name: n2n_edge_manual_raw
     restart: always
     privileged: true
     # network_mode: host
-    links:
-      - test-n2n_supernode
     command:
       [
         "/bin/bash",

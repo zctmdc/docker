@@ -46,8 +46,6 @@ services:
       - EDGE_ENCRYPTION=-A2
     # volumes:
     #   - ./conf/dhcpd.conf:/etc/dhcp/dhcpd.conf:ro
-    links:
-      - test-n2n_supernode
     networks:
       n2n:
 
@@ -70,8 +68,6 @@ services:
       - EDGE_COMMUNITY=n2n_test
       - EDGE_KEY=test_n2n
       - EDGE_ENCRYPTION=-A2
-    links:
-      - test-n2n_supernode
     networks:
       n2n:
 
@@ -95,8 +91,6 @@ services:
       - EDGE_COMMUNITY=n2n_test
       - EDGE_KEY=test_n2n
       - EDGE_ENCRYPTION=-A2
-    links:
-      - test-n2n_supernode
     networks:
       n2n:
 
@@ -113,8 +107,6 @@ services:
     # network_mode: host
     volumes:
       - ./conf/:/n2n/conf/
-    links:
-      - test-n2n_supernode
     networks:
       n2n:
 
@@ -129,8 +121,6 @@ services:
     privileged: true
     platform: ${TEST_PLATFORM}
     # network_mode: host
-    links:
-      - test-n2n_supernode
     command:
       [
         "edge",
@@ -155,8 +145,6 @@ services:
     privileged: true
     platform: ${TEST_PLATFORM}
     # network_mode: host
-    links:
-      - test-n2n_supernode
     command:
       [
         "/bin/bash",

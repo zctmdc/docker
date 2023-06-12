@@ -24,17 +24,25 @@ RESTART_WAIT_TIME=$((60 * 3))
 TOTLA_WAIT_TIME=$((60 * 10))
 UP_WAIT_TIME=$((60 * 2))
 
-pull() {
+compose_pull() {
     # if [[ -n "$(docker images --format '{{ .Repository }}:{{ .Tag }}' | grep ${REGISTRY_USERNAME}/${DOCKER_APP_NAME}:${DOCKER_TEST_TAG})" ]]; then
     #     return
     # fi
     LOG_RUN docker compose -f "${DOCKER_TEST_COMPSOE_FILE}" pull
 }
-start() {
+compose_start() {
     LOG_RUN docker compose --project-directory "${DOCKER_TEST_PROJECT_DIRECTORY}" -f "${DOCKER_TEST_COMPSOE_FILE}" up -d
 }
-stop() {
-    LOG_RUN docker compose -f "${DOCKER_TEST_COMPSOE_FILE}" down
+compose_restart() {
+    service_name="$1"
+    if [ -z "${service_name}" ]; then
+        echo "service_name is empty" >&2
+        return 1
+    fi
+    LOG_RUN docker compose --project-directory "${DOCKER_TEST_PROJECT_DIRECTORY}" -f "${DOCKER_TEST_COMPSOE_FILE}" restart ${service_name}
+}
+compose_down() {
+    LOG_RUN docker compose --project-directory "${DOCKER_TEST_PROJECT_DIRECTORY}" -f "${DOCKER_TEST_COMPSOE_FILE}" down
 }
 check_status() {
     startTime=$(date +%Y%m%d-%H:%M:%S)
@@ -56,7 +64,7 @@ check_status() {
         
         if [[ ${sumTime} -gt ${UP_WAIT_TIME} ]]; then
             LOG_WARNING "再次启动"
-            start
+            compose_start
             sleep 10
         fi
         
@@ -73,13 +81,13 @@ check_status() {
         fi
         if [[ ${sumTime} -gt ${RESTART_WAIT_TIME} ]]; then
             sleep 10
-            for container_string in $(echo "${run_status}" | grep 'starting)' | awk '{print $4}'); do
-                LOG_WARNING "container_string: ${container_string}"
-                LOG_RUN docker restart ${container_string}
+            for service_name in $(echo "${run_status}" | grep 'starting)' | awk '{print $4}'); do
+                LOG_WARNING "compose_restart service_name: ${service_name}"
+                compose_restart ${container_string}
             done
-            for container_string in $(echo "${run_status}" | grep 'unhealthy' | awk '{print $4}'); do
-                LOG_WARNING "container_string: ${container_string}"
-                LOG_RUN docker restart $container_string
+            for service_name in $(echo "${run_status}" | grep 'unhealthy' | awk '{print $4}'); do
+                LOG_WARNING "compose_restart service_name: ${service_name}"
+                compose_restart ${container_string}
             done
             sleep 5
             RESTART_WAIT_TIME=$((${RESTART_WAIT_TIME} *2))
@@ -91,17 +99,17 @@ check_status() {
 
 main() {
     LOG_INFO "测试开始"
-    stop
-    pull
+    compose_down
+    compose_pull
     LOG_INFO "即将启动"
-    start >>/dev/null &
-    # start
+    compose_start >>/dev/null &
+    # compose_start
     LOG_INFO "测试中"
     sleep 10
     check_status
     status_code=$?
     LOG_INFO "测试结果 status_code: ${status_code} - ${DOCKER_TEST_TAG:+ - }${TEST_PLATFORM}"
-    stop
+    compose_down
     LOG_INFO "测试结束"
     return ${status_code}
 }
