@@ -83,11 +83,11 @@ check_status() {
             sleep 10
             for service_name in $(echo "${run_status}" | grep 'starting)' | awk '{print $4}'); do
                 LOG_WARNING "compose_restart service_name: ${service_name}"
-                compose_restart ${container_string}
+                compose_restart ${service_name}
             done
             for service_name in $(echo "${run_status}" | grep 'unhealthy' | awk '{print $4}'); do
                 LOG_WARNING "compose_restart service_name: ${service_name}"
-                compose_restart ${container_string}
+                compose_restart ${service_name}
             done
             sleep 5
             RESTART_WAIT_TIME=$((${RESTART_WAIT_TIME} *2))
