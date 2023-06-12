@@ -139,16 +139,16 @@ if [[ -n "$(/usr/local/sbin/edge -h 2>&1 | grep libcrypto.so.1.0.0)" ]]; then
             chmod og-rwx ~/.gnupg/
             gpg --no-default-keyring --keyring /usr/share/keyrings/9D6D8F6BC857C906-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 9D6D8F6BC857C906
             gpg --no-default-keyring --keyring /usr/share/keyrings/AA8E81B4331F7F50-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys AA8E81B4331F7F50
-            echo 'deb [signed-by=/usr/share/keyrings/9D6D8F6BC857C906-archive-keyring.gpg signed-by=/usr/share/keyrings/AA8E81B4331F7F50-archive-keyring.gpg] http://archive.debian.org/debian-security jessie/updates main' >/etc/apt/sources.list.d/debian8.list
+            echo 'deb [signed-by=/usr/share/keyrings/9D6D8F6BC857C906-archive-keyring.gpg signed-by=/usr/share/keyrings/AA8E81B4331F7F50-archive-keyring.gpg] http://archive.debian.org/debian-security jessie/updates main' >>/etc/apt/sources.list.d/debian8.list
         fi
         if is_ubuntu && ! is_ubuntu_18_04; then
             apt-get update && apt-get install -y gnupg2
             mkdir -p ~/.gnupg/
             chmod og-rwx ~/.gnupg/
             gpg --no-default-keyring --keyring /usr/share/keyrings/3B4FE6ACC0B21F32-archive-keyring.gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3B4FE6ACC0B21F32
-            echo 'deb http://security.ubuntu.com/ubuntu/ bionic-security main restricted' >/etc/apt/sources.list.d/ubuntu-18.04.list
-            echo 'deb http://security.ubuntu.com/ubuntu/ bionic-security universe' >/etc/apt/sources.list.d/ubuntu-18.04.list
-            echo 'deb [signed-by=/usr/share/keyrings/3B4FE6ACC0B21F32-archive-keyring.gpg] http://security.ubuntu.com/ubuntu/ bionic-security multiverse' >/etc/apt/sources.list.d/ubuntu-18.04.list
+            echo 'deb http://security.ubuntu.com/ubuntu/ bionic-security main restricted' >>/etc/apt/sources.list.d/ubuntu-18.04.list
+            echo 'deb http://security.ubuntu.com/ubuntu/ bionic-security universe' >>/etc/apt/sources.list.d/ubuntu-18.04.list
+            echo 'deb [signed-by=/usr/share/keyrings/3B4FE6ACC0B21F32-archive-keyring.gpg] http://security.ubuntu.com/ubuntu/ bionic-security multiverse' >>/etc/apt/sources.list.d/ubuntu-18.04.list
         fi
 
         ################################################################
@@ -185,12 +185,12 @@ if [[ -n "$(/usr/local/sbin/edge -h 2>&1 | grep libcrypto.so.1.1)" ]]; then
     LOG_WARNING 缺少 libssl1.1 , 正在修复
     if command_exists apt-get; then
         if is_debian_8; then
-            echo 'deb http://archive.debian.org/debian-security stretch/updates main' >/etc/apt/sources.list.d/debian9.list
+            echo 'deb http://archive.debian.org/debian-security stretch/updates main' >>/etc/apt/sources.list.d/debian9.list
         fi
         if is_ubuntu_18_04; then
-            echo 'deb http://security.ubuntu.com/ubuntu/ jammy-security main restricted' >/etc/apt/sources.list.d/ubuntu22.04.list
-            echo 'deb http://security.ubuntu.com/ubuntu/ jammy-security universe' >/etc/apt/sources.list.d/ubuntu22.04.list
-            echo 'deb http://security.ubuntu.com/ubuntu/ jammy-security multiverse' >/etc/apt/sources.list.d/ubuntu22.04.list
+            echo 'deb http://security.ubuntu.com/ubuntu/ jammy-security main restricted' >>/etc/apt/sources.list.d/ubuntu22.04.list
+            echo 'deb http://security.ubuntu.com/ubuntu/ jammy-security universe' >>/etc/apt/sources.list.d/ubuntu22.04.list
+            echo 'deb http://security.ubuntu.com/ubuntu/ jammy-security multiverse' >>/etc/apt/sources.list.d/ubuntu22.04.list
         fi
 
         ################################################################
