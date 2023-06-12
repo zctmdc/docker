@@ -65,6 +65,7 @@ check_status() {
         if [[ ${sumTime} -gt ${UP_WAIT_TIME} ]]; then
             LOG_WARNING "再次启动"
             compose_start
+            RESTART_WAIT_TIME=$((${sumTime} + 30))
             sleep 10
         fi
         
@@ -90,7 +91,7 @@ check_status() {
                 compose_restart ${service_name}
             done
             sleep 5
-            RESTART_WAIT_TIME=$((${RESTART_WAIT_TIME} *2))
+            RESTART_WAIT_TIME=$((${sumTime} + 120))
         fi
 
         sleep 10

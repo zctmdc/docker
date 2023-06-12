@@ -38,7 +38,7 @@ LOG_WARNING() {
 }
 
 LOG_RUN() {
-  echo -e $(caller) "\033[46;37m$@\033[0m"
+  echo -e $(caller) "\033[102;35m$@\033[0m"
   # eval $@
   eval "$@"
 }

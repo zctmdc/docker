@@ -44,7 +44,7 @@ LOG_WARNING() {
 }
 
 LOG_RUN() {
-  echo -e $(caller) "\033[46;37m[    RUN] $@ \033[0m"
+  echo -e $(caller) "\033[102;35m[    RUN] $@ \033[0m"
   eval "$@"
 }
 
