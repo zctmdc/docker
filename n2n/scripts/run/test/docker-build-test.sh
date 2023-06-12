@@ -20,7 +20,7 @@ export DOCKER_BUILD_PLATFORMS="${DOCKER_BUILD_PLATFORMS}"
 export DOCKER_TEST_COMPSOE_FILE="${DOCKER_TEST_COMPSOE_FILE}"
 flag_test_pass='true'
 
-RESTART_WAIT_TIME=$((60 * 10))
+RESTART_WAIT_TIME=$((60 * 3))
 TOTLA_WAIT_TIME=$((60 * 10))
 UP_WAIT_TIME=$((60 * 2))
 
@@ -71,16 +71,20 @@ check_status() {
             LOG_ERROR "超时退出"
             return 1
         fi
-        for container_string in $(echo "${run_status}" | grep 'starting)' | awk '{print $4}'); do
-            LOG_ERROR "container_string: $container_string"
-            LOG_RUN docker restart $container_string
+        if [[ ${sumTime} -gt ${RESTART_WAIT_TIME} ]]; then
+            sleep 10
+            for container_string in $(echo "${run_status}" | grep 'starting)' | awk '{print $4}'); do
+                LOG_WARNING "container_string: ${container_string}"
+                LOG_RUN docker restart ${container_string}
+            done
+            for container_string in $(echo "${run_status}" | grep 'unhealthy' | awk '{print $4}'); do
+                LOG_WARNING "container_string: ${container_string}"
+                LOG_RUN docker restart $container_string
+            done
             sleep 5
-        done
-        for container_string in $(echo "${run_status}" | grep 'unhealthy' | awk '{print $4}'); do
-            LOG_ERROR "container_string: $container_string"
-            LOG_RUN docker restart $container_string
-            sleep 5
-        done
+            RESTART_WAIT_TIME=$((${RESTART_WAIT_TIME} *2))
+        fi
+
         sleep 10
     done
 }
