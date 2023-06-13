@@ -20,9 +20,9 @@ export DOCKER_BUILD_PLATFORMS="${DOCKER_BUILD_PLATFORMS}"
 export DOCKER_TEST_COMPSOE_FILE="${DOCKER_TEST_COMPSOE_FILE}"
 flag_test_pass='true'
 
+UP_WAIT_TIME=$((60 * 2))
 RESTART_WAIT_TIME=$((60 * 3))
 TOTLA_WAIT_TIME=$((60 * 10))
-UP_WAIT_TIME=$((60 * 2))
 
 compose_pull() {
     # if [[ -n "$(docker images --format '{{ .Repository }}:{{ .Tag }}' | grep ${REGISTRY_USERNAME}/${DOCKER_APP_NAME}:${DOCKER_TEST_TAG})" ]]; then
@@ -65,7 +65,7 @@ check_status() {
         if [[ ${sumTime} -gt ${UP_WAIT_TIME} ]]; then
             LOG_WARNING "再次启动"
             compose_start
-            RESTART_WAIT_TIME=$((${sumTime} + 30))
+            UP_WAIT_TIME=$((${sumTime} + 30))
             sleep 10
         fi
         
@@ -81,7 +81,6 @@ check_status() {
             return 1
         fi
         if [[ ${sumTime} -gt ${RESTART_WAIT_TIME} ]]; then
-            sleep 10
             for service_name in $(echo "${run_status}" | grep 'starting)' | awk '{print $4}'); do
                 LOG_WARNING "compose_restart service_name: ${service_name}"
                 compose_restart ${service_name}
@@ -90,8 +89,8 @@ check_status() {
                 LOG_WARNING "compose_restart service_name: ${service_name}"
                 compose_restart ${service_name}
             done
-            sleep 5
             RESTART_WAIT_TIME=$((${sumTime} + 120))
+            sleep 10
         fi
 
         sleep 10
