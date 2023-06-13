@@ -81,15 +81,35 @@ check_status() {
             return 1
         fi
         if [[ ${sumTime} -gt ${RESTART_WAIT_TIME} ]]; then
-            for service_name in $(echo "${run_status}" | grep 'starting)' | awk '{print $4}'); do
+            starting_container_names=$(echo "${run_status}" | grep 'starting)' | awk '{print $1}');
+            starting_service_names=$(echo "${run_status}" | grep 'starting)' | awk '{print $4}');
+
+            unhealthy_container_names=$(echo "${run_status}" | grep 'unhealthy)' | awk '{print $1}');
+            unhealthy_service_names=$(echo "${run_status}" | grep 'unhealthy)' | awk '{print $4}');
+
+            # echo $starting_container_names | while read container_name; do
+            #     LOG_WARNING "docker restart container_name: ${container_name}"
+            #     docker restart ${container_name}
+            # done
+
+            # echo $unhealthy_container_names | while read container_name; do
+            #     LOG_WARNING "docker restart container_name: ${container_name}"
+            #     docker restart ${container_name}
+            # done
+
+
+            echo $starting_service_names | while read service_name; do
                 LOG_WARNING "compose_restart service_name: ${service_name}"
                 compose_restart ${service_name}
             done
-            for service_name in $(echo "${run_status}" | grep 'unhealthy' | awk '{print $4}'); do
+
+            echo $unhealthy_service_names | while read service_name; do
                 LOG_WARNING "compose_restart service_name: ${service_name}"
                 compose_restart ${service_name}
             done
-            RESTART_WAIT_TIME=$((${sumTime} + 120))
+            
+            RESTART_WAIT_TIME=$((${sumTime} + 60))
+
             sleep 10
         fi
 
