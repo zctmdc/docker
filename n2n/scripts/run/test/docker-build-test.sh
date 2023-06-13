@@ -108,7 +108,7 @@ check_status() {
                 compose_restart ${service_name}
             done
             
-            RESTART_WAIT_TIME=$((${sumTime} + 60))
+            RESTART_WAIT_TIME=$((${sumTime} + 90))
 
             sleep 10
         fi
