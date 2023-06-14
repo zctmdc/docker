@@ -57,7 +57,11 @@ on:
                 default: "Dockerfile.build.debian-stable"
                 required: true
                 type: string
-
+            DOCKER_BUILD_WHITH_OUT_CACHE:
+                default: false
+                description: "docker_build_whith_out_cache"
+                required: true
+                type: boolean
 env:
     DOCKER_CONTEXT_PATH: n2n
     DOCKER_APP_NAME: n2n
@@ -90,6 +94,7 @@ jobs:
             DOCKER_BUILD_DOCKERFILE_OK: ${{ inputs.DOCKER_BUILD_DOCKERFILE_OK }}
             DOCKER_BUILD_DOCKERFILE_FIX: ${{ inputs.DOCKER_BUILD_DOCKERFILE_FIX }}
             DOCKER_TEST_SCRIPTS_PATH: "n2n/scripts/build"
+            DOCKER_BUILD_WHITH_OUT_CACHE: ${{ inputs.DOCKER_BUILD_WHITH_OUT_CACHE }}
 
     docker-n2n-sh-build-test:
         name: docker-n2n-sh-build-test - sh -
@@ -118,3 +123,4 @@ jobs:
             DOCKER_BUILD_DOCKERFILE_OK: ${{ inputs.DOCKER_BUILD_DOCKERFILE_OK }}
             DOCKER_BUILD_DOCKERFILE_FIX: ${{ inputs.DOCKER_BUILD_DOCKERFILE_FIX }}
             DOCKER_TEST_SCRIPTS_PATH: "n2n/scripts/run"
+            DOCKER_BUILD_WHITH_OUT_CACHE: ${{ inputs.DOCKER_BUILD_WHITH_OUT_CACHE }}

@@ -28,7 +28,11 @@ on:
                 default: "Dockerfile.build.debian-stable"
                 required: true
                 type: string
-
+            DOCKER_BUILD_WHITH_OUT_CACHE:
+                default: true
+                description: "docker_build_whith_out_cache"
+                required: false
+                type: boolean
 jobs:
     scan-all:
         runs-on: ubuntu-latest
@@ -88,3 +92,4 @@ jobs:
             DEFIN_LATEST_VERSION: ${{ inputs.DEFIN_LATEST_VERSION }}
             DOCKER_BUILD_DOCKERFILE_OK: ${{ inputs.DOCKER_BUILD_DOCKERFILE_OK }}
             DOCKER_BUILD_DOCKERFILE_FIX: ${{ inputs.DOCKER_BUILD_DOCKERFILE_FIX }}
+            DOCKER_BUILD_WHITH_OUT_CACHE: ${{ inputs.DOCKER_BUILD_WHITH_OUT_CACHE }}
