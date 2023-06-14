@@ -67,8 +67,8 @@ env:
     DOCKER_APP_NAME: n2n
 
 jobs:
-    docker-n2n-build-test:
-        name: docker-n2n-build-test - -
+    TAG-BUILD-docker-n2n-build-test:
+        name: TAG-BUILD-docker-n2n-build-test
         permissions:
             contents: read
             packages: write
@@ -96,9 +96,9 @@ jobs:
             DOCKER_TEST_SCRIPTS_PATH: "n2n/scripts/build"
             DOCKER_BUILD_WHITH_OUT_CACHE: ${{ inputs.DOCKER_BUILD_WHITH_OUT_CACHE }}
 
-    docker-n2n-sh-build-test:
-        name: docker-n2n-sh-build-test - sh -
-        needs: ["docker-n2n-build-test"]
+    TAG-RUN-docker-n2n-build-test:
+        name: TAG-RUN-docker-n2n-build-test
+        needs: ["TAG-BUILD-docker-n2n-build-test"]
         permissions:
             contents: read
             packages: write
