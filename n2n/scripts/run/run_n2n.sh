@@ -77,6 +77,9 @@ EOF
 run_dhcpd() {
   init_dhcpd_conf
   LOG_INFO 'DHCPD 服务启动中'
+  if [ -f '/var/run/dhcpd.pid' ]; then
+    rm -f /var/run/dhcpd.pid
+  fi
   if [ -f "/etc/dhcp/dhcpd.conf" ]; then
     dhcpd -f -d "${EDGE_TUN}" &
   elif [ -f "/etc/dhcp/udhcpd.conf" ]; then
