@@ -87,6 +87,12 @@ on:
                 description: "docker_test_scripts_path    eg. n2n/script/build"
                 required: false
                 type: string
+            DOCKER_BUILD_WHITH_OUT_CACHE:
+                default: false
+                description: "docker_build_whith_out_cache"
+                required: true
+                type: boolean
+
 jobs:
     init-docker-tag:
         name: init-docker-tag - ${{ inputs.DOCKER_TAG_PREFIX }} - ${{ inputs.DOCKER_TAG_SUFFIX }}
