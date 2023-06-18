@@ -7,7 +7,7 @@ source init_logger.sh
 REGISTRY=${REGISTRY:-docker.io}
 REGISTRY_USERNAME=${REGISTRY_USERNAME:-zctmdc}
 DOCKER_APP_NAME=${DOCKER_APP_NAME:-n2n}
-DOCKER_TEST_TAG=${DOCKER_TEST_TAG:-zctmdc}
+DOCKER_TEST_TAG=${DOCKER_TEST_TAG:-latest}
 DOCKER_BUILD_PLATFORMS=${DOCKER_BUILD_PLATFORMS:-linux/amd64}
 DOCKER_TEST_COMPSOE_FILE=${DOCKER_TEST_COMPSOE_FILE:-test/docker-compose.test.yaml}
 DOCKER_TEST_PROJECT_DIRECTORY=${DOCKER_TEST_PROJECT_DIRECTORY:-"${DOCKER_TEST_COMPSOE_FILE%/*}/"}
@@ -70,10 +70,10 @@ check_status() {
         fi
 
         if [[ "${count_all_runing}" == "${count_healthy}" ]]; then
-            LOG_INFO "已通过:${DOCKER_TEST_TAG:+ - }${DOCKER_BUILD_PLATFORMS:+ - }${TEST_PLATFORM} - ${count_healthy}/${count_all_runing} - ${sumTime}s"
+            LOG_INFO "已通过:${DOCKER_TEST_TAG:+ ${DOCKER_TEST_TAG} - }${DOCKER_BUILD_PLATFORMS:+ ${DOCKER_BUILD_PLATFORMS} - }${TEST_PLATFORM} - ${count_healthy}/${count_all_runing} - ${sumTime}s"
             return 0
         else
-            LOG_WARNING "测试中:${DOCKER_TEST_TAG:+ - }${DOCKER_BUILD_PLATFORMS:+ - }${TEST_PLATFORM} - ${count_healthy}/${count_all_runing} - ${sumTime}s\n"
+            LOG_WARNING "测试中:${DOCKER_TEST_TAG:+ ${DOCKER_TEST_TAG} - }${DOCKER_BUILD_PLATFORMS:+ ${DOCKER_BUILD_PLATFORMS} - }${TEST_PLATFORM} - ${count_healthy}/${count_all_runing} - ${sumTime}s\n"
         fi
 
         if [[ ${sumTime} -gt ${TOTLA_WAIT_TIME} ]]; then

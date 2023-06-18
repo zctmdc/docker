@@ -66,6 +66,11 @@ jobs:
                   force_push=${{ inputs.FORCE_PUSH }}
                   LOG_INFO  FORCE_PUSH: ${force_push}
                   echo "FORCE_PUSH=${force_push}" >> $GITHUB_OUTPUT
+                  
+                  echo "DOCKER_BUILD_WHITH_OUT_CACHE          : ${{ inputs.DOCKER_BUILD_WHITH_OUT_CACHE }}"
+                  echo "DOCKER_BUILD_WHITH_OUT_CACHE == true  : ${{ inputs.DOCKER_BUILD_WHITH_OUT_CACHE == true }}"
+                  echo "DOCKER_BUILD_WHITH_OUT_CACHE == 'true': ${{ inputs.DOCKER_BUILD_WHITH_OUT_CACHE == 'true' }}"
+
 
     build-all:
         name: build-all-${{ matrix.version_b_s_rc }}

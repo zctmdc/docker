@@ -231,6 +231,10 @@ jobs:
                   LOG_INFO 'BUILD_PUSH: ${{ needs.check-pushed.outputs.BUILD_PUSH }}'
                   LOG_INFO "NEED_FIX: ${{ needs.check-init-version.outputs.NEED_FIX }}"
 
+                  LOG_INFO "DOCKER_BUILD_WHITH_OUT_CACHE          : ${{ inputs.DOCKER_BUILD_WHITH_OUT_CACHE }}"
+                  LOG_INFO "DOCKER_BUILD_WHITH_OUT_CACHE == true  : ${{ inputs.DOCKER_BUILD_WHITH_OUT_CACHE == true }}"
+                  LOG_INFO "DOCKER_BUILD_WHITH_OUT_CACHE == 'true': ${{ inputs.DOCKER_BUILD_WHITH_OUT_CACHE == 'true' }}"
+                  
     docker-n2n-build-test:
         name: docker-n2n-build-test - ${{ inputs.DOCKER_TAG_PREFIX }} - false - ${{ inputs.DOCKER_TAG_SUFFIX }}
         if: ${{ false }}
