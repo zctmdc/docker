@@ -28,7 +28,7 @@ compose_pull() {
     # if [[ -n "$(docker images --format '{{ .Repository }}:{{ .Tag }}' | grep ${REGISTRY_USERNAME}/${DOCKER_APP_NAME}:${DOCKER_TEST_TAG})" ]]; then
     #     return
     # fi
-    LOG_RUN docker compose -f "${DOCKER_TEST_COMPSOE_FILE}" pull
+    LOG_RUN docker compose --project-directory "${DOCKER_TEST_PROJECT_DIRECTORY}" -f "${DOCKER_TEST_COMPSOE_FILE}" pull
 }
 compose_start() {
     LOG_RUN docker compose --project-directory "${DOCKER_TEST_PROJECT_DIRECTORY}" -f "${DOCKER_TEST_COMPSOE_FILE}" up -d
@@ -70,10 +70,10 @@ check_status() {
         fi
 
         if [[ "${count_all_runing}" == "${count_healthy}" ]]; then
-            LOG_INFO "已通过:${DOCKER_TEST_TAG:+ ${DOCKER_TEST_TAG} - }${DOCKER_BUILD_PLATFORMS:+ ${DOCKER_BUILD_PLATFORMS} - }${TEST_PLATFORM} - ${count_healthy}/${count_all_runing} - ${sumTime}s"
+            LOG_INFO "已通过:${DOCKER_TEST_TAG:+ ${DOCKER_TEST_TAG} - }${TEST_PLATFORM} - ${count_healthy}/${count_all_runing} - ${sumTime}s${DOCKER_BUILD_PLATFORMS:+ ${DOCKER_BUILD_PLATFORMS} - }\n"
             return 0
         else
-            LOG_WARNING "测试中:${DOCKER_TEST_TAG:+ ${DOCKER_TEST_TAG} - }${DOCKER_BUILD_PLATFORMS:+ ${DOCKER_BUILD_PLATFORMS} - }${TEST_PLATFORM} - ${count_healthy}/${count_all_runing} - ${sumTime}s\n"
+            LOG_WARNING "测试中:${DOCKER_TEST_TAG:+ ${DOCKER_TEST_TAG} - }${TEST_PLATFORM} - ${count_healthy}/${count_all_runing} - ${sumTime}s${DOCKER_BUILD_PLATFORMS:+ ${DOCKER_BUILD_PLATFORMS} - }\n"
         fi
 
         if [[ ${sumTime} -gt ${TOTLA_WAIT_TIME} ]]; then
@@ -130,8 +130,8 @@ check_status() {
 
 main() {
     LOG_INFO "测试开始"
-    compose_down
     compose_pull
+    compose_down
     LOG_INFO "即将启动"
     compose_start >>/dev/null &
     # compose_start

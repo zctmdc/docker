@@ -191,7 +191,7 @@ jobs:
                   labels: ${{ steps.meta.outputs.labels }}
                   push: ${{ inputs.DOCKER_PUSH == true }}
                   load: ${{ inputs.DOCKER_PUSH != true }}
-                  no-cache: ${{  inputs.DOCKER_BUILD_WHITH_OUT_CACHE }}
+                  no-cache: ${{  inputs.DOCKER_BUILD_WHITH_OUT_CACHE == true }}
                   cache-from: type=registry,ref=${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ inputs.DOCKER_APP_NAME }}:${{ inputs.DOCKER_BUILD_CACHE_TAG }}
                   cache-to: type=registry,ref=${{ env.REGISTRY }}/${{ secrets.REGISTRY_USERNAME }}/${{ inputs.DOCKER_APP_NAME }}:${{ inputs.DOCKER_BUILD_CACHE_TAG }},mode=max
                   build-args: |
@@ -199,7 +199,7 @@ jobs:
                       VERSION_SMALL=${{ inputs.VERSION_SMALL }}
                       VERSION_COMMIT=${{ inputs.VERSION_COMMIT }}
                       VERSION_B_S_rC=${{ fromJSON(steps.meta.outputs.json).labels['org.opencontainers.image.version'] }}
-                      #   STR_DOWNLOAD_URLS=${{ inputs.STR_DOWNLOAD_URLS }}
+                      STR_DOWNLOAD_URLS=${{ inputs.STR_DOWNLOAD_URLS }}
                       REGISTRY_USERNAME=${{ secrets.REGISTRY_USERNAME }}
                       DOCKER_APP_NAME=${{ inputs.DOCKER_APP_NAME }}
 
