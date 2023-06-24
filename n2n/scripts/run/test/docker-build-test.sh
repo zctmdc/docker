@@ -44,6 +44,9 @@ compose_restart() {
 compose_down() {
     LOG_RUN docker compose --project-directory "${DOCKER_TEST_PROJECT_DIRECTORY}" -f "${DOCKER_TEST_COMPSOE_FILE}" down
 }
+docker_image_rm() {
+    LOG_RUN docker image rm ${REGISTRY}/${REGISTRY_USERNAME}/${DOCKER_APP_NAME}:${DOCKER_TEST_TAG}
+}
 check_status() {
     startTime=$(date +%Y%m%d-%H:%M:%S)
     startTime_s=$(date +%s)
@@ -141,6 +144,7 @@ main() {
     status_code=$?
     LOG_INFO "测试结果 status_code: ${status_code} - ${DOCKER_TEST_TAG:+ - }${TEST_PLATFORM}"
     compose_down
+    docker_image_rm
     LOG_INFO "测试结束"
     return ${status_code}
 }
