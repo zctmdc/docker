@@ -65,12 +65,12 @@ check_status() {
         LOG_INFO "### run_status:\n${run_status}"
         LOG_INFO "count_healthy: ${count_healthy} / count_all_runing: ${count_all_runing}"
 
-        if [[ ${sumTime} -gt ${UP_WAIT_TIME} ]]; then
-            LOG_WARNING "再次启动"
-            compose_start
-            UP_WAIT_TIME=$((${sumTime} + 30))
-            sleep 10
-        fi
+        # if [[ ${sumTime} -gt ${UP_WAIT_TIME} ]]; then
+        #     LOG_WARNING "再次启动"
+        #     compose_start
+        #     UP_WAIT_TIME=$((${sumTime} + 30))
+        #     sleep 10
+        # fi
 
         if [[ "${count_all_runing}" == "${count_healthy}" ]]; then
             LOG_INFO "已通过:${DOCKER_TEST_TAG:+ ${DOCKER_TEST_TAG} - }${TEST_PLATFORM} - ${count_healthy}/${count_all_runing} - ${sumTime}s${DOCKER_BUILD_PLATFORMS:+ ${DOCKER_BUILD_PLATFORMS} - }\n"
