@@ -106,20 +106,24 @@ check_status() {
             #     docker restart ${unhealthy_container_names}
             # done
 
-            echo $starting_service_names | while read service_name; do
-                if [ -z "$starting_service_names" ]; then
+            # echo $starting_service_names | while read service_name; do
+            for service_name in $starting_service_names;
+            do
+                if [ -z "$service_name" ]; then
                     continue
                 fi
-                LOG_WARNING "compose_restart starting_service_names: ${starting_service_names}"
-                compose_restart ${starting_service_names}
+                LOG_WARNING "compose_restart starting_service_names: ${service_name}"
+                compose_restart ${service_name}
             done
 
-            echo $unhealthy_service_names | while read service_name; do
-                if [ -z "$unhealthy_service_names" ]; then
+            # echo $unhealthy_service_names | while read service_name; do
+            for service_name in $unhealthy_service_names;
+            do
+                if [ -z "$service_name" ]; then
                     continue
                 fi
-                LOG_WARNING "compose_restart unhealthy_service_names: ${unhealthy_service_names}"
-                compose_restart ${unhealthy_service_names}
+                LOG_WARNING "compose_restart unhealthy_service_names: ${service_name}"
+                compose_restart ${service_name}
             done
 
             RESTART_WAIT_TIME=$((${sumTime} + 90))
