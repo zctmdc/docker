@@ -106,8 +106,8 @@ check_status() {
             #     docker restart ${unhealthy_container_names}
             # done
 
-            # echo $starting_service_names | while read service_name; do
-            for service_name in $starting_service_names;
+            # for service_name in $starting_service_names;
+            echo "$starting_service_names" | while read service_name; 
             do
                 if [ -z "$service_name" ]; then
                     continue
@@ -116,8 +116,8 @@ check_status() {
                 compose_restart ${service_name}
             done
 
-            # echo $unhealthy_service_names | while read service_name; do
-            for service_name in $unhealthy_service_names;
+            # for service_name in $unhealthy_service_names;
+            echo $unhealthy_service_names | while read service_name; 
             do
                 if [ -z "$service_name" ]; then
                     continue
