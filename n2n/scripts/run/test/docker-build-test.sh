@@ -1,7 +1,5 @@
 #!/bin/bash
 
-# set -x
-
 source init_logger.sh
 
 REGISTRY=${REGISTRY:-docker.io}
@@ -74,6 +72,7 @@ check_status() {
 
         if [[ "${count_all_runing}" == "${count_healthy}" ]]; then
             LOG_INFO "已通过:${DOCKER_TEST_TAG:+ ${DOCKER_TEST_TAG} - }${TEST_PLATFORM} - ${count_healthy}/${count_all_runing} - ${sumTime}s${DOCKER_BUILD_PLATFORMS:+ ${DOCKER_BUILD_PLATFORMS} - }\n"
+            flag_test_pass=true
             return 0
         else
             LOG_WARNING "测试中:${DOCKER_TEST_TAG:+ ${DOCKER_TEST_TAG} - }${TEST_PLATFORM} - ${count_healthy}/${count_all_runing} - ${sumTime}s${DOCKER_BUILD_PLATFORMS:+ ${DOCKER_BUILD_PLATFORMS} - }\n"
@@ -81,7 +80,8 @@ check_status() {
 
         if [[ ${sumTime} -gt ${TOTLA_WAIT_TIME} ]]; then
             LOG_ERROR "超时退出"
-            return 1
+            flag_test_pass=false
+            return 0
         fi
         if [[ ${sumTime} -gt ${RESTART_WAIT_TIME} ]]; then
             starting_container_names=$(echo "${run_status}" | grep 'starting)' | awk '{print $1}')
@@ -145,12 +145,11 @@ main() {
     LOG_INFO "测试中"
     sleep 10
     check_status
-    status_code=$?
-    LOG_INFO "测试结果 status_code: ${status_code} - ${DOCKER_TEST_TAG:+ - }${TEST_PLATFORM}"
+    LOG_INFO "测试结果 flag_test_pass: ${flag_test_pass} - ${DOCKER_TEST_TAG:+ - }${TEST_PLATFORM}"
     compose_down
     docker_image_rm
     LOG_INFO "测试结束"
-    return ${status_code}
+    return 0
 }
 
 case $1 in
@@ -167,14 +166,11 @@ check_status)
         export TEST_PLATFORM="${TEST_PLATFORM}"
         LOG_WARNING "Test START ${DOCKER_TEST_TAG:+ - }platform: ${TEST_PLATFORM}"
         main
-        if [[ "${status_code}" != "0" ]]; then
-            main_code="${status_code}"
+        if [[ "${flag_test_pass,,}" != "true" ]]; then
+            return 0
         fi
         LOG_WARNING "Test DONE  ${DOCKER_TEST_TAG:+ - }platform: ${TEST_PLATFORM}"
     done
-    if [[ "${status_code}" != "0" ]]; then
-        flag_test_pass="false"
-    fi
     ;;
 esac
 
