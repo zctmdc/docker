@@ -33,6 +33,14 @@ n2n 尽可能在 edge 节点之间建立直接的 P2P 连接;如果不可能（�
 
 ![连接原理][连接原理]
 
+### 推荐标签
+
+所有的通过脚本测试：[<docker-compose.test.yaml>](https://github.com/zctmdc/docker/blob/alpha/n2n/docker-compose.test.yaml) , [<compose-test.sh>](https://github.com/zctmdc/docker/blob/alpha/n2n/scripts/compose-test.sh) , [<docker-build-test.sh>](https://github.com/zctmdc/docker/blob/alpha/n2n/scripts/build/test/docker-build-test.sh)
+
+如果对应版本TAG上没有 `sha256-xxx` 签名，请尽量减少使用；因为这个版本测试 *10 min* 未通过。
+
+![签名][签名]
+
 ## 快速入门
 
 ### 代码换行
@@ -238,8 +246,6 @@ docker compose down
 
 ## 更多帮助
 
-所有的通过此文件测试：[<docker-compose.test.yaml>](https://github.com/zctmdc/docker/blob/alpha/n2n/docker-compose.test.yaml) , [<compose-test.sh>](https://github.com/zctmdc/docker/blob/alpha/n2n/scripts/compose-test.sh)
-
 更多帮助请参考 [好运博客][好运博客] 中 [N2N 新手向导及最新信息][n2n 新手向导及最新信息] , [N2N 支持参数版本一览表][n2n_args]
 
 中文说明参考: [附加参数](https://bugxia.com/?s=附加参数) , [点对网](https://bugxia.com/?s=点对网）)
@@ -261,6 +267,7 @@ docker compose down
 [n2n中心节点]: http://supernode.ml/ "N2N中心节点"
 [组网示意]: ./img/n2n_network.png "组网示意"
 [连接原理]: ./img/n2n_com.png "连接原理"
+[签名]: ./img/docker-hub-cosign.png "签名"
 [zctmdc—docker]: https://hub.docker.com/u/zctmdc "我的docker主页"
 [zctmdc—github]: https://github.com/zctmdc/docker.git "我github的docker项目页"
 [overview of docker-compose cli]: https://docs.docker.com/compose/reference/overview/ "docker-compose CLI概述"
