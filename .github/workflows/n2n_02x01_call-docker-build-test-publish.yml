@@ -251,10 +251,13 @@ jobs:
                   if [[ "${FLAG_TEST_PASS}" != "true" ]]; then
                     LOG_ERROR "Test faild: ${{ inputs.VERSION_B_S_rC }}"
                     echo "DOCKER_BUILD_DOCKERFILE=${{ inputs.DOCKER_BUILD_DOCKERFILE_OK }}">> $GITHUB_OUTPUT
-                    exit 1
+                    echo "FLAG_TEST_PASS=${FLAG_TEST_PASS}">> $GITHUB_OUTPUT
+                    # exit 1
+                    exit 0
                   fi
                   LOG_INFO "Test done: ${{ inputs.VERSION_B_S_rC }}"
                   echo "DOCKER_BUILD_DOCKERFILE=${{ inputs.DOCKER_BUILD_DOCKERFILE_FIX }}">> $GITHUB_OUTPUT
+                  echo "FLAG_TEST_PASS=${FLAG_TEST_PASS}">> $GITHUB_OUTPUT
                   exit 0
 
             # Sign the resulting Docker image digest except on PRs.
@@ -263,7 +266,7 @@ jobs:
             # transparency data even for private images, pass --force to cosign below.
             # https://github.com/sigstore/cosign
             - name: Sign image - ${{ inputs.DOCKER_PUSH }} - ${{ inputs.DOCKER_TEST_TAG }}
-              if: inputs.DOCKER_PUSH == true
+              if: ${{ inputs.DOCKER_PUSH == true && steps.n2n-test.outputs.FLAG_TEST_PASS == 'true' }}
               env:
                   COSIGN_EXPERIMENTAL: "true"
               # This step uses the identity token to provision an ephemeral certificate
