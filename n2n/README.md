@@ -35,11 +35,23 @@ n2n 尽可能在 edge 节点之间建立直接的 P2P 连接;如果不可能（�
 
 ### 推荐标签
 
-所有的通过脚本测试：[<docker-compose.test.yaml>](https://github.com/zctmdc/docker/blob/alpha/n2n/docker-compose.test.yaml) , [<compose-test.sh>](https://github.com/zctmdc/docker/blob/alpha/n2n/scripts/compose-test.sh) , [<docker-build-test.sh>](https://github.com/zctmdc/docker/blob/alpha/n2n/scripts/build/test/docker-build-test.sh)
+所有的通过脚本测试：[docker-compose.test.yaml][docker-compose.test.yaml] , [compose-test.sh][compose-test.sh] , [docker-build-test.sh][docker-build-test.sh]
 
-如果对应版本TAG上没有 `sha256-xxx` 签名，请尽量减少使用；因为这个版本测试 *10 min* 未通过。
+如果对应版本TAG上没有 `sha256-xxx` 签名，请尽量减少使用；因为这个版本测试 _10 min_ 未通过。
 
 ![签名][签名]
+
+- TAG 带前缀 `build`
+
+  Dockerfile: [Dockerfile.build.debian-11][Dockerfile.build.debian-11]
+
+  该容器仅含 `n2n` 执行文件和相关环境
+
+- TAG 无前缀 `build`
+
+  Dockerfile: [Dockerfile.run][Dockerfile.run]
+  
+  该容器含 `n2n` 执行文件、相关环境和环境变量读取脚本
 
 ## 快速入门
 
@@ -272,3 +284,8 @@ docker compose down
 [zctmdc—github]: https://github.com/zctmdc/docker.git "我github的docker项目页"
 [overview of docker-compose cli]: https://docs.docker.com/compose/reference/overview/ "docker-compose CLI概述"
 [n2n_args]: https://github.com/lucktu/n2n "N2N 支持参数版本一览表"
+[docker-compose.test.yaml]: https://github.com/zctmdc/docker/blob/alpha/n2n/docker-compose.test.yaml "docker-compose.test.yaml"
+[compose-test.sh]: https://github.com/zctmdc/docker/blob/alpha/n2n/scripts/compose-test.sh "compose-test.sh"
+[docker-build-test.sh]: https://github.com/zctmdc/docker/blob/alpha/n2n/scripts/build/test/docker-build-test.sh "docker-build-test.sh"
+[Dockerfile.build.debian-11]: https://github.com/zctmdc/docker/blob/alpha/n2n/Dockerfile.build.debian-11 "Dockerfile.build.debian-11"
+[Dockerfile.run]: https://github.com/zctmdc/docker/blob/alpha/n2n/Dockerfile.build.debian-11 "Dockerfile.run"
