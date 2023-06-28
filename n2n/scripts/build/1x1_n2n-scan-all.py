@@ -159,8 +159,8 @@ if __name__ == '__main__':
 
     logger.debug('---'*8)
 
-    version_big_only = os.environ.get('VERSION_BIG_ONLY', false)
-    
+    version_big_only = os.environ.get('VERSION_BIG_ONLY', False)
+
     list_build_obj = []
 
     if not version_big_only:
