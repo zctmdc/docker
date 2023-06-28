@@ -31,7 +31,12 @@ on:
             DOCKER_BUILD_WHITH_OUT_CACHE:
                 default: true
                 description: "docker_build_whith_out_cache"
-                required: false
+                required: true
+                type: boolean
+            VERSION_BIG_ONLY:
+                default: false
+                description: "docker_build_VERSION_BIG_ONLY"
+                required: true
                 type: boolean
 jobs:
     scan-all:
@@ -59,6 +64,8 @@ jobs:
 
                   LOG_INFO 'scan_all_save Starting'
                   export my_token='${{  secrets.GITHUB_TOKEN }}'
+                  export VERSION_BIG_ONLY='${{  inputs.VERSION_BIG_ONLY }}'
+
                   bash 1x1_n2n-scan-all.sh
                   LOG_INFO 'scan_all_save Successful'
                   echo "MATRIX_JSON=$(cat dict_build_obj.json)" >>  $GITHUB_OUTPUT
