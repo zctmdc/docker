@@ -170,7 +170,7 @@ jobs:
                       prefix=${{ inputs.DOCKER_TAG_PREFIX }}, onlatest=true
                       suffix=${{ inputs.DOCKER_TAG_SUFFIX }}, onlatest=true
                   tags: |
-                      type=raw,value=latest, enable=${{ inputs.IS_LATEST_VERSION == 'true' }}
+                      type=raw,value=latest, enable=${{ inputs.IS_LATEST_VERSION == true }}
                       type=raw,value=${{ inputs.VERSION_BIG }}, enable=${{ inputs.VERSION_B_S_rC == inputs.VERSION_BIG }}
                       type=raw,value=releases-${{ inputs.VERSION_BIG }}, enable=${{ inputs.VERSION_B_S_rC == inputs.VERSION_BIG }}
                       type=raw,value=${{ inputs.VERSION_B_S_rC }}, enable=${{ inputs.VERSION_B_S_rC != inputs.VERSION_BIG }}
@@ -248,16 +248,16 @@ jobs:
                   source test/docker-build-test.sh
                   ####################################
 
+                  echo "FLAG_TEST_PASS=${FLAG_TEST_PASS}">> $GITHUB_OUTPUT
+                  LOG_INFO "FLAG_TEST_PASS: ${FLAG_TEST_PASS}"
                   if [[ "${FLAG_TEST_PASS}" != "true" ]]; then
                     LOG_ERROR "Test faild: ${{ inputs.VERSION_B_S_rC }}"
                     echo "DOCKER_BUILD_DOCKERFILE=${{ inputs.DOCKER_BUILD_DOCKERFILE_OK }}">> $GITHUB_OUTPUT
-                    echo "FLAG_TEST_PASS=${FLAG_TEST_PASS}">> $GITHUB_OUTPUT
                     # exit 1
                     exit 0
                   fi
                   LOG_INFO "Test done: ${{ inputs.VERSION_B_S_rC }}"
                   echo "DOCKER_BUILD_DOCKERFILE=${{ inputs.DOCKER_BUILD_DOCKERFILE_FIX }}">> $GITHUB_OUTPUT
-                  echo "FLAG_TEST_PASS=${FLAG_TEST_PASS}">> $GITHUB_OUTPUT
                   exit 0
 
             # Sign the resulting Docker image digest except on PRs.

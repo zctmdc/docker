@@ -35,7 +35,7 @@ jobs:
         name: check-push - ${{ inputs.DOCKER_TEST_TAG }}
         runs-on: ubuntu-latest
         # needs: [init-version]
-        # if: inputs.FORCE_PUSH != 'true'
+        # if: inputs.FORCE_PUSH != true
         outputs:
             LAST_PULLED_DATE: ${{ steps.check-tag-last-pushed-date.outputs.LAST_PULLED_DATE }}
             BUILD_PUSH: ${{ steps.check-tag-last-pushed-date.outputs.BUILD_PUSH }}
@@ -64,7 +64,7 @@ jobs:
                   }
                   result=${{ steps.get-tag-last-pushed-info.outputs.result }}
                   LOG_INFO "result: ${result}"
-                  if [[ "${{ contains( steps.get-tag-last-pushed-info.outputs.result , 'errinfo' ) }}" == 'true' ]]; then
+                  if [[ "${{ contains( steps.get-tag-last-pushed-info.outputs.result , 'errinfo' ) }}" == "true" ]]; then
                     LOG_WARNING '获取失败: ${{ steps.get-tag-last-pushed-info.outputs.result }}'
                     LOG_INFO "准备 编译/推送"
                     echo "BUILD_PUSH=true" >> $GITHUB_OUTPUT

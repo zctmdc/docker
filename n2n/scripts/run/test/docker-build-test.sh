@@ -167,11 +167,11 @@ check_status)
         LOG_WARNING "Test START ${DOCKER_TEST_TAG:+ - }platform: ${TEST_PLATFORM}"
         main
         if [[ "${flag_test_pass,,}" != "true" ]]; then
-            return 0
+            break
         fi
         LOG_WARNING "Test DONE  ${DOCKER_TEST_TAG:+ - }platform: ${TEST_PLATFORM}"
     done
     ;;
 esac
 
-export FLAG_TEST_PASS=${flag_test_pass}
+export FLAG_TEST_PASS=${flag_test_pass,,}
