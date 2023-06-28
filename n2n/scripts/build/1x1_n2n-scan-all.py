@@ -159,11 +159,12 @@ if __name__ == '__main__':
 
     logger.debug('---'*8)
 
-    version_big_only = os.environ.get('VERSION_BIG_ONLY', False)
+    version_big_only = os.environ.get('VERSION_BIG_ONLY', 'false')
+    logger.info(f'VERSION_BIG_ONLY: {version_big_only}')
 
     list_build_obj = []
 
-    if not version_big_only:
+    if version_big_only != 'true':
         version_b_s_rcs = list(dict_version_b_s_rc.keys())
         version_b_s_rcs.sort()
         for version_b_s_rc in version_b_s_rcs:
