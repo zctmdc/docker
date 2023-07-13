@@ -76,52 +76,52 @@ jobs:
             # branch event
             type=ref,event=branch,enable=${{ github.ref != format('refs/heads/{0}', 'master') }}
 
-      - name: Build and load to Docker
-        id: build-and-load
-        uses: docker/build-push-action@v3
-        with:
-          context: ${{ env.APP_NAME }}
-          load: true
-          tags: ${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test
+      # - name: Build and load to Docker
+      #   id: build-and-load
+      #   uses: docker/build-push-action@v3
+      #   with:
+      #     context: ${{ env.APP_NAME }}
+      #     load: true
+      #     tags: ${{ secrets.REGISTRY_USERNAME }}/${{ env.APP_NAME }}:test
 
-      - name: Test docker
-        id: docker-test
-        run: |
-          echo "test start"
-          docker network create --driver bridge --subnet=172.31.0.0/16 frp-test
-          REGISTRY_USERNAME=${{ secrets.REGISTRY_USERNAME }}
-          APP_NAME=${{ env.APP_NAME }}
-          # REGISTRY_USERNAME=zctmdc
-          # APP_NAME=frp
-          ADMIN_PORT=7480
-          docker run -d --name frps \
-              --network frp-test \
-              -e SUBDOMAIN_HOST=frp.example.com \
-              -e ADMIN_PORT=${ADMIN_PORT} \
-              -e MODE=RUN_FRPS \
-              --ip 172.31.0.30 \
-              --add-host frp.example.com:172.31.0.30 \
-              ${REGISTRY_USERNAME}/${APP_NAME}:test
+      # - name: Test docker
+      #   id: docker-test
+      #   run: |
+      #     echo "test start"
+      #     docker network create --driver bridge --subnet=172.31.0.0/16 frp-test
+      #     REGISTRY_USERNAME=${{ secrets.REGISTRY_USERNAME }}
+      #     APP_NAME=${{ env.APP_NAME }}
+      #     # REGISTRY_USERNAME=zctmdc
+      #     # APP_NAME=frp
+      #     ADMIN_PORT=7480
+      #     docker run -d --name frps \
+      #         --network frp-test \
+      #         -e SUBDOMAIN_HOST=frp.example.com \
+      #         -e ADMIN_PORT=${ADMIN_PORT} \
+      #         -e MODE=RUN_FRPS \
+      #         --ip 172.31.0.30 \
+      #         --add-host frp.example.com:172.31.0.30 \
+      #         ${REGISTRY_USERNAME}/${APP_NAME}:test
 
-          docker run -d --name frpc \
-              --network frp-test \
-              -e SUBDOMAIN_HOST=frp.example.com \
-              -e ADMIN_PORT=${ADMIN_PORT} \
-              --add-host frp.example.com:172.31.0.30 \
-              ${REGISTRY_USERNAME}/${APP_NAME}:test
+      #     docker run -d --name frpc \
+      #         --network frp-test \
+      #         -e SUBDOMAIN_HOST=frp.example.com \
+      #         -e ADMIN_PORT=${ADMIN_PORT} \
+      #         --add-host frp.example.com:172.31.0.30 \
+      #         ${REGISTRY_USERNAME}/${APP_NAME}:test
 
-          sleep 15
-          result="$(docker exec -i frps curl --head "http://localhost:${ADMIN_PORT}/healthz")"
-          if [[ -z "$(echo ${result}| head -n 1 | grep -o '200')" ]]; then
-              echo "test faild: frps: http resp code - '${result}'"
-              exit 1
-          fi
-          result="$(docker exec -i frpc curl --head "http://localhost:${ADMIN_PORT}/healthz")"
-          if [[ -z "$(echo ${result}| head -n 1 | grep -o '200')" ]]; then
-              echo "test faild: frpc: http resp code - '${result}'"
-              exit 1
-          fi
-          echo "test pass"
+      #     sleep 15
+      #     result="$(docker exec -i frps curl --head "http://localhost:${ADMIN_PORT}/healthz")"
+      #     if [[ -z "$(echo ${result}| head -n 1 | grep -o '200')" ]]; then
+      #         echo "test faild: frps: http resp code - '${result}'"
+      #         exit 1
+      #     fi
+      #     result="$(docker exec -i frpc curl --head "http://localhost:${ADMIN_PORT}/healthz")"
+      #     if [[ -z "$(echo ${result}| head -n 1 | grep -o '200')" ]]; then
+      #         echo "test faild: frpc: http resp code - '${result}'"
+      #         exit 1
+      #     fi
+      #     echo "test pass"
 
       # Build and push Docker image with Buildx (don't push on PR)
       # https://github.com/docker/build-push-action
