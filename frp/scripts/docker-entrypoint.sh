@@ -197,7 +197,7 @@ run_frp() {
     exit $?
 }
 
-if [ "$(echo ${MODE}  | tr A-Z a-z)" = "RUN_FRPS" ]; then
+if [ "$(echo ${MODE}  | tr a-z A-Z)" = "RUN_FRPS" ]; then
     # FRPS
     echo "RUN FRPS"
 
@@ -208,7 +208,7 @@ if [ "$(echo ${MODE}  | tr A-Z a-z)" = "RUN_FRPS" ]; then
     CONF_FILE_ADD=$CONF_FRPS_ADD
     CONF_FILE_ADD_MD5=$CONF_FRPS_ADD_MD5
     run_frp
-elif [ "$(echo ${MODE}  | tr A-Z a-z)" = "RUN_FRPC" ]; then
+elif [ "$(echo ${MODE}  | tr a-z A-Z)" = "RUN_FRPC" ]; then
     # FRPC
     echo "RUN FRPC"
 
