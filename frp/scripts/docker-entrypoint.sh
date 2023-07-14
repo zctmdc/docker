@@ -65,7 +65,7 @@ sum_file_check() {
         echo "FAILED non-readable - ${sum_save_file}" >&2
         return 1
     fi
-    if cat "${sum_save_file}" | sha256sum --check | grep 'OK' >/dev/null; then
+    if cat "${sum_save_file}" | sha256sum --check | grep "OK" >/dev/null; then
         # OK
         echo "OK"
         return 1
@@ -158,11 +158,11 @@ run_frp() {
         # 拼接配置文件
         echo "RUN 拼接配置文件 - ${CONF_FILE_ADD}"
 
-        echo '' >>$CONF_FILE
+        echo "" >>$CONF_FILE
         echo "$FLAG_CONF_ADD" >>$CONF_FILE
-        echo '' >>$CONF_FILE
+        echo "" >>$CONF_FILE
         cat $CONF_FILE_ADD >>$CONF_FILE
-        echo '' >>$CONF_FILE
+        echo "" >>$CONF_FILE
     fi
     if is_not_edit_pass_web && -r ${CONF_ADD_PATH}; then
         for src_file in $(find "${CONF_ADD_PATH}" -name '*.ini'); do
@@ -171,12 +171,12 @@ run_frp() {
             fi
             echo "RUN 拼接配置文件 - ${src_file}"
 
-            echo '' >>$CONF_FILE
+            echo "" >>$CONF_FILE
             echo "$FLAG_CONF_ADD" >>$CONF_FILE
-            echo '' >>$CONF_FILE
+            echo "" >>$CONF_FILE
             # 拼接配置文件
             cat "$src_file" >>$CONF_FILE
-            echo '' >>$CONF_FILE
+            echo "" >>$CONF_FILE
         done
     fi
 
@@ -197,7 +197,7 @@ run_frp() {
     exit $?
 }
 
-if [ "${MODE^^}" = "RUN_FRPS" ]; then
+if [ "$(echo ${MODE}  | tr A-Z a-z)" = "RUN_FRPS" ]; then
     # FRPS
     EXEC_FILE=$EXEC_FILE_FRPS
     CONF_FILE=$CONF_FRPS
@@ -206,7 +206,7 @@ if [ "${MODE^^}" = "RUN_FRPS" ]; then
     CONF_FILE_ADD=$CONF_FRPS_ADD
     CONF_FILE_ADD_MD5=$CONF_FRPS_ADD_MD5
     run_frp
-elif [ "${MODE^^}" = "RUN_FRPC" ]; then
+elif [ "$(echo ${MODE}  | tr A-Z a-z)" = "RUN_FRPC" ]; then
     # FRPC
     EXEC_FILE=$EXEC_FILE_FRPC
     CONF_FILE=$CONF_FRPC
