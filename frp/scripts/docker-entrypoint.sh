@@ -41,7 +41,7 @@ sum_file_save() {
         return 1
     fi
     sum_save_path="${sum_save_file%/*}"
-    if [ -n "${sum_save_path}" ] || [ ! -w "${sum_save_path}" ]; then
+    if [ -n "${sum_save_path}" ] || [ ! -w "${sum_save_path}"]; then
         echo "FAILED non-writable - ${sum_save_path}" >&2
         return 1
     fi
@@ -146,31 +146,31 @@ run_frp() {
         echo "##################"
         cp -f "${CONF_FILE}" "$(date +%Y-%m-%d--%H-%M-%S)-${CONF_FILE}.bak"
     fi
-    
-    if is_not_edit_pass_web && -f ${CONF_FILE}; then
+
+    if [ ! -f ${CONF_FILE} ] || is_not_edit_pass_web; then
         # 还原配置文件
         echo "RUN 还原配置文件 - ${CONF_FILE_BAK}"
         cp $CONF_FILE_BAK $CONF_FILE
-        chmod +w $CONF_FILE
+        chmod +rw $CONF_FILE
     fi
-    
-    if is_not_edit_pass_web && -r ${CONF_FILE_ADD}; then
+
+    if [ -r ${CONF_FILE_ADD} ] && is_not_edit_pass_web; then
         # 拼接配置文件
         echo "RUN 拼接配置文件 - ${CONF_FILE_ADD}"
-        
+
         echo "" >>$CONF_FILE
         echo "$FLAG_CONF_ADD" >>$CONF_FILE
         echo "" >>$CONF_FILE
         cat $CONF_FILE_ADD >>$CONF_FILE
         echo "" >>$CONF_FILE
     fi
-    if is_not_edit_pass_web && -r ${CONF_ADD_PATH}; then
+    if [ -r ${CONF_ADD_PATH} ] && is_not_edit_pass_web; then
         for src_file in $(find "${CONF_ADD_PATH}" -name '*.ini'); do
             if [ ! -r "$src_file" ]; then
                 continue
             fi
             echo "RUN 拼接配置文件 - ${src_file}"
-            
+
             echo "" >>$CONF_FILE
             echo "$FLAG_CONF_ADD" >>$CONF_FILE
             echo "" >>$CONF_FILE
@@ -179,7 +179,7 @@ run_frp() {
             echo "" >>$CONF_FILE
         done
     fi
-    
+
     if [ ! -x "${EXEC_FILE}" ]; then
         echo "FAILED non-executable - ${EXEC_FILE}" >&2
         exit 1
@@ -200,7 +200,7 @@ run_frp() {
 if [ "$(echo ${MODE} | tr a-z A-Z)" = "RUN_FRPS" ]; then
     # FRPS
     echo "RUN FRPS"
-    
+
     EXEC_FILE=$EXEC_FILE_FRPS
     CONF_FILE=$CONF_FRPS
     CONF_FILE_MD5=$CONF_FRPS_MD5
@@ -208,10 +208,10 @@ if [ "$(echo ${MODE} | tr a-z A-Z)" = "RUN_FRPS" ]; then
     CONF_FILE_ADD=$CONF_FRPS_ADD
     CONF_FILE_ADD_MD5=$CONF_FRPS_ADD_MD5
     run_frp
-    elif [ "$(echo ${MODE} | tr a-z A-Z)" = "RUN_FRPC" ]; then
+elif [ "$(echo ${MODE} | tr a-z A-Z)" = "RUN_FRPC" ]; then
     # FRPC
     echo "RUN FRPC"
-    
+
     EXEC_FILE=$EXEC_FILE_FRPC
     CONF_FILE=$CONF_FRPC
     CONF_FILE_MD5=$CONF_FRPC_MD5
