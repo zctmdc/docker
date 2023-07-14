@@ -199,6 +199,8 @@ run_frp() {
 
 if [ "$(echo ${MODE}  | tr A-Z a-z)" = "RUN_FRPS" ]; then
     # FRPS
+    echo "RUN FRPS"
+
     EXEC_FILE=$EXEC_FILE_FRPS
     CONF_FILE=$CONF_FRPS
     CONF_FILE_MD5=$CONF_FRPS_MD5
@@ -208,6 +210,8 @@ if [ "$(echo ${MODE}  | tr A-Z a-z)" = "RUN_FRPS" ]; then
     run_frp
 elif [ "$(echo ${MODE}  | tr A-Z a-z)" = "RUN_FRPC" ]; then
     # FRPC
+    echo "RUN FRPC"
+
     EXEC_FILE=$EXEC_FILE_FRPC
     CONF_FILE=$CONF_FRPC
     CONF_FILE_MD5=$CONF_FRPC_MD5
