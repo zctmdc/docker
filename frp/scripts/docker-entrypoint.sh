@@ -210,5 +210,5 @@ elif [ "${MODE^^}" = "RUN_FRPC" ]; then
     run_frp
 fi
 
-exec $@
+exec "$@"
 exit $?
