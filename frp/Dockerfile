@@ -62,6 +62,7 @@ ENV MODE=RUN_FRPC
 
 VOLUME /etc/frp/
 VOLUME /opt/frp/conf/
+VOLUME /opt/frp/bak/
 
 ENTRYPOINT [ "/opt/frp/docker-entrypoint.sh" ]
 HEALTHCHECK --interval=30s --timeout=10s CMD curl -s --head "http://localhost:${ADMIN_PORT}/healthz" || exit 1

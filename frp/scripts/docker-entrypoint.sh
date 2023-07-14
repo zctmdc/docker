@@ -6,7 +6,7 @@ EXEC_PATH=/usr/bin
 CONF_PATH=/etc/frp
 CONF_FRPS_BAK_PATH=/opt/frp/bak
 CONF_ADD_PATH=/opt/frp/conf
-CONF_ADD_PATH=/opt/frp/conf/add/
+CONFS_ADD_PATH=/opt/frp/conf/add/
 
 EXEC_FILE_FRPS=${EXEC_PATH}/frps
 EXEC_FILE_FRPC=${EXEC_PATH}/frpc
@@ -47,7 +47,7 @@ sum_file_save() {
     fi
     sha256sum "${sum_src_file}" >"${sum_save_file}"
     if [ "$?" == "0" ]; then
-        echo "OK"
+        echo "OK     sha256sum ${sum_src_file} - ${sum_save_file}"
         return 0
     else
         echo "FAILED sha256sum ${sum_src_file} - ${sum_save_file}" >&2
@@ -67,7 +67,7 @@ sum_file_check() {
     fi
     if cat "${sum_save_file}" | sha256sum --check | grep "OK" >/dev/null; then
         # OK
-        echo "OK"
+        echo "OK     sha256sum --check ${sum_save_file}"
         return 1
     else
         # FAILED
@@ -147,14 +147,14 @@ run_frp() {
         cp -f "${CONF_FILE}" "$(date +%Y-%m-%d--%H-%M-%S)-${CONF_FILE}.bak"
     fi
 
-    if [ ! -f ${CONF_FILE} ] || is_not_edit_pass_web; then
+    if [ ! -f "${CONF_FILE}" ] || is_not_edit_pass_web; then
         # 还原配置文件
         echo "RUN 还原配置文件 - ${CONF_FILE_BAK}"
         cp $CONF_FILE_BAK $CONF_FILE
         chmod +rw $CONF_FILE
     fi
 
-    if [ -r ${CONF_FILE_ADD} ] && is_not_edit_pass_web; then
+    if [ -r "${CONF_FILE_ADD}" ] && is_not_edit_pass_web; then
         # 拼接配置文件
         echo "RUN 拼接配置文件 - ${CONF_FILE_ADD}"
 
@@ -164,8 +164,8 @@ run_frp() {
         cat $CONF_FILE_ADD >>$CONF_FILE
         echo "" >>$CONF_FILE
     fi
-    if [ -r ${CONF_ADD_PATH} ] && is_not_edit_pass_web; then
-        for src_file in $(find "${CONF_ADD_PATH}" -name '*.ini'); do
+    if [ -r "${CONFS_ADD_PATH}" ] && is_not_edit_pass_web; then
+        for src_file in $(find "${CONFS_ADD_PATH}" -name '*.ini'); do
             if [ ! -r "$src_file" ]; then
                 continue
             fi
