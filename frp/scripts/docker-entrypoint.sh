@@ -67,7 +67,7 @@ sum_file_check() {
     fi
     if cat "${sum_save_file}" | sha256sum --check | grep 'OK' >/dev/null; then
         # OK
-        echo 'OK'
+        echo "OK"
         return 1
     else
         # FAILED
@@ -140,7 +140,7 @@ is_edit_conf_pass_add() {
 
 run_frp() {
     if [ -r "${CONF_FILE_MD5}" ] && check_conf_changed >/dev/null; then
-        echo 'FAILED 配置文件已经改变 - ${CONF_FILE}'
+        echo "FAILED 配置文件已经改变 - ${CONF_FILE}"
         echo "##################"
         cat "${CONF_FILE}"
         echo "##################"
@@ -149,12 +149,15 @@ run_frp() {
 
     if is_not_edit_pass_web && -f ${CONF_FILE}; then
         # 还原配置文件
+        echo "RUN 还原配置文件 - ${CONF_FILE_BAK}"
         cp $CONF_FILE_BAK $CONF_FILE
         chmod +w $CONF_FILE
     fi
 
     if is_not_edit_pass_web && -r ${CONF_FILE_ADD}; then
         # 拼接配置文件
+        echo "RUN 拼接配置文件 - ${CONF_FILE_ADD}"
+
         echo '' >>$CONF_FILE
         echo "$FLAG_CONF_ADD" >>$CONF_FILE
         echo '' >>$CONF_FILE
@@ -166,6 +169,8 @@ run_frp() {
             if [ ! -r "$src_file" ]; then
                 continue
             fi
+            echo "RUN 拼接配置文件 - ${src_file}"
+
             echo '' >>$CONF_FILE
             echo "$FLAG_CONF_ADD" >>$CONF_FILE
             echo '' >>$CONF_FILE
@@ -184,8 +189,10 @@ run_frp() {
         exit 1
     fi
     # 保存校验信息
+    echo "RUN 保存校验信息 - ${CONF_FILE_MD5}"
     sum_file_save "${CONF_FILE}" "${CONF_FILE_MD5}"
     # RUN IT
+    echo "RUN ${EXEC_FILE} -c ${CONF_FILE}"
     exec $EXEC_FILE -c $CONF_FILE
     exit $?
 }
